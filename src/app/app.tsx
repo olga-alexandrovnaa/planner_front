@@ -11,6 +11,7 @@ import { useCallback, useEffect } from "react";
 import { getRoutelogin } from "@/sharedComponents/config/routeConfig/routeConfig";
 import { useNavigate } from "react-router-dom";
 import { useApiIsRefreshing } from "@/sharedComponents/lib/context/ApiIsRefreshing";
+import { refresh } from "@/programFeatures/Auth";
 
 const App = () => {
   const navigate = useNavigate();
@@ -26,12 +27,17 @@ const App = () => {
   const { ApiIsRefreshing, toggleApiIsRefreshing } = useApiIsRefreshing();
   const INTERVAL_MS = 50;
 
-  const addBearer = useCallback((config: RequestInit) => {
+  const getHeaders = useCallback((): Headers => {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "Bearer " + authData.token);
+    return myHeaders;
+  }, []);
 
-    config.headers = myHeaders;
+  const addRetry = useCallback((): Headers => {
+    const myHeaders = getHeaders();
+    myHeaders.append("isRetry", "retry");
+    return myHeaders;
   }, []);
 
   useEffect(() => {
@@ -39,37 +45,34 @@ const App = () => {
     window.fetch = async (...args) => {
       const [resource, config] = args;
 
+      config.credentials = "include";
+
       if (!ApiIsRefreshing) {
-        addBearer(config);
+        config.headers = getHeaders();
       } else {
         const interval = setInterval(() => {
           if (!ApiIsRefreshing) {
             clearInterval(interval);
-            addBearer(config);
+            config.headers = getHeaders();
           }
         }, INTERVAL_MS);
       }
 
       const response = await originalFetch(resource, config);
 
-      if (response.status === 401) {
-        //&& error.config && !error.config._isRetry) {
+      if (
+        response.status === 401 &&
+        response.headers.get("isRetry") !== "retry"
+      ) {
         if (!ApiIsRefreshing) {
           toggleApiIsRefreshing(true);
-          // originalRequest._isRetry = true;
-          // await UserStore.refresh();
+
+          config.headers = addRetry();
+          refresh();
           toggleApiIsRefreshing(false);
         }
-        // return $api.request(originalRequest);
+        return await originalFetch(resource, config);
       }
-
-      const json = () =>
-        response
-          .clone()
-          .json()
-          .then((data) => ({ ...data, title: `Intercepted: ${data.title}` }));
-      response.json = json;
-
       return response;
     };
   }, []);

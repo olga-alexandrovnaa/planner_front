@@ -4,49 +4,36 @@ import { User, userActions } from '@/serviceEntities/User';
 import { USER_LOCALSTORAGE_KEY } from '@/sharedComponents/const/localstorage';
 import { getUserNameForService } from '../selectors/selectors';
 
-interface RegistrationProps {
-    name: string;
-    userName: string;
-    password: string;
-    passwordConfirm: string;
-}
 
 export const registration = createAsyncThunk<
     User,
-    RegistrationProps,
+    undefined,
     ThunkConfig<string>
->('login/registration', async (authData, thunkApi) => {
+>('login/registration', async (_, thunkApi) => {
     const { dispatch, rejectWithValue, getState } = thunkApi;
-
-    //return $api.post<AuthResponse>('/auth/registration', { userName, password });
     
     const currentUserName = getUserNameForService(getState());
+    const currentPassword = getUserNameForService(getState());
+    const currentName = getUserNameForService(getState());
 
     try {
-        // const formData = new URLSearchParams();
-        // formData.append('userName', authData.userName);
-        // formData.append('password', authData.password);
+        const formData = new URLSearchParams();
+        formData.append('userName', currentUserName);
+        formData.append('password', currentPassword);
+        formData.append('name', currentName);
 
-        // const response = await fetch(
-        //     __API__ + 'login', 
-        //     {
-        //         credentials: 'include',
-        //         method: "POST",
-        //         body: formData
-        //     }
-        // );
-        // const responseJSON = await response.json();
-
-        // if (!responseJSON.result || responseJSON.result !== true ) {
-        //     throw new Error();
-        // }
-
-        
-        const responseJSON = {
-            data: {
-                id: '11111',
-                userName: authData.userName,
+        const response = await fetch(
+            __API__ + 'auth/registration', 
+            {
+                credentials: 'include',
+                method: "POST",
+                body: formData
             }
+        );
+        const responseJSON = await response.json();
+
+        if (!responseJSON.result || responseJSON.result !== true ) {
+            throw new Error();
         }
         
         await dispatch(userActions.setAuthData(responseJSON.data));
