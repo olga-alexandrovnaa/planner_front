@@ -3,6 +3,7 @@ import { ThunkConfig } from '@/app/providers/StoreProvider';
 import { User, userActions } from '@/serviceEntities/User';
 import { USER_LOCALSTORAGE_KEY } from '@/sharedComponents/const/localstorage';
 import { getUserNameForService } from '../selectors/selectors';
+import $api from '@/sharedComponents/api/api';
 
 
 export const registration = createAsyncThunk<
@@ -22,7 +23,7 @@ export const registration = createAsyncThunk<
         formData.append('password', currentPassword);
         formData.append('name', currentName);
 
-        const response = await fetch(
+        const response = await $api(
             __API__ + 'auth/registration', 
             {
                 credentials: 'include',
@@ -30,17 +31,15 @@ export const registration = createAsyncThunk<
                 body: formData
             }
         );
-        const responseJSON = await response.json();
-
-        if (!responseJSON.result || responseJSON.result !== true ) {
+        if (!response.result || response.result !== true ) {
             throw new Error();
         }
         
-        await dispatch(userActions.setAuthData(responseJSON.data));
+        await dispatch(userActions.setAuthData(response.data));
 
-        localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(responseJSON.data));
+        localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(response.data));
         
-        return responseJSON.data;
+        return response.data;
  
     } catch (e) {
         
