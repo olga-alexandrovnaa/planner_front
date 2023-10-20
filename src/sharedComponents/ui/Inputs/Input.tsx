@@ -25,10 +25,10 @@ type Props = {
   onPhotoChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   type?: string;
-  label: string;
   value?: any;
   width?: "small" | "smaller" | "medium" | "big" | "bigger";
-  icon?: ReactElement;
+  buttonIcon?: ReactElement;
+  rowStartIcon?: ReactElement;
   disabled?: boolean;
   textAfterInput?: string;
   getDateValueString?: (date?: Date) => string;
@@ -49,7 +49,6 @@ const Input = forwardRef<HTMLInputElement, Props>(
       children,
       onPhotoChange,
       value,
-      label,
       width,
       type,
       disabled,
@@ -59,7 +58,8 @@ const Input = forwardRef<HTMLInputElement, Props>(
       isWithEvent,
       buttonLabel,
       eventAction,
-      icon,
+      buttonIcon,
+      rowStartIcon,
       clearable,
       required,
       ...props
@@ -76,7 +76,8 @@ const Input = forwardRef<HTMLInputElement, Props>(
       onChange?.(e.target.value);
     };
 
-    const IconComponent = icon ?? <span />;
+    const rowStartIconComponent = rowStartIcon ?? <span />;
+    const buttonIconComponent = buttonIcon ?? <span />;
 
     const onButtonClick = useCallback(() => {
       if (eventAction) eventAction();
@@ -100,10 +101,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
       <div className={styles.htmlInputBlock}>
         <input
           onChange={onChangeHandler}
-          className={classNames(
-            styles.htmlInput,
-            {[styles.disabled]: disabled}
-          )}
+          className={classNames(styles.htmlInput, {
+            [styles.disabled]: disabled,
+          })}
           value={value ?? ""}
           disabled={disabled}
           {...props}
@@ -119,10 +119,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
         <div className={styles.htmlInputBlock}>
           <textarea
             onChange={onChangeTextAreaHandler}
-            className={classNames(
-              styles.htmlInput,
-              {[styles.disabled]: disabled}
-            )}
+            className={classNames(styles.htmlInput, {
+              [styles.disabled]: disabled,
+            })}
             value={value ?? ""}
             ref={ref}
             disabled={disabled}
@@ -139,10 +138,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
           onChange={onChangeHandler}
           value={value ?? "+7 (***) *** - ** - **"}
           alwaysShowMask
-          className={classNames(
-            styles.htmlInput,
-            {[styles.disabled]: disabled}
-          )}
+          className={classNames(styles.htmlInput, {
+            [styles.disabled]: disabled,
+          })}
           disabled={disabled}
           mask="+7 (***) *** - ** - **"
           maskChar="_"
@@ -158,10 +156,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
           <input
             onChange={onChangeHandler}
             value={value}
-            className={classNames(
-              styles.htmlInputDate,
-              {[styles.disabled]: disabled}
-            )}
+            className={classNames(styles.htmlInputDate, {
+              [styles.disabled]: disabled,
+            })}
             {...props}
             type={type}
             disabled={disabled}
@@ -169,10 +166,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
           />
 
           <div
-            className={classNames(
-              styles.htmlInputText,
-              {[styles.disabled]: disabled}
-            )}
+            className={classNames(styles.htmlInputText, {
+              [styles.disabled]: disabled,
+            })}
           >
             {value
               ? getDateValueString
@@ -203,10 +199,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
             disabled={disabled}
             onChange={onPhotoChange}
             onBlur={onBlur}
-            className={classNames(
-              styles.htmlInput,
-              {[styles.disabled]: disabled}
-            )}
+            className={classNames(styles.htmlInput, {
+              [styles.disabled]: disabled,
+            })}
             {...props}
           />
         </div>
@@ -224,19 +219,15 @@ const Input = forwardRef<HTMLInputElement, Props>(
           [className]
         )}
       >
+        {!!rowStartIcon && (
+          <span className={styles.rowStartIcon}>{rowStartIconComponent}</span>
+        )}
+
         <div
           className={
             type !== "file" ? styles.inputBlock : styles.inputBlockFile
           }
         >
-          <span className={classNames(styles.inputLabel)}>
-            {label}
-            {required && (
-              <span className={classNames(styles.required)}>
-                {` (Обязательное поле)`}
-              </span>
-            )}
-          </span>
           {children ? children : input}
         </div>
         {/* {isWithEvent !== undefined ? ( */}
@@ -245,13 +236,14 @@ const Input = forwardRef<HTMLInputElement, Props>(
         )}
         {(!disabled || notDisabledEvent) && (
           <button
-            className={classNames(
-              styles.button,
-              {[styles.disabled]: disabled}
-            )}
+            className={classNames(styles.button, {
+              [styles.disabled]: disabled,
+            })}
             onClick={onButtonClick}
           >
-            {!!icon && <span className={styles.icon}>{IconComponent}</span>}
+            {!!buttonIcon && (
+              <span className={styles.icon}>{buttonIconComponent}</span>
+            )}
             {!!buttonLabel && <span>{buttonLabel}</span>}
           </button>
         )}

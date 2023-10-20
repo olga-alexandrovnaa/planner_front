@@ -1,135 +1,168 @@
-import { useSelector } from 'react-redux';
-import { memo, useCallback } from 'react';
-import cls from './LoginForm.module.scss';
-import { getLoginFormError, getLoginFormIsLoading, getLoginFormName, getLoginFormPassword, getLoginFormPasswordConfirm, getLoginFormUserName } from '../model/selectors/selectors';
-import { useAppDispatch } from '@/sharedComponents/lib/hooks/useAppDispatch/useAppDispatch';
-import { loginActions, loginReducer } from '../model/slice/loginFormSlice';
-import { DynamicModuleLoader, ReducersList } from '@/sharedComponents/lib/components/DynamicModuleLoader/DynamicModuleLoader';
-import { classNames } from '@/sharedComponents/lib/classNames/classNames';
-import { Input } from '@/sharedComponents/ui/Inputs/Input';
-import { ReactComponent as Profile } from '@/sharedComponents/assets/icons/profile.svg';
-import { ReactComponent as Lock } from '@/sharedComponents/assets/icons/lock.svg';
-import { Loader } from '@/sharedComponents/ui/Loader';
-import { Button } from '@/sharedComponents/ui/Button';
-import { registration } from '../model/services/registration';
-import { loginByUserName } from '../model/services/loginByEmail';
+import { useSelector } from "react-redux";
+import { memo, useCallback, useState } from "react";
+import cls from "./LoginForm.module.scss";
+import {
+  getLoginFormError,
+  getLoginFormIsLoading,
+  getLoginFormName,
+  getLoginFormPassword,
+  getLoginFormPasswordConfirm,
+  getLoginFormUserName,
+} from "../model/selectors/selectors";
+import { useAppDispatch } from "@/sharedComponents/lib/hooks/useAppDispatch/useAppDispatch";
+import { loginActions, loginReducer } from "../model/slice/loginFormSlice";
+import {
+  DynamicModuleLoader,
+  ReducersList,
+} from "@/sharedComponents/lib/components/DynamicModuleLoader/DynamicModuleLoader";
+import { classNames } from "@/sharedComponents/lib/classNames/classNames";
+import { Input } from "@/sharedComponents/ui/Inputs/Input";
+import { ReactComponent as Profile } from "@/sharedComponents/assets/icons/profile.svg";
+import { ReactComponent as Lock } from "@/sharedComponents/assets/icons/lock.svg";
+import { Loader } from "@/sharedComponents/ui/Loader";
+import { Button } from "@/sharedComponents/ui/Button";
+import { registration } from "../model/services/registration";
+import { loginByUserName } from "../model/services/loginByEmail";
 
 export interface LoginFormProps {
-    className?: string;
-    onSuccess: () => void;
+  className?: string;
+  onSuccess: () => void;
 }
 
 const initialReducers: ReducersList = {
-    loginForm: loginReducer,
+  loginForm: loginReducer,
 };
 
 const LoginForm = memo(({ className, onSuccess }: LoginFormProps) => {
-    const dispatch = useAppDispatch();
-    const userName = useSelector(getLoginFormUserName);
-    const password = useSelector(getLoginFormPassword);
-    const name = useSelector(getLoginFormName);
-    const passwordConfirm = useSelector(getLoginFormPasswordConfirm);
+  const dispatch = useAppDispatch();
+  const userName = useSelector(getLoginFormUserName);
+  const password = useSelector(getLoginFormPassword);
+  const name = useSelector(getLoginFormName);
+  const passwordConfirm = useSelector(getLoginFormPasswordConfirm);
 
-    const isLoading = useSelector(getLoginFormIsLoading);
-    const error = useSelector(getLoginFormError);
+  const isLoading = useSelector(getLoginFormIsLoading);
+  const error = useSelector(getLoginFormError);
 
-    const onChangeUserName = useCallback(
-        (value: string) => {
-            dispatch(loginActions.setUserName(value));
-        },
-        [dispatch],
-    );
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
 
-    const onChangePassword = useCallback(
-        (value: string) => {
-            dispatch(loginActions.setPassword(value));
-        },
-        [dispatch],
-    );
+  const onChangeIsRegistrationOpen = useCallback(() => {
+    setIsRegistrationOpen(!isRegistrationOpen);
+  }, [isRegistrationOpen]);
 
-    const onChangeName = useCallback(
-        (value: string) => {
-            dispatch(loginActions.setName(value));
-        },
-        [dispatch],
-    );
+  const onChangeUserName = useCallback(
+    (value: string) => {
+      dispatch(loginActions.setUserName(value));
+    },
+    [dispatch]
+  );
 
-    const onChangePasswordConfirm = useCallback(
-        (value: string) => {
-            dispatch(loginActions.setPasswordConfirm(value));
-        },
-        [dispatch],
-    );
+  const onChangePassword = useCallback(
+    (value: string) => {
+      dispatch(loginActions.setPassword(value));
+    },
+    [dispatch]
+  );
 
-    const onLoginClick = useCallback(async () => {
-      if(!userName || !password) return;
-      const result = await dispatch(loginByUserName());
-      if (result.meta.requestStatus === 'fulfilled') {
-          onSuccess();
-      }
-    }, [onSuccess, dispatch, password, userName]);
+  const onChangeName = useCallback(
+    (value: string) => {
+      dispatch(loginActions.setName(value));
+    },
+    [dispatch]
+  );
 
-    const onRegistrationClick = useCallback(async () => {
-        if(!userName || !password || !passwordConfirm || !name || password !== passwordConfirm) return;
-        const result = await dispatch(registration());
-        if (result.meta.requestStatus === 'fulfilled') {
-            onSuccess();
-        }
-      }, [userName, password, passwordConfirm, name, dispatch, onSuccess]);
+  const onChangePasswordConfirm = useCallback(
+    (value: string) => {
+      dispatch(loginActions.setPasswordConfirm(value));
+    },
+    [dispatch]
+  );
 
-    return (
-        <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
-            <div className={classNames(cls.LoginForm, {}, [className])}>
-                <div className={cls.LoginWidget}>
-                    {!!error && <span className={cls.Error}>Вы ввели неверный userName или пароль</span> }
-                    <Input
-                        label="UserName"
-                        onChange={onChangeUserName}
-                        value={userName}
-                        icon={<Profile width={25}/>}
-                    />
-                    <Input
-                        label="Пароль"
-                        type='password'
-                        onChange={onChangePassword}
-                        value={password}
-                        icon={<Lock width={25}/>}
-                    />
-                    <Input
-                        label="Name"
-                        onChange={onChangeName}
-                        value={name}
-                        icon={<Profile width={25}/>}
-                    />
-                    <Input
-                        label="Пароль подтверждение"
-                        type='password'
-                        onChange={onChangePasswordConfirm}
-                        value={passwordConfirm}
-                        icon={<Lock width={25}/>}
-                    />
-                    { !isLoading && <Button
-                        className={cls.loginBtn}
-                        onClick={onLoginClick}
-                        disabled={isLoading}
-                    >
-                        Войти
-                    </Button>}
-                    { !isLoading && <Button
-                        className={cls.loginBtn}
-                        onClick={onRegistrationClick}
-                        disabled={isLoading}
-                    >
-                        Регистрация
-                    </Button>}
+  const onLoginClick = useCallback(async () => {
+    if (!userName || !password) return;
+    const result = await dispatch(loginByUserName());
+    if (result.meta.requestStatus === "fulfilled") {
+      onSuccess();
+    }
+  }, [onSuccess, dispatch, password, userName]);
 
-                    {
-                        isLoading && <div className={cls.loader}><Loader/></div>
-                    }
-                </div> 
+  const onRegistrationClick = useCallback(async () => {
+    if (
+      !userName ||
+      !password ||
+      !passwordConfirm ||
+      !name ||
+      password !== passwordConfirm
+    )
+      return;
+    const result = await dispatch(registration());
+    if (result.meta.requestStatus === "fulfilled") {
+      onSuccess();
+    }
+  }, [userName, password, passwordConfirm, name, dispatch, onSuccess]);
+
+  return (
+    <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
+      <div className={classNames(cls.LoginForm, {}, [className])}>
+        <div className={cls.LoginWidget}>
+          {!!error && (
+            <span className={cls.Error}>
+              Вы ввели неверный userName или пароль
+            </span>
+          )}
+          <Input
+            placeholder="UserName"
+            onChange={onChangeUserName}
+            value={userName}
+            rowStartIcon={<Profile width={25} />}
+          />
+          <Input
+            placeholder="Пароль"
+            type="password"
+            onChange={onChangePassword}
+            value={password}
+            rowStartIcon={<Lock width={25} />}
+          />
+          <Input
+            placeholder="Name"
+            onChange={onChangeName}
+            value={name}
+            rowStartIcon={<Profile width={25} />}
+          />
+          <Input
+            placeholder="Пароль подтверждение"
+            type="password"
+            onChange={onChangePasswordConfirm}
+            value={passwordConfirm}
+            rowStartIcon={<Lock width={25} />}
+          />
+          {!isLoading && (
+            <Button
+              className={cls.loginBtn}
+              onClick={onLoginClick}
+              disabled={isLoading}
+            >
+              Войти
+            </Button>
+          )}
+          {!isLoading && (
+            <Button
+              className={cls.loginBtn}
+              onClick={onRegistrationClick}
+              disabled={isLoading}
+            >
+              Регистрация
+            </Button>
+          )}
+
+          {isLoading && (
+            <div className={cls.loader}>
+              <Loader />
             </div>
-        </DynamicModuleLoader>
-    );
+          )}
+        </div>
+      </div>
+    </DynamicModuleLoader>
+  );
 });
 
 export default LoginForm;
