@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
 import { User, userActions } from '@/serviceEntities/User';
 import { USER_LOCALSTORAGE_KEY } from '@/sharedComponents/const/localstorage';
-import { getUserNameForService } from '../selectors/selectors';
+import { getRegistrationDataForService } from '../selectors/selectors';
 import $api from '@/sharedComponents/api/api';
 
 
@@ -13,22 +13,15 @@ export const registration = createAsyncThunk<
 >('login/registration', async (_, thunkApi) => {
     const { dispatch, rejectWithValue, getState } = thunkApi;
     
-    const currentUserName = getUserNameForService(getState());
-    const currentPassword = getUserNameForService(getState());
-    const currentName = getUserNameForService(getState());
+    const data = getRegistrationDataForService(getState());
 
     try {
-        const formData = new URLSearchParams();
-        formData.append('userName', currentUserName);
-        formData.append('password', currentPassword);
-        formData.append('name', currentName);
-
         const response = await $api(
             __API__ + 'auth/registration', 
             {
                 credentials: 'include',
                 method: "POST",
-                body: formData
+                body: JSON.stringify(data)
             }
         );
         if (!response.result || response.result !== true ) {

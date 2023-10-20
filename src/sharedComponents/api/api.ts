@@ -25,13 +25,14 @@ const $api = async (
 
   // Настроить config
   config.credentials = "include";
-  config.headers = getHeaders(authData.token);
+  config.mode ='no-cors';
+  config.headers = getHeaders(authData?.token);
 
   // Отправить запрос
   let response = await originalFetch(resource, config);
 
   // Если не авторизовано и не повторный
-  if (response.status === 401 && !("_isRetry" in config)) {
+  if (response.status === 401 && !("_isRetry" in config) && authData) {
     Object.assign(config, { _isRetry: true });
     //Если refresh токен не обновляется - обновить
     if (!isRefreshing) {
