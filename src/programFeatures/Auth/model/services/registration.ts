@@ -16,23 +16,23 @@ export const registration = createAsyncThunk<
     const data = getRegistrationDataForService(getState());
 
     try {
-        const response = await $api(
+        const responseData = await $api(
             __API__ + 'auth/registration', 
             {
-                credentials: 'include',
+                // credentials: 'include',
                 method: "POST",
                 body: JSON.stringify(data)
             }
         );
-        if (!response.result || response.result !== true ) {
+        if (!responseData.user ) {
             throw new Error();
         }
         
-        await dispatch(userActions.setAuthData(response.data));
+        await dispatch(userActions.setAuthData(responseData));
 
-        localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(response.data));
+        localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(responseData));
         
-        return response.data;
+        return responseData;
  
     } catch (e) {
         

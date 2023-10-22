@@ -5,10 +5,8 @@ const refresh = async () => {
     const response = await $api(__API__ + "auth/refresh", {
       method: "POST",
     });
-    if (!response.result || response.result !== true) {
-      throw new Error();
-    }
-    return response.data;
+    
+    return response;
   } catch (e) {
     throw new Error();
   }

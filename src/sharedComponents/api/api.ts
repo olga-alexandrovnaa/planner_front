@@ -1,3 +1,4 @@
+import { resolve } from "path";
 import { USER_LOCALSTORAGE_KEY } from "../const/localstorage";
 import getHeaders from "./getHeaders";
 import localstorageAuthData from "./localstorageAuthData";
@@ -13,59 +14,54 @@ const $api = async (
 ) => {
   const [resource, config] = args;
 
-  // Продолжить если refresh токен не обновляется
-  const interval = setInterval(() => {
-    if (!isRefreshing) {
-      clearInterval(interval);
-    }
-  }, INTERVAL_MS);
-
-  // Получить юзера и token из localStorage
+   // Получить юзера и token из localStorage
   const authData = localstorageAuthData();
 
   // Настроить config
   config.credentials = "include";
-  config.mode ='no-cors';
-  config.headers = getHeaders(authData?.token);
+  // config.mode ='no-cors';
+  console.log(authData);
+  config.headers = getHeaders(authData?.accessToken);
 
   // Отправить запрос
   let response = await originalFetch(resource, config);
 
   // Если не авторизовано и не повторный
-  if (response.status === 401 && !("_isRetry" in config) && authData) {
-    Object.assign(config, { _isRetry: true });
-    //Если refresh токен не обновляется - обновить
-    if (!isRefreshing) {
-      isRefreshing = true;
-      try {
-        const response = await refresh();
-        //записать новый accessToken
-        authData.token = response.accessToken;
-        localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(authData));
-      } catch (e) {
-        isRefreshing = false;
-        throw new Error();
-      }
-      isRefreshing = false;
-    } else {
-      // Продолжить если refresh токен не обновляется
-      const interval = setInterval(() => {
-        if (!isRefreshing) {
-          clearInterval(interval);
+  if (response.status === 401) {
+    if( !("_isRetry" in config) && authData) {
+      Object.assign(config, { _isRetry: true });
+      //Если refresh токен не обновляется - обновить
+      if (!isRefreshing) {
+        isRefreshing = true;
+        try {
+          const response = await refresh();
+          //записать новый accessToken
+          authData.accessToken = response.accessToken;
+          localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(authData));
+          isRefreshing = false;
+          return $api(resource, config);
+        } catch (e) {
+          isRefreshing = false;
+          throw new Error();
         }
-      }, INTERVAL_MS);
+      } else {
+          // Продолжить если refresh токен не обновляется
+          return new Promise((resolve) => {
+            const interval = setInterval(() => {
+              if (!isRefreshing) {
+                clearInterval(interval);
+                resolve($api(resource, config));
+              }
+            }, INTERVAL_MS);
+          })
 
-      // Получить юзера и token из localStorage
-      const authData = localstorageAuthData();
-
-      // Настроить config
-      config.credentials = "include";
-      config.headers = getHeaders(authData.token);
+      }
+    } else {
+      // logout();
+      return;
     }
-    //Отправить запрос
-    response = await originalFetch(resource, config);
   }
-
+  
   return response.json();
 };
 

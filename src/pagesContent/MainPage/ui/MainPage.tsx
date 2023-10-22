@@ -7,13 +7,10 @@ import { useCallback } from "react";
 function MainPage() {
   const sendTestResquest = useCallback(async () => {
     try {
-      const response = await $api(__API__ + "users/getMe", {
+      await $api(__API__ + "users/getMe", {
         method: "GET",
       });
-      if (!response.result || response.result !== true) {
-        throw new Error();
-      }
-      return response.data;
+      
     } catch (e) {
       throw new Error();
     }

@@ -19,6 +19,7 @@ export default defineConfig(({ command, mode }) => {
         },
     },
     server: {
+      // cors: false,
       host: true,
       open: true,
       port: 3050,
