@@ -35,7 +35,7 @@ const UserAuthDataForm = memo(({ className }: UserAuthDataFormProps) => {
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
       {(
         <div className={classNames(cls.UserForm, {}, [className])}>
-          {userName}
+          userName: {userName ? userName : 'empty'}
           <div onClick={logoutHandler}>
             <Logout />
           </div>

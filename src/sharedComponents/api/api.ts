@@ -19,12 +19,10 @@ const $api = async (
 
   // Настроить config
   config.credentials = "include";
-  // config.mode ='no-cors';
-  console.log(authData);
   config.headers = getHeaders(authData?.accessToken);
 
   // Отправить запрос
-  let response = await originalFetch(resource, config);
+  const response = await originalFetch(resource, config);
 
   // Если не авторизовано и не повторный
   if (response.status === 401) {

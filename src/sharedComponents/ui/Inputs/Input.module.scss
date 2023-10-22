@@ -1,14 +1,16 @@
 
 .input {
-    background: var(--white);
+    background: var(--input-bg);
     border: 1px solid var(--borderColor);
     border-radius: 14px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     padding: 10px;
+
+    height: 30px;
 }
 
 .required{
@@ -60,7 +62,7 @@ input[type=file] {
 .htmlInput {
     flex-grow: 1;
     height: 22px;
-    background: var(--bg-color);
+    background: var(--input-bg);
     border: none;
     outline: none;
     font-size: var(--fontSize);
@@ -71,7 +73,7 @@ input[type=file] {
 .htmlInputDate {
     width: 100%;
     height: 22px;
-    background: var(--bg-color);
+    background: var(--input-bg);
     border: none;
     outline: none;
     font-size: var(--fontSize);
@@ -140,7 +142,7 @@ input[type=file] {
     border: none;
     outline: none;
     height: max-content;
-    background-color: var(--bg-color);
+    background-color: var(--input-bg);
     font-size:var(--fontSizeSmall);
     color: var(--primary-text);
     cursor: pointer;
@@ -160,6 +162,10 @@ input[type=file] {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+
+    
+    box-sizing: border-box;
+    
     span{
         margin-top: 7px;
         margin-left: 5px;

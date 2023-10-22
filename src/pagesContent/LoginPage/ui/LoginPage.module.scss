@@ -5,14 +5,19 @@
     align-items: center;
     justify-content: center;
     flex-grow: 1;
+    min-height: 100vh;
 
     @include size-tablet {
-        background-color: azure;
+        // background-color: azure;
     }
 }
 
 .FormContent{
     width: 400px;
+
+    @include size-tablet {
+        width: 100%;
+    }
 }
 
 .Overlay{

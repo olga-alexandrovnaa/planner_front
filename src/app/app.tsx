@@ -21,7 +21,7 @@ const App = () => {
   useEffect(() => {
     dispatch(userActions.initAuthData());
   }, [dispatch]);
-  
+
   useEffect(() => {
     if (inited && !authData && location.pathname !== getRoutelogin()) {
       navigate(getRoutelogin(), { replace: true });
@@ -30,7 +30,9 @@ const App = () => {
 
   return (
     <div className={classNames("app")}>
-      <AppRouter />
+      <div className={classNames("content")}>
+        <AppRouter />
+      </div>
     </div>
   );
 };

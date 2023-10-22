@@ -20,7 +20,7 @@ import { Input } from "@/sharedComponents/ui/Inputs/Input";
 import { ReactComponent as Profile } from "@/sharedComponents/assets/icons/profile.svg";
 import { ReactComponent as Lock } from "@/sharedComponents/assets/icons/lock.svg";
 import { Loader } from "@/sharedComponents/ui/Loader";
-import { Button } from "@/sharedComponents/ui/Button";
+import { Button, ButtonSize } from "@/sharedComponents/ui/Button";
 import { registration } from "../model/services/registration";
 import { loginByUserName } from "../model/services/loginByEmail";
 
@@ -42,12 +42,6 @@ const LoginForm = memo(({ className, onSuccess }: LoginFormProps) => {
 
   const isLoading = useSelector(getLoginFormIsLoading);
   const error = useSelector(getLoginFormError);
-
-  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
-
-  const onChangeIsRegistrationOpen = useCallback(() => {
-    setIsRegistrationOpen(!isRegistrationOpen);
-  }, [isRegistrationOpen]);
 
   const onChangeUserName = useCallback(
     (value: string) => {
@@ -77,12 +71,25 @@ const LoginForm = memo(({ className, onSuccess }: LoginFormProps) => {
     [dispatch]
   );
 
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+
+  const onChangeIsRegistrationOpen = useCallback(() => {
+    setIsRegistrationOpen(!isRegistrationOpen);
+    onChangeUserName("");
+    onChangePassword("");
+    onChangeName("");
+    onChangePasswordConfirm("");
+  }, [
+    isRegistrationOpen,
+    onChangeName,
+    onChangePassword,
+    onChangePasswordConfirm,
+    onChangeUserName,
+  ]);
+
   const onLoginClick = useCallback(async () => {
     if (!userName || !password) return;
-
-    console.log(userName, password)
     const result = await dispatch(loginByUserName()).catch();
-    console.log(result)
     if (result.meta.requestStatus === "fulfilled") {
       onSuccess();
     }
@@ -106,14 +113,24 @@ const LoginForm = memo(({ className, onSuccess }: LoginFormProps) => {
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
       <div className={classNames(cls.LoginForm, {}, [className])}>
+        <h1 className={cls.WelcomeText}>Welcome</h1>
+
         <div className={cls.LoginWidget}>
           {!!error && (
             <span className={cls.Error}>
               Вы ввели неверный userName или пароль
             </span>
           )}
+          {isRegistrationOpen && (
+            <Input
+              placeholder="Имя"
+              onChange={onChangeName}
+              value={name}
+              rowStartIcon={<Profile width={25} />}
+            />
+          )}
           <Input
-            placeholder="UserName"
+            placeholder="Имя пользователя"
             onChange={onChangeUserName}
             value={userName}
             rowStartIcon={<Profile width={25} />}
@@ -125,36 +142,55 @@ const LoginForm = memo(({ className, onSuccess }: LoginFormProps) => {
             value={password}
             rowStartIcon={<Lock width={25} />}
           />
-          <Input
-            placeholder="Name"
-            onChange={onChangeName}
-            value={name}
-            rowStartIcon={<Profile width={25} />}
-          />
-          <Input
-            placeholder="Пароль подтверждение"
-            type="password"
-            onChange={onChangePasswordConfirm}
-            value={passwordConfirm}
-            rowStartIcon={<Lock width={25} />}
-          />
+          {isRegistrationOpen && (
+            <Input
+              className={cls.LastInput}
+              placeholder="Подтвердите пароль"
+              type="password"
+              onChange={onChangePasswordConfirm}
+              value={passwordConfirm}
+              rowStartIcon={<Lock width={25} />}
+            />
+          )}
+          {isRegistrationOpen &&
+            password !== passwordConfirm &&
+            password &&
+            passwordConfirm && (
+              <span className={cls.Error}>Пароли не совпадают</span>
+            )}
+
           {!isLoading && (
             <Button
               className={cls.loginBtn}
-              onClick={onLoginClick}
+              onClick={isRegistrationOpen ? onRegistrationClick : onLoginClick}
               disabled={isLoading}
             >
-              Войти
+              {isRegistrationOpen ? "Зарегистрироваться" : "Войти"}
             </Button>
           )}
-          {!isLoading && (
+          {!isLoading && !isRegistrationOpen && (
             <Button
-              className={cls.loginBtn}
-              onClick={onRegistrationClick}
+              className={cls.changeToRegistration}
+              onClick={onChangeIsRegistrationOpen}
               disabled={isLoading}
             >
-              Регистрация
+              Зарегистрироваться
             </Button>
+          )}
+
+          {!isLoading && isRegistrationOpen && (
+            <div className={cls.AccountAlrearyExists}>
+              <span className={cls.AccountAlrearyExistsText}>
+                Уже есть аккаунт?
+              </span>
+              &nbsp;
+              <span
+                className={cls.AccountAlrearyExistsLink}
+                onClick={onChangeIsRegistrationOpen}
+              >
+                Войдите
+              </span>
+            </div>
           )}
 
           {isLoading && (
