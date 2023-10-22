@@ -55,7 +55,11 @@ const $api = async (
 
       }
     } else {
-      // logout();
+      //logout
+      
+      localStorage.removeItem(USER_LOCALSTORAGE_KEY);
+      window.location.assign('http://localhost:3050/login')
+      
       return;
     }
   }

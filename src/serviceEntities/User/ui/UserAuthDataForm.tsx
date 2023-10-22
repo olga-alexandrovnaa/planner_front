@@ -11,6 +11,7 @@ import { userActions, userReducer } from "..";
 import { useAppDispatch } from "@/sharedComponents/lib/hooks/useAppDispatch/useAppDispatch";
 import { ReactComponent as Logout } from "@/sharedComponents/assets/icons/logout.svg";
 import { useNavigate } from "react-router-dom";
+import logout from "@/sharedComponents/api/logout";
 
 export interface UserAuthDataFormProps {
   className?: string;
@@ -26,7 +27,8 @@ const UserAuthDataForm = memo(({ className }: UserAuthDataFormProps) => {
 
   const navigate = useNavigate()
 
-  const logoutHandler = useCallback(() => {
+  const logoutHandler = useCallback(async () => {
+    await logout();
     dispatch(userActions.logout());
     navigate(0)
   }, [dispatch, navigate]);
