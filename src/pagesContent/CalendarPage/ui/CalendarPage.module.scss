@@ -1,0 +1,8 @@
+@import "@/app/styles/mixins/adaptive.scss";
+
+.CalendarPage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}

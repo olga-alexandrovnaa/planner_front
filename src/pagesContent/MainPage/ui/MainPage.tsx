@@ -1,5 +1,6 @@
 import { UserAuthDataForm } from "@/serviceEntities/User";
 import cls from "./MainPage.module.scss";
+import WeekForm from "@/programFeatures/WeekDaySelector/ui/WeekForm";
 // import { Button } from "@/sharedComponents/ui/Button";
 // import $api from "@/sharedComponents/api/api";
 // import { useCallback } from "react";
@@ -27,6 +28,8 @@ function MainPage() {
   return (
     <div className={cls.MainPage}>
       <UserAuthDataForm />
+
+      <WeekForm />
 
       {/* <Button onClick={sendTestResquest}>Отправить 1 запрос</Button>
       <Button onClick={sendTestFewResquests}>Отправить 5</Button> */}

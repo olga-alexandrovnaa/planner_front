@@ -20,7 +20,7 @@ import {
   getRouteCalendar,
   getRouteMain,
 } from "@/sharedComponents/config/routeConfig/routeConfig";
-import { format } from "date-fns";
+import { format, getISOWeeksInYear } from "date-fns";
 import { WeekDay } from "../model/types/weekSchema";
 
 export interface WeekFormProps {
@@ -31,14 +31,25 @@ const initialReducers: ReducersList = {
   weekForm: weekReducer,
 };
 
-const WeekFormDay = memo(({ day }: { day: WeekDay }) => {
-  return (
-    <div className={classNames(cls.WeekDay, { [cls.SelectedWeekDay]: day.isSelected })}>
-      <div>{day.shortName}</div>
-      <div>{day.day}</div>
-    </div>
-  );
-});
+const WeekDayForm = memo(
+  ({ day, onClick }: { day: WeekDay; onClick: (value: Date) => void }) => {
+    const onClickHandler = useCallback(() => {
+      onClick(day.date);
+    }, [day.date, onClick]);
+
+    return (
+      <div
+        className={classNames(cls.WeekDay, {
+          [cls.SelectedWeekDay]: day.isSelected,
+        })}
+        onClick={onClickHandler}
+      >
+        <div>{day.shortName}</div>
+        <div>{day.day}</div>
+      </div>
+    );
+  }
+);
 
 const WeekForm = memo(({ className }: WeekFormProps) => {
   const { date } = useParams<{ date: string }>();
@@ -84,27 +95,88 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   );
 
   const onOpenCalendar = useCallback(
-    (value: Date) => {
-      navigate(getRouteCalendar(format(value, "dd-MM-yyyy")));
+    () => {
+      navigate(getRouteCalendar(format(selectedDay, "dd-MM-yyyy")));
     },
-    [navigate]
+    [navigate, selectedDay]
   );
+
+  const onSwipeRight = useCallback(() => {
+    if (showedWeekNumber === getISOWeeksInYear(new Date(showedYear, 1, 1))) {
+      onChangeShowedWeekNumber(0);
+      onChangeShowedYear(showedYear + 1);
+    } else {
+      onChangeShowedWeekNumber(showedWeekNumber + 1);
+    }
+  }, [
+    onChangeShowedWeekNumber,
+    onChangeShowedYear,
+    showedWeekNumber,
+    showedYear,
+  ]);
+
+  const onSwipeLeft = useCallback(() => {
+    if (showedWeekNumber === 0) {
+      onChangeShowedWeekNumber(
+        getISOWeeksInYear(new Date(showedYear - 1, 1, 1))
+      );
+      onChangeShowedYear(showedYear - 1);
+    } else {
+      onChangeShowedWeekNumber(showedWeekNumber - 1);
+    }
+  }, [
+    onChangeShowedWeekNumber,
+    onChangeShowedYear,
+    showedWeekNumber,
+    showedYear,
+  ]);
 
   useEffect(() => {
     onChangeSelectedDay(paramDate);
   }, [onChangeSelectedDay, paramDate]);
 
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  const handleTouchStart = useCallback((e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  }, [])
+
+  const handleTouchMove = useCallback((e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    if (touchStart - touchEnd > 150) {
+      console.log("right");
+      onSwipeRight();
+    }
+    if (touchStart - touchEnd < -150) {
+      console.log("left");
+      onSwipeLeft();
+    }
+  }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart])
+
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
-      <div className={classNames(cls.WeekForm, {}, [className])}>
+      <div
+        className={classNames(cls.WeekForm, {}, [className])}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <div>
           <div></div>
-          <div>{showedMonthYearString}</div>
+          <div onClick={onOpenCalendar}>{showedMonthYearString}</div>
           <div></div>
         </div>
         <div>
-          {weekDates.map((d) => (
-            <WeekFormDay day={d} key={String(d.date)} />
+          {weekDates.map((d, index) => (
+            <WeekDayForm
+              day={d}
+              key={index}
+              onClick={onSelectDay}
+            />
           ))}
         </div>
       </div>
