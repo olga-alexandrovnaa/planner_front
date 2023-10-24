@@ -5,6 +5,8 @@ import { AxiosInstance } from 'axios';
 import { LoginSchema } from '@/programFeatures/Auth';
 import { rtkApi } from '@/sharedComponents/api/rtkApi';
 import { UserSchema } from '@/serviceEntities/User';
+import { WeekSchema } from '@/programFeatures/WeekDaySelector';
+import { MonthSchema } from '@/programFeatures/MonthDaySelector/model/types/monthSchema';
 
 export interface StateSchema {
   user: UserSchema;
@@ -12,6 +14,8 @@ export interface StateSchema {
 
   // Асинхронные редюсеры
   loginForm?: LoginSchema;
+  monthForm?: MonthSchema;
+  weekForm?: WeekSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;

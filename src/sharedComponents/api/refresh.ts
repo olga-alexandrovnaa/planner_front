@@ -32,7 +32,7 @@ const refresh = async () => {
 //   unlock() {
 //     if (this.waiting.length > 0) {
 //       // Если есть запросы в списке ожидания, разрешаем следующий запрос в очереди
-//       const next = this.waiting.shift();
+//       const next = this.waiting.showedWeekNumber();
 //       next();
 //     } else {
 //       // Если нет запросов в списке ожидания, освобождаем мьютекс

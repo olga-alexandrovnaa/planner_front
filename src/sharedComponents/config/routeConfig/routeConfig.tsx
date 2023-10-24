@@ -5,12 +5,14 @@ import { RouteProps } from "react-router-dom";
 
 export enum AppRoutes {
   MAIN = "main",
+  CALENDAR='calendar',
   LOGIN = 'login',
   NOT_FOUND = 'not_found'
 }
 
 export const getRoutelogin = () => '/login';
-export const getRouteMain = () => '/';
+export const getRouteMain = (date: string) => `/${date}`;
+export const getRouteCalendar = (date: string) => `/calendar/${date}`;
 export const getRouteNOT_FOUND = () => '*';
 
 export const routeConfig: Record<AppRoutes, RouteProps> = {
@@ -19,7 +21,11 @@ export const routeConfig: Record<AppRoutes, RouteProps> = {
     element: <LoginPage />,
   },
   [AppRoutes.MAIN]: {
-    path: getRouteMain(),
+    path: getRouteMain(':date'),
+    element: <MainPage />,
+  },
+  [AppRoutes.CALENDAR]: {
+    path: getRouteCalendar(':date'),
     element: <MainPage />,
   },
   
