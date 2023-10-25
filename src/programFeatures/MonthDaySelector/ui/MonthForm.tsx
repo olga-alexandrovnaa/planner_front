@@ -9,16 +9,15 @@ import {
 import { classNames } from "@/sharedComponents/lib/classNames/classNames";
 import { monthActions, monthReducer } from "../model/slice/monthSlice";
 import {
-  getSelectedDay,
   getShowedMonthYearString,
-  getShowedMonthNumber,
-  getShowedYear,
   getMonthDates,
+  getYearMonthDates,
+  getShowedYear,
 } from "../model/selectors/selectors";
 import { useNavigate, useParams } from "react-router-dom";
 import { getRouteMain } from "@/sharedComponents/config/routeConfig/routeConfig";
-import { format } from "date-fns";
-import { MonthDay, MonthWeek } from "../model/types/monthSchema";
+import { MonthDay, MonthWeek, YearMonth } from "../model/types/monthSchema";
+import { DD_MM_YYYYtoDate } from "@/sharedComponents/lib/helpers/DD_MM_YYYYtoDate";
 
 export interface MonthFormProps {
   className?: string;
@@ -36,11 +35,12 @@ const MonthDayForm = memo(
     onClick,
   }: {
     day: MonthDay | null;
-    onClick: (value: Date) => void;
+    onClick?: (value: string) => void;
   }) => {
     const onClickHandler = useCallback(() => {
-      onClick(day.date);
-    }, [day.date, onClick]);
+      if (!day || !onClick) return;
+      onClick(day?.date);
+    }, [day, onClick]);
 
     if (!day) {
       return <div></div>;
@@ -52,7 +52,7 @@ const MonthDayForm = memo(
         })}
         onClick={onClickHandler}
       >
-        <div>{day.day}</div>
+        <div className={cls.WeekDayDate}>{day.day}</div>
       </div>
     );
   }
@@ -64,11 +64,11 @@ const MonthWeekForm = memo(
     onDayClick,
   }: {
     week: MonthWeek;
-    onDayClick: (value: Date) => void;
+    onDayClick?: (value: string) => void;
   }) => {
     return (
-      <div>
-        <div>{week.weekNumber}</div>
+      <div className={cls.Week}>
+        <div className={cls.WeekNumber}>{week.weekNumber}</div>
         {week.days.map((d, index) => (
           <MonthDayForm day={d} onClick={onDayClick} key={index} />
         ))}
@@ -77,99 +77,103 @@ const MonthWeekForm = memo(
   }
 );
 
+const YearMonthForm = memo(
+  ({
+    month,
+    onClick,
+  }: {
+    month: YearMonth;
+    onClick: (value: number) => void;
+  }) => {
+    const onClickHandler = useCallback(() => {
+      onClick(month.monthIndex);
+    }, []);
+
+    return (
+      <div key={month.monthIndex} onClick={onClickHandler}>
+        <div>{month.name}</div>
+        <div className={cls.Weeks}>
+          {month.weeks.map((week) => (
+            <MonthWeekForm key={String(week.weekIndex)} week={week} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+);
+
 const MonthForm = memo(({ className }: MonthFormProps) => {
-  const { date } = useParams<{ date: string }>();
-  const paramDate = useMemo(() => {
-    const arr = date.split("-").map((e) => Number(e));
-    if (arr.length !== 3 || isNaN(new Date(arr[2], arr[1], arr[0]).valueOf())) {
-      return new Date();
-    }
-    return new Date(arr[2], arr[1], arr[0]);
-  }, [date]);
-
   const navigate = useNavigate();
-
   const dispatch = useAppDispatch();
-  const selectedDay = useSelector(getSelectedDay);
-  const showedMonthNumber = useSelector(getShowedMonthNumber);
-  const showedYear = useSelector(getShowedYear);
-  const showedMonthYearString = useSelector(getShowedMonthYearString);
-  const monthDates = useSelector(getMonthDates);
 
-  const onChangeShowedYear = useCallback(
-    (value: number) => {
-      dispatch(monthActions.setShowedYear(value));
-    },
-    [dispatch]
-  );
-  const onChangeShowedMonthNumber = useCallback(
-    (value: number) => {
-      //0-11
-      dispatch(monthActions.setShowedMonthNumber(value));
-    },
-    [dispatch]
-  );
-  const onChangeSelectedDay = useCallback(
-    (value: Date) => {
-      dispatch(monthActions.setSelectedDay(value));
-    },
-    [dispatch]
-  );
+  const { date } = useParams<{ date: string }>();
+  const paramDate = useMemo(() => DD_MM_YYYYtoDate(date), [date]);
+  useEffect(() => {
+    dispatch(monthActions.setSelectedDay(paramDate));
+  }, [dispatch, paramDate]);
+
+  const [showYear, setShowYear] = useState(false);
+  const onChangeShowYear = useCallback(() => {
+    setShowYear(true);
+  }, []);
+  const onChangeShowMonth = useCallback(() => {
+    setShowYear(false);
+  }, []);
+
+  const showedMonthYearString = useSelector(getShowedMonthYearString);
+  const showedYear = useSelector(getShowedYear);
+  const monthDates = useSelector(getMonthDates);
+  const yearMonthDates = useSelector(getYearMonthDates);
+
+  const onBack = useCallback(() => {
+    navigate(getRouteMain(date));
+  }, [date, navigate]);
+
   const onSelectDay = useCallback(
-    (value: Date) => {
-      navigate(getRouteMain(format(value, "dd-MM-yyyy")));
+    (value: string) => {
+      navigate(getRouteMain(value));
     },
     [navigate]
   );
+  const onSelectMonth = useCallback(
+    (value: number) => {
+      dispatch(monthActions.setShowedMonthNumber(value));
+      onChangeShowMonth();
+    },
+    [dispatch, onChangeShowMonth]
+  );
   const onSwipeRight = useCallback(() => {
-    if (showedMonthNumber === 11) {
-      onChangeShowedMonthNumber(0);
-      onChangeShowedYear(showedYear + 1);
+    if (showYear) {
+      dispatch(monthActions.showNextYear());
     } else {
-      onChangeShowedMonthNumber(showedMonthNumber + 1);
+      dispatch(monthActions.showNextMonth());
     }
-  }, [
-    onChangeShowedMonthNumber,
-    onChangeShowedYear,
-    showedMonthNumber,
-    showedYear,
-  ]);
-  const onSwipeLeft = useCallback(() => {
-    if (showedMonthNumber === 0) {
-      onChangeShowedMonthNumber(11);
-      onChangeShowedYear(showedYear - 1);
-    } else {
-      onChangeShowedMonthNumber(showedMonthNumber - 1);
-    }
-  }, [
-    onChangeShowedMonthNumber,
-    onChangeShowedYear,
-    showedMonthNumber,
-    showedYear,
-  ]);
+  }, [dispatch, showYear]);
 
-  useEffect(() => {
-    onChangeSelectedDay(paramDate);
-  }, [onChangeSelectedDay, paramDate]);
+  const onSwipeLeft = useCallback(() => {
+    if (showYear) {
+      dispatch(monthActions.showLastYear());
+    } else {
+      dispatch(monthActions.showLastMonth());
+    }
+  }, [dispatch, showYear]);
 
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
-  const handleTouchStart = useCallback((e) => {
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     setTouchStart(e.targetTouches[0].clientX);
   }, []);
 
-  const handleTouchMove = useCallback((e) => {
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     setTouchEnd(e.targetTouches[0].clientX);
   }, []);
 
   const handleTouchEnd = useCallback(() => {
     if (touchStart - touchEnd > 150) {
-      console.log("right");
       onSwipeRight();
     }
     if (touchStart - touchEnd < -150) {
-      console.log("left");
       onSwipeLeft();
     }
   }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart]);
@@ -182,25 +186,63 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div>
-          <div></div>
-          <div>{showedMonthYearString}</div>
-          <div></div>
+        <div className={cls.Header}>
+          <div className={cls.HeaderLeft}>
+            <div className={cls.WeekOrMonthSelector}>
+              <div
+                onClick={onChangeShowMonth}
+                className={classNames(cls.WeekOrMonthSelectorItem, {
+                  [cls.WeekOrMonthSelectorItemActive]: !showYear,
+                })}
+              >
+                Месяц
+              </div>
+              <div
+                onClick={onChangeShowYear}
+                className={classNames(cls.WeekOrMonthSelectorItem, {
+                  [cls.WeekOrMonthSelectorItemActive]: showYear,
+                })}
+              >
+                Год
+              </div>
+            </div>
+          </div>
+          <div className={cls.HeaderCenter}>
+            <button onClick={onSwipeLeft}>{"<"}</button>
+            <div className={cls.Month}>
+              {showYear ? showedYear : showedMonthYearString}
+            </div>
+            <button onClick={onSwipeRight}>{">"}</button>
+          </div>
+          <div className={cls.HeaderRight}>
+            <button onClick={onBack}>Назад</button>
+          </div>
         </div>
-        <div>
-          {weekDayNames.map((name) => (
-            <div>{name}</div>
+
+        {!showYear && (
+          <>
+            <div className={cls.WeekDaysNames}>
+              <div className={cls.WeekDayName}>#</div>
+              {weekDayNames.map((name) => (
+                <div className={cls.WeekDayName}>{name}</div>
+              ))}
+            </div>
+            <div className={cls.Weeks}>
+              {monthDates.map((week) => (
+                <MonthWeekForm
+                  key={String(week.weekIndex)}
+                  onDayClick={onSelectDay}
+                  week={week}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {showYear &&
+          yearMonthDates.map((month) => (
+            <YearMonthForm month={month} onClick={onSelectMonth} />
           ))}
-        </div>
-        <div>
-          {monthDates.map((week) => (
-            <MonthWeekForm
-              key={String(week.weekIndex)}
-              onDayClick={onChangeSelectedDay}
-              week={week}
-            />
-          ))}
-        </div>
       </div>
     </DynamicModuleLoader>
   );

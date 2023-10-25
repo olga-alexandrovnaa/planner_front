@@ -4,6 +4,12 @@ export interface MonthSchema {
   showedYear: number;
 }
 
+export type YearMonth = {
+  monthIndex: number;
+  name: string;
+  weeks: MonthWeek[];
+};
+
 export type MonthWeek = {
   weekNumber: number;
   weekIndex: number;
@@ -12,6 +18,6 @@ export type MonthWeek = {
 
 export type MonthDay = {
   day: number;
-  date: Date;
+  date: string;
   isSelected: boolean;
 };

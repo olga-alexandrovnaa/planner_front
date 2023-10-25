@@ -12,7 +12,6 @@ import {
   getSelectedDay,
   getShowedMonthYearString,
   getShowedWeekNumber,
-  getShowedYear,
   getWeekDates,
 } from "../model/selectors/selectors";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,8 +19,9 @@ import {
   getRouteCalendar,
   getRouteMain,
 } from "@/sharedComponents/config/routeConfig/routeConfig";
-import { format, getISOWeeksInYear } from "date-fns";
 import { WeekDay } from "../model/types/weekSchema";
+import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
+import { DD_MM_YYYYtoDate } from "@/sharedComponents/lib/helpers/DD_MM_YYYYtoDate";
 
 export interface WeekFormProps {
   className?: string;
@@ -32,7 +32,7 @@ const initialReducers: ReducersList = {
 };
 
 const WeekDayForm = memo(
-  ({ day, onClick }: { day: WeekDay; onClick: (value: Date) => void }) => {
+  ({ day, onClick }: { day: WeekDay; onClick: (value: string) => void }) => {
     const onClickHandler = useCallback(() => {
       onClick(day.date);
     }, [day.date, onClick]);
@@ -44,118 +44,66 @@ const WeekDayForm = memo(
         })}
         onClick={onClickHandler}
       >
-        <div>{day.shortName}</div>
-        <div>{day.day}</div>
+        <div className={cls.WeekDayName}>{day.shortName}</div>
+        <div className={cls.WeekDayDate}>{day.day}</div>
       </div>
     );
   }
 );
 
 const WeekForm = memo(({ className }: WeekFormProps) => {
-  const { date } = useParams<{ date: string }>();
-  const paramDate = useMemo(() => {
-    const arr = date.split("-").map((e) => Number(e));
-    if (arr.length !== 3 || isNaN(new Date(arr[2], arr[1], arr[0]).valueOf())) {
-      return new Date();
-    }
-    return new Date(arr[2], arr[1], arr[0]);
-  }, [date]);
   const navigate = useNavigate();
-
   const dispatch = useAppDispatch();
+
+  const { date } = useParams<{ date: string }>();
+  const paramDate = useMemo(() => DD_MM_YYYYtoDate(date), [date]);
+  useEffect(() => {
+    dispatch(weekActions.setSelectedDay(paramDate));
+  }, [dispatch, paramDate]);
+  
   const selectedDay = useSelector(getSelectedDay);
   const showedWeekNumber = useSelector(getShowedWeekNumber);
-  const showedYear = useSelector(getShowedYear);
   const showedMonthYearString = useSelector(getShowedMonthYearString);
   const weekDates = useSelector(getWeekDates);
 
-  const onChangeShowedYear = useCallback(
-    (value: number) => {
-      dispatch(weekActions.setShowedYear(value));
-    },
-    [dispatch]
-  );
-  const onChangeShowedWeekNumber = useCallback(
-    (value: number) => {
-      dispatch(weekActions.setShowedWeekNumber(value));
-    },
-    [dispatch]
-  );
-  const onChangeSelectedDay = useCallback(
-    (value: Date) => {
-      dispatch(weekActions.setSelectedDay(value));
-    },
-    [dispatch]
-  );
   const onSelectDay = useCallback(
-    (value: Date) => {
-      navigate(getRouteMain(format(value, "dd-MM-yyyy")));
+    (value: string) => {
+      navigate(getRouteMain(value));
     },
     [navigate]
   );
 
-  const onOpenCalendar = useCallback(
-    () => {
-      navigate(getRouteCalendar(format(selectedDay, "dd-MM-yyyy")));
-    },
-    [navigate, selectedDay]
-  );
+  const onOpenCalendar = useCallback(() => {
+    navigate(getRouteCalendar(getDD_MM_YYYY(selectedDay)));
+  }, [navigate, selectedDay]);
 
   const onSwipeRight = useCallback(() => {
-    if (showedWeekNumber === getISOWeeksInYear(new Date(showedYear, 1, 1))) {
-      onChangeShowedWeekNumber(0);
-      onChangeShowedYear(showedYear + 1);
-    } else {
-      onChangeShowedWeekNumber(showedWeekNumber + 1);
-    }
-  }, [
-    onChangeShowedWeekNumber,
-    onChangeShowedYear,
-    showedWeekNumber,
-    showedYear,
-  ]);
+    dispatch(weekActions.showNextWeek());
+  }, [dispatch]);
 
   const onSwipeLeft = useCallback(() => {
-    if (showedWeekNumber === 0) {
-      onChangeShowedWeekNumber(
-        getISOWeeksInYear(new Date(showedYear - 1, 1, 1))
-      );
-      onChangeShowedYear(showedYear - 1);
-    } else {
-      onChangeShowedWeekNumber(showedWeekNumber - 1);
-    }
-  }, [
-    onChangeShowedWeekNumber,
-    onChangeShowedYear,
-    showedWeekNumber,
-    showedYear,
-  ]);
-
-  useEffect(() => {
-    onChangeSelectedDay(paramDate);
-  }, [onChangeSelectedDay, paramDate]);
+    dispatch(weekActions.showLastWeek());
+  }, [dispatch]);
 
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
-  const handleTouchStart = useCallback((e) => {
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     setTouchStart(e.targetTouches[0].clientX);
-  }, [])
+  }, []);
 
-  const handleTouchMove = useCallback((e) => {
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     setTouchEnd(e.targetTouches[0].clientX);
-  }, [])
+  }, []);
 
   const handleTouchEnd = useCallback(() => {
     if (touchStart - touchEnd > 150) {
-      console.log("right");
       onSwipeRight();
     }
     if (touchStart - touchEnd < -150) {
-      console.log("left");
       onSwipeLeft();
     }
-  }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart])
+  }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart]);
 
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
@@ -165,18 +113,25 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div>
+        <div className={cls.Header}>
           <div></div>
-          <div onClick={onOpenCalendar}>{showedMonthYearString}</div>
+          <div className={cls.HeaderCenter}>
+            <button onClick={onSwipeLeft}>{"<"}</button>
+            <div className={cls.Month} onClick={onOpenCalendar}>
+              {showedMonthYearString}
+            </div>
+            <button onClick={onSwipeRight}>{">"}</button>
+          </div>
           <div></div>
         </div>
-        <div>
+        <div className={cls.Dates}>
+          <div className={cls.WeekDay}>
+            <div className={cls.WeekDayName}>#</div>
+            <div className={cls.WeekDayDate}>{showedWeekNumber}</div>
+          </div>
+
           {weekDates.map((d, index) => (
-            <WeekDayForm
-              day={d}
-              key={index}
-              onClick={onSelectDay}
-            />
+            <WeekDayForm day={d} key={index} onClick={onSelectDay} />
           ))}
         </div>
       </div>

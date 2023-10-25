@@ -27,7 +27,7 @@ function MainPage() {
 
   return (
     <div className={cls.MainPage}>
-      <UserAuthDataForm />
+      {/* <UserAuthDataForm /> */}
 
       <WeekForm />
 

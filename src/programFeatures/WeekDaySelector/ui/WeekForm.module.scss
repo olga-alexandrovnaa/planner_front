@@ -4,4 +4,49 @@
     display: flex;
     flex-direction: column;
 
+    background-color: rgb(239, 255, 250);
+    flex-grow: 1;
+    height: 100vh;
+
+    .Header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .HeaderCenter{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            .Month{
+                cursor: pointer;
+            }
+        }
+        
+    }
+    .Dates{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        
+        .WeekDay {
+            cursor: pointer;
+
+            .WeekDayDate{
+
+            }
+            .WeekDayName{
+                
+            }
+
+        }
+        .SelectedWeekDay{
+            .WeekDayDate{
+                color: red;
+            }
+            .WeekDayName{
+            }
+        }
+    }
+
 }

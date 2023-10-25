@@ -21,8 +21,32 @@ const monthSlice = createSlice({
     setShowedMonthNumber: (state, action: PayloadAction<number>) => {
       state.showedMonthNumber = action.payload;
     },
-    setShowedYear: (state, action: PayloadAction<number>) => {
-      state.showedYear = action.payload;
+    // setShowedYear: (state, action: PayloadAction<number>) => {
+    //   state.showedYear = action.payload;
+    // },
+    
+    showNextYear: (state) => {
+      state.showedYear = state.showedYear + 1;
+    },
+    showLastYear: (state) => {
+      state.showedYear = state.showedYear - 1;
+    },
+
+    showNextMonth: (state) => {
+      if (state.showedMonthNumber === 11) {
+        state.showedMonthNumber = 0;
+        state.showedYear = state.showedYear + 1;
+      } else {
+        state.showedMonthNumber = state.showedMonthNumber + 1;
+      }
+    },
+    showLastMonth: (state) => {
+      if (state.showedMonthNumber === 0) {
+        state.showedMonthNumber = 11;
+        state.showedYear = state.showedYear - 1;
+      } else {
+        state.showedMonthNumber = state.showedMonthNumber - 1;
+      }
     },
   },
 

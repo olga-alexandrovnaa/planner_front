@@ -4,4 +4,4 @@ export interface WeekSchema {
   showedYear: number;
 }
 
-export type WeekDay = {day: number, date: Date, shortName: string, isSelected: boolean};
+export type WeekDay = {day: number, date: string, shortName: string, isSelected: boolean};

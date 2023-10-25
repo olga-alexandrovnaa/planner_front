@@ -5,7 +5,7 @@ import MonthForm from "@/programFeatures/MonthDaySelector/ui/MonthForm";
 function CalendarPage() {
   return (
     <div className={cls.CalendarPage}>
-      <UserAuthDataForm />
+      {/* <UserAuthDataForm /> */}
 
       <MonthForm />
 

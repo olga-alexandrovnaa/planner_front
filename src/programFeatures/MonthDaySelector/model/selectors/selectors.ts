@@ -9,9 +9,11 @@ import {
   getWeek,
   getWeeksInMonth,
 } from "date-fns";
-import { MonthWeek } from "../types/monthSchema";
+import { MonthWeek, YearMonth } from "../types/monthSchema";
 import { ru } from "date-fns/locale";
-import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
+import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
+import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNumber";
+import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
 
 export const getSelectedDay = (state: StateSchema) =>
   state.monthForm?.selectedDay;
@@ -25,24 +27,26 @@ export const getShowedMonthYearString = (state: StateSchema) => {
     new Date(state.monthForm?.showedYear, state.monthForm?.showedMonthNumber, 1)
   );
 };
+export const getMonthDates = (state: StateSchema, month?: number) => {
 
-export const getMonthDates = (state: StateSchema) => {
   if(!state.monthForm) return []; 
+
+  const showedMonthNumber = month !== undefined ? month : state.monthForm?.showedMonthNumber;
 
   const result: MonthWeek[] = [];
   let date = new Date(
     state.monthForm?.showedYear,
-    state.monthForm?.showedMonthNumber,
+    showedMonthNumber,
     1
   );
 
   const daysCount = getDaysInMonth(
-    new Date(state.monthForm?.showedYear, state.monthForm?.showedMonthNumber)
+    new Date(state.monthForm?.showedYear, showedMonthNumber)
   );
   const weeksCount = getWeeksInMonth(
     new Date(
       state.monthForm?.showedYear,
-      state.monthForm?.showedMonthNumber,
+      showedMonthNumber,
       1
     ),
     { weekStartsOn: 1 }
@@ -50,54 +54,89 @@ export const getMonthDates = (state: StateSchema) => {
 
   let index = 0;
   for (let weekIndex = 0; weekIndex < weeksCount; weekIndex++) {
-    //   const weekDay = getDay(date);
-    //   const weekDayWithMondayStart = weekDay === 0 ? 6 : weekDay - 1;
-
     //создать неделю
     const week: MonthWeek = {
       weekIndex: weekIndex,
-      weekNumber: getWeek(date, { locale: ru }),
+      weekNumber: getYearWeekNumber(date),
       days: [],
     };
 
     //текущий день недели
-    const weekDayWithMondayStart = date.getDay();
+    let weekDay = getWeekDayNumber(date);
 
     //не понедельник - добавить пустые дни до текущего дня недели
     for (
       let indexOfEmptyDays = 0;
-      indexOfEmptyDays < weekDayWithMondayStart;
+      indexOfEmptyDays < weekDay;
       indexOfEmptyDays++
     ) {
       week.days.push(null);
     }
+
+    let isFirstWeekDay = true;
+
     //пока не началась следующая неделя добавлять дни
-    while (date.getDay() < 7) {
+    while (weekDay > 0 || isFirstWeekDay) {
       week.days.push({
-        date: { ...date },
+        date: getDD_MM_YYYY(date),
         day: date.getDate(),
         isSelected:
-          getYYYY_MM_DD(date) === getYYYY_MM_DD(state.weekForm.selectedDay),
+        getDD_MM_YYYY(date) === getDD_MM_YYYY(state.monthForm?.selectedDay),
       });
 
       //все дни выведены - заполнить пустыми днями
       if (index + 1 === daysCount) {
         for (
-          let indexOfEmptyDays = weekDayWithMondayStart;
+          let indexOfEmptyDays = weekDay + 1;
           indexOfEmptyDays < 7;
           indexOfEmptyDays++
         ) {
           week.days.push(null);
         }
+        result.push(week);
         return result;
       }
 
-      index = index + 1;
-      date = addDays(date, 1);
+      isFirstWeekDay = false;
+        index = index + 1;
+        date = addDays(date, 1);
+        weekDay = getWeekDayNumber(date);
     }
 
     result.push(week);
   }
 
   return result;
+};
+
+export const getYearMonthDates = (state: StateSchema) => {
+
+  if(!state.monthForm) return []; 
+
+  const months = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ];
+
+  const result: YearMonth[] = [];
+  for (let index = 0; index < 12; index++) {
+    result.push({ 
+      monthIndex: index,
+      name: months[index],
+      weeks: getMonthDates(state, index) 
+    })
+  }
+
+  return result;
+  
 };
