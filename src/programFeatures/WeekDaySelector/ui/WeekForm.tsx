@@ -22,6 +22,9 @@ import {
 import { WeekDay } from "../model/types/weekSchema";
 import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 import { DD_MM_YYYYtoDate } from "@/sharedComponents/lib/helpers/DD_MM_YYYYtoDate";
+import { ReactComponent as Left } from "@/sharedComponents/assets/icons/left-arrow.svg";
+import { ReactComponent as Right } from "@/sharedComponents/assets/icons/right-arrow.svg";
+import { ReactComponent as Calendar } from "@/sharedComponents/assets/icons/calendar.svg";
 
 export interface WeekFormProps {
   className?: string;
@@ -60,7 +63,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   useEffect(() => {
     dispatch(weekActions.setSelectedDay(paramDate));
   }, [dispatch, paramDate]);
-  
+
   const selectedDay = useSelector(getSelectedDay);
   const showedWeekNumber = useSelector(getShowedWeekNumber);
   const showedMonthYearString = useSelector(getShowedMonthYearString);
@@ -88,9 +91,12 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  }, []);
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      setTouchStart(e.targetTouches[0].clientX);
+    },
+    []
+  );
 
   const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     setTouchEnd(e.targetTouches[0].clientX);
@@ -114,26 +120,63 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         onTouchEnd={handleTouchEnd}
       >
         <div className={cls.Header}>
-          <div></div>
-          <div className={cls.HeaderCenter}>
-            <button onClick={onSwipeLeft}>{"<"}</button>
-            <div className={cls.Month} onClick={onOpenCalendar}>
-              {showedMonthYearString}
+          <div className={cls.DatesHeader}>
+            <div></div>
+            <div className={cls.DatesHeaderCenter}>
+              <div className={cls.Icon} onClick={onSwipeLeft}>
+                <Left />
+              </div>
+              <div className={cls.Month} onClick={onOpenCalendar}>
+                {showedMonthYearString}{" "}
+                <div className={cls.Icon} onClick={onSwipeLeft}>
+                  <Calendar />
+                </div>
+              </div>
+              <div className={cls.Icon} onClick={onSwipeRight}>
+                <Right />
+              </div>
             </div>
-            <button onClick={onSwipeRight}>{">"}</button>
+            <div></div>
           </div>
-          <div></div>
-        </div>
-        <div className={cls.Dates}>
-          <div className={cls.WeekDay}>
-            <div className={cls.WeekDayName}>#</div>
-            <div className={cls.WeekDayDate}>{showedWeekNumber}</div>
-          </div>
+          <div className={cls.Dates}>
+            <div className={cls.WeekDay}>
+              <div className={cls.WeekDayName}>#</div>
+              <div className={cls.WeekDayName}>{showedWeekNumber}</div>
+            </div>
 
-          {weekDates.map((d, index) => (
-            <WeekDayForm day={d} key={index} onClick={onSelectDay} />
-          ))}
+            {weekDates.map((d, index) => (
+              <WeekDayForm day={d} key={index} onClick={onSelectDay} />
+            ))}
+          </div>
         </div>
+
+        <div className={cls.Content}>
+          Здесь будут задачи
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div>
+        </div>
+
+        <div className={cls.Footer}>Здесь будут кнопки</div>
       </div>
     </DynamicModuleLoader>
   );

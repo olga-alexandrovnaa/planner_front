@@ -43,7 +43,7 @@ const MonthDayForm = memo(
     }, [day, onClick]);
 
     if (!day) {
-      return <div></div>;
+      return <div className={cls.WeekDay}>&nbsp;</div>;
     }
     return (
       <div
@@ -87,11 +87,19 @@ const YearMonthForm = memo(
   }) => {
     const onClickHandler = useCallback(() => {
       onClick(month.monthIndex);
-    }, []);
+    }, [month.monthIndex, onClick]);
 
     return (
-      <div key={month.monthIndex} onClick={onClickHandler}>
-        <div>{month.name}</div>
+      <div className={cls.Month} key={month.monthIndex} onClick={onClickHandler}>
+        <div className={cls.MonthName}>{month.name}</div>
+
+        <div className={cls.WeekDaysNames}>
+          <div className={cls.WeekDayName}>#</div>
+          {weekDayNames.map((name) => (
+            <div className={cls.WeekDayName}>{name}</div>
+          ))}
+        </div>
+
         <div className={cls.Weeks}>
           {month.weeks.map((week) => (
             <MonthWeekForm key={String(week.weekIndex)} week={week} />
@@ -161,9 +169,12 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  }, []);
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      setTouchStart(e.targetTouches[0].clientX);
+    },
+    []
+  );
 
   const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     setTouchEnd(e.targetTouches[0].clientX);
@@ -187,62 +198,76 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
         onTouchEnd={handleTouchEnd}
       >
         <div className={cls.Header}>
-          <div className={cls.HeaderLeft}>
-            <div className={cls.WeekOrMonthSelector}>
-              <div
-                onClick={onChangeShowMonth}
-                className={classNames(cls.WeekOrMonthSelectorItem, {
-                  [cls.WeekOrMonthSelectorItemActive]: !showYear,
-                })}
-              >
-                Месяц
+          <div className={cls.HeaderContent}>
+            <div className={cls.DatesHeader}>
+              <div className={cls.DatesHeaderLeft}>
+                <div className={cls.WeekOrMonthSelector}>
+                  <div
+                    onClick={onChangeShowMonth}
+                    className={classNames(cls.WeekOrMonthSelectorItem, {
+                      [cls.WeekOrMonthSelectorItemActive]: !showYear,
+                    })}
+                  >
+                    Месяц
+                  </div>
+                  <div
+                    onClick={onChangeShowYear}
+                    className={classNames(cls.WeekOrMonthSelectorItem, {
+                      [cls.WeekOrMonthSelectorItemActive]: showYear,
+                    })}
+                  >
+                    Год
+                  </div>
+                </div>
               </div>
-              <div
-                onClick={onChangeShowYear}
-                className={classNames(cls.WeekOrMonthSelectorItem, {
-                  [cls.WeekOrMonthSelectorItemActive]: showYear,
-                })}
-              >
-                Год
+              <div className={cls.DatesHeaderCenter}>
+                <button onClick={onSwipeLeft}>{"<"}</button>
+                <div className={cls.Month}>
+                  {showYear ? showedYear : showedMonthYearString}
+                </div>
+                <button onClick={onSwipeRight}>{">"}</button>
+              </div>
+              <div className={cls.DatesHeaderRight}>
+                <button onClick={onBack}>Назад</button>
               </div>
             </div>
-          </div>
-          <div className={cls.HeaderCenter}>
-            <button onClick={onSwipeLeft}>{"<"}</button>
-            <div className={cls.Month}>
-              {showYear ? showedYear : showedMonthYearString}
-            </div>
-            <button onClick={onSwipeRight}>{">"}</button>
-          </div>
-          <div className={cls.HeaderRight}>
-            <button onClick={onBack}>Назад</button>
+            {!showYear && (
+              <div className={cls.WeekDaysNames}>
+                <div className={cls.WeekDayName}>#</div>
+                {weekDayNames.map((name) => (
+                  <div className={cls.WeekDayName}>{name}</div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         {!showYear && (
           <>
-            <div className={cls.WeekDaysNames}>
-              <div className={cls.WeekDayName}>#</div>
-              {weekDayNames.map((name) => (
-                <div className={cls.WeekDayName}>{name}</div>
-              ))}
+            <div className={cls.Content}>
+              <div className={cls.Weeks}>
+                {monthDates.map((week) => (
+                  <MonthWeekForm
+                    key={String(week.weekIndex)}
+                    onDayClick={onSelectDay}
+                    week={week}
+                  />
+                ))}
+              </div>
             </div>
-            <div className={cls.Weeks}>
-              {monthDates.map((week) => (
-                <MonthWeekForm
-                  key={String(week.weekIndex)}
-                  onDayClick={onSelectDay}
-                  week={week}
-                />
-              ))}
+            <div className={cls.Footer}>
+              <div className={cls.FooterContent}>Здесь будут кнопки</div>
             </div>
           </>
         )}
 
-        {showYear &&
-          yearMonthDates.map((month) => (
-            <YearMonthForm month={month} onClick={onSelectMonth} />
-          ))}
+        {showYear && (
+          <div className={cls.Content}>
+            {yearMonthDates.map((month) => (
+              <YearMonthForm month={month} onClick={onSelectMonth} />
+            ))}
+          </div>
+        )}
       </div>
     </DynamicModuleLoader>
   );

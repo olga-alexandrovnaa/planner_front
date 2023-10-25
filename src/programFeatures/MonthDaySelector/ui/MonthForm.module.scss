@@ -3,83 +3,190 @@
 .MonthForm{
     display: flex;
     flex-direction: column;
+    padding: var(--mainPageMargin);
 
-    background-color: rgb(239, 255, 250);
-    flex-grow: 1;
-    height: 100vh;
+    width: calc(100vw - (var(--mainPageMargin) * 2));
+    height: calc(100vh - (var(--mainPageMargin) * 2));
 
-    .Header{
+    font-size: var(--fontSizeSmall);
+    background-color: var(--main-bg-color);
+
+    .Icon{
+        background-color: rgba(255, 255, 255, 0);
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-
-        .HeaderLeft{
-            .WeekOrMonthSelector{
-                display: flex;
-                flex-direction: row;
-                .WeekOrMonthSelectorItem{
-                    cursor: pointer;
-                }
-                .WeekOrMonthSelectorItemActive{
-                    color: red;
-                }   
-            }
-        }
-        .HeaderCenter{
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-
-            .Month{
-                cursor: pointer;
-            }
-        }
-        .HeaderRight{
-        }
-        
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        margin: 5px;
+        cursor: pointer;
     }
 
+    
     .WeekDaysNames{
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-
+        align-items: center;
+        width: 100%;
         .WeekDayName{
-
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--secondary-text);
+            width: 2em;
+            height: 2em;
+            font-size: var(--fontSize);
         }
     }
 
-    .Weeks{
+    .Header{
+        display: flex;
+        flex-direction: column;
+        background-color: var(--main-bg-color);
+
+
         display: flex;
         flex-direction: column;
 
-        .Week {
+        .DatesHeader{
+        
             display: flex;
             flex-direction: row;
             justify-content: space-between;
 
-            .WeekNumber{
-
-            }
-            .WeekDay {
-                cursor: pointer;
-    
-                .WeekDayDate{
-    
+            .DatesHeaderLeft{
+                .WeekOrMonthSelector{
+                    display: flex;
+                    flex-direction: row;
+                    .WeekOrMonthSelectorItem{
+                        cursor: pointer;
+                    }
+                    .WeekOrMonthSelectorItemActive{
+                        color: red;
+                    }   
                 }
-    
             }
-            .SelectedWeekDay{
+            .DatesHeaderCenter{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                font-size: var(--fontSize);
+                font-weight: var(--fontWeightBold);
 
-                .WeekDayDate{
-                    color: red;
-    
+                .Month{
+                    cursor: pointer;
                 }
+            }
+            .DatesHeaderRight{
             }
             
         }
-        
 
+        
+    }
+
+    .Content{
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        background-color: azure;
+        overflow-y: auto;
+        flex-wrap: wrap;
+        justify-content: space-around;
+
+        .Month{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            margin: 5px;
+
+            .MonthName{
+                font-weight: var(--fontWeightBold);
+            }
+
+            .Week {
+                margin: 0px !important;
+                padding: 0px !important;
+                border-top: none !important;
+            }
+
+            .WeekDayName, .WeekDay, .WeekNumber, .WeekDayDate{
+                background-color: rgba(255, 255, 255, 0) !important;
+                font-size: var(--fontSizeSmall) !important;
+                width: 1em !important;
+                height: 1em !important;
+                border-radius: 0 !important;
+            }
+        }
+
+        .Weeks{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            .Week {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                font-size: var(--fontSize);
+                margin-bottom: 10px;
+                border-top: 1px solid black;
+                padding: 3px;
+
+                .WeekNumber{
+                    color: var(--secondary-text);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    width: 2em;
+                    height: 4em;
+                }
+                .WeekDay {
+                    cursor: pointer;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    width: 2em;
+                    height: 4em;
+                    background-color: rgba(127, 255, 212, 0.201);
+                    
+
+                    .WeekDayDate{
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        width: 2em;
+                        height: 2em;
+                        border-radius: 2em;
+                        background-color: aquamarine;
+                    }
+        
+                }
+                .SelectedWeekDay{
+
+                    .WeekDayDate{
+                        color: red;
+                        font-weight: var(--fontWeightBold);
+                    }
+                }
+                
+            }
+            
+
+        }
+       
+    }
+
+    .Footer{
+        background-color: var(--main-bg-color);
+        height: 80px;
+        display: flex;
+        flex-direction: row;
+        background-color: rgb(251, 240, 255);
     }
 
 }
