@@ -6,7 +6,7 @@ const localstorageAuthData = () => {
   if (user) {
     try {
       authData = JSON.parse(user);
-    } catch {
+    } catch (e) {
       authData = undefined;
     }
   }

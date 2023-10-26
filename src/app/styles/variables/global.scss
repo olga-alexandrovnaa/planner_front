@@ -1,5 +1,10 @@
 :root{
     --primary: #FF392B;
+
+    --red: #FF392B;
+    --blue: #2b4eff;
+    --green: #2eae32;
+
     --primary-text: #000000;
 
     --input-bg: #F2F2F2;
@@ -8,6 +13,10 @@
     --white-text: #ffffff;
 
     --main-bg-color: #ffffff;
+    --secondary-bg-color: #fafafa;
+    --light-bg-color: #EEF6FF;
+    --selected-bg-color: #ffeeee;
+    --dark-bg-color: #d3d3d3;
 
     // --overlay-bg-color: #0000006b;
     // --login-modal-bg-color: #f6f6f6;
@@ -16,16 +25,16 @@
 
     --btn-disabled: #7C8DA5;
 
-    // --borderColor: #e8e6e6 ;
+    --borderColor: #d3d3d3 ;
 
     //--shadow: 0px 2px 36px -4px rgba(34, 60, 80, 0.2);
 
     --fontWeight: normal;
     --fontWeightBold: bold;
-    --fontSize: 20px;
+    --fontSize: 16px;
     --fontSizeLarge: 32px;
     --fontSizeSmall: 16px;
-    --mainPageMargin: 20px;
+    --mainPageMargin: 10px;
 
     // --modal-z-index: 10000;
     // --overlay-z-index: 1000;

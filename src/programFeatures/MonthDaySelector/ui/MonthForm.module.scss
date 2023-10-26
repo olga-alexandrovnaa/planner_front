@@ -3,10 +3,8 @@
 .MonthForm{
     display: flex;
     flex-direction: column;
-    padding: var(--mainPageMargin);
-
-    width: calc(100vw - (var(--mainPageMargin) * 2));
-    height: calc(100vh - (var(--mainPageMargin) * 2));
+    width: calc(100vw);
+    height: calc(100vh);
 
     font-size: var(--fontSizeSmall);
     background-color: var(--main-bg-color);
@@ -17,7 +15,6 @@
         align-items: center;
         justify-content: center;
         padding: 5px;
-        margin: 5px;
         cursor: pointer;
     }
 
@@ -32,7 +29,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            color: var(--secondary-text);
+            // color: var(--secondary-text);
             width: 2em;
             height: 2em;
             font-size: var(--fontSize);
@@ -42,45 +39,80 @@
     .Header{
         display: flex;
         flex-direction: column;
-        background-color: var(--main-bg-color);
-
-
+        background-color: var(--secondary-bg-color);
         display: flex;
         flex-direction: column;
+
+        
+        padding: var(--mainPageMargin) var(--mainPageMargin) 0 var(--mainPageMargin);
 
         .DatesHeader{
         
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
 
             .DatesHeaderLeft{
+                display: flex;
+                flex-direction: row;
+                flex-basis: 30%;
                 .WeekOrMonthSelector{
+                    // background-color: var(--dark-bg-color);
                     display: flex;
                     flex-direction: row;
+                    // padding: 5px;
+                    // border-radius: 5px;
                     .WeekOrMonthSelectorItem{
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        background-color: var(--main-bg-color);
+                        border: 1px solid var(--btn-active);
                         cursor: pointer;
+                        padding:  5px 10px 5px 10px;
+                        margin-right: 2px;
+                        border-radius: 5px;
+                        // min-width: 40px;
+                        text-align: center;
                     }
                     .WeekOrMonthSelectorItemActive{
-                        color: red;
+                        background-color: var(--btn-active);
+                        color: var(--white-text);
                     }   
                 }
             }
             .DatesHeaderCenter{
                 display: flex;
                 flex-direction: row;
-                justify-content: space-between;
+                flex-basis: 40%;
+                justify-content: center;
                 align-items: center;
                 font-size: var(--fontSize);
                 font-weight: var(--fontWeightBold);
 
                 .Month{
                     cursor: pointer;
+                    font-weight: var(--fontWeightBold);
+                    text-align: center;
+                    width: min-content;
                 }
             }
             .DatesHeaderRight{
+                display: flex;
+                flex-direction: row;
+                flex-basis: 30%;
+                justify-content: flex-end;
             }
             
+        }
+
+        .TodayLink{
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            align-self: flex-end;
+            margin-top: 3px;
+            width: min-content;
         }
 
         
@@ -88,38 +120,11 @@
 
     .Content{
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         flex-grow: 1;
-        background-color: azure;
+        justify-content: stretch;
         overflow-y: auto;
-        flex-wrap: wrap;
-        justify-content: space-around;
 
-        .Month{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-grow: 1;
-            margin: 5px;
-
-            .MonthName{
-                font-weight: var(--fontWeightBold);
-            }
-
-            .Week {
-                margin: 0px !important;
-                padding: 0px !important;
-                border-top: none !important;
-            }
-
-            .WeekDayName, .WeekDay, .WeekNumber, .WeekDayDate{
-                background-color: rgba(255, 255, 255, 0) !important;
-                font-size: var(--fontSizeSmall) !important;
-                width: 1em !important;
-                height: 1em !important;
-                border-radius: 0 !important;
-            }
-        }
 
         .Weeks{
             display: flex;
@@ -127,13 +132,13 @@
             width: 100%;
 
             .Week {
+                padding: 3px var(--mainPageMargin) 3px var(--mainPageMargin);
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
                 font-size: var(--fontSize);
                 margin-bottom: 10px;
-                border-top: 1px solid black;
-                padding: 3px;
+                border-top: 1px solid var(--borderColor);
 
                 .WeekNumber{
                     color: var(--secondary-text);
@@ -142,7 +147,7 @@
                     justify-content: center;
                     align-items: center;
                     width: 2em;
-                    height: 4em;
+                    height: 2em;
                 }
                 .WeekDay {
                     cursor: pointer;
@@ -151,7 +156,7 @@
                     align-items: center;
                     width: 2em;
                     height: 4em;
-                    background-color: rgba(127, 255, 212, 0.201);
+                    // background-color: rgba(127, 255, 212, 0.201);
                     
 
                     .WeekDayDate{
@@ -161,16 +166,26 @@
                         align-items: center;
                         width: 2em;
                         height: 2em;
-                        border-radius: 2em;
-                        background-color: aquamarine;
+                        border-radius: 2em  !important;
+                        // background-color: aquamarine;
                     }
         
+                }
+                .DayOffDate{
+                    .WeekDayDate{
+                        color: var(--red);
+                    }
+                }
+                .CurrentDate{
+                    .WeekDayDate{
+                        color: var(--blue);
+                    }
                 }
                 .SelectedWeekDay{
 
                     .WeekDayDate{
-                        color: red;
-                        font-weight: var(--fontWeightBold);
+                        background-color: var(--primary) !important;
+                        color: var(--white-text);
                     }
                 }
                 
@@ -178,6 +193,56 @@
             
 
         }
+
+
+        .Months{
+            display: flex;
+            flex-direction: row;
+            // flex-grow: 1;
+            flex-wrap: wrap;
+            overflow-y: auto;
+            cursor: pointer;
+            
+            .Margin{
+                height: var(--mainPageMargin);
+                width: 100%;
+                background-color: var(--secondary-bg-color);
+            }
+            .Month{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                flex-grow: 1;
+                margin: 5px;
+                background-color: var(--light-bg-color);
+                border-radius: 10px;
+                padding: 5px;
+    
+                .MonthName{
+                    font-weight: var(--fontWeightBold);
+                }
+    
+                .Week {
+                    margin: 0px !important;
+                    padding: 0px !important;
+                    border-top: none !important;
+                }
+    
+                .WeekDayName, .WeekDay, .WeekNumber, .WeekDayDate{
+                    background-color: rgba(255, 255, 255, 0) !important;
+                    font-size: var(--fontSizeSmall) !important;
+                    width: 1.3em !important;
+                    height: 1.3em !important;
+                    border-radius: 0 !important;
+                
+                }
+            }
+            .SelectedMonth{
+                background-color: var(--selected-bg-color);
+            }
+        }
+
+        
        
     }
 
@@ -186,7 +251,8 @@
         height: 80px;
         display: flex;
         flex-direction: row;
-        background-color: rgb(251, 240, 255);
+        padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);
+        // background-color: rgb(251, 240, 255);
     }
 
 }

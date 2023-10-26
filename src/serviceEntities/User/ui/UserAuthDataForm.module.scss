@@ -1,7 +1,7 @@
 @import "@/app/styles/mixins/adaptive.scss";
 
 .UserForm{
-    color: red;
+    color: var(--primary);
     font-size: larger;
     display: flex;
     align-items: center;

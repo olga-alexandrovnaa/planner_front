@@ -82,6 +82,9 @@ export const getMonthDates = (state: StateSchema, month?: number) => {
         day: date.getDate(),
         isSelected:
         getDD_MM_YYYY(date) === getDD_MM_YYYY(state.monthForm?.selectedDay),
+        isCurrent: getDD_MM_YYYY(date) === getDD_MM_YYYY(new Date()),
+        isDayOff: [5,6].includes(getWeekDayNumber(date)),
+        holiday: state.monthForm.holidays.find((e)=>getDD_MM_YYYY(e.date) === getDD_MM_YYYY(date)),
       });
 
       //все дни выведены - заполнить пустыми днями
@@ -133,7 +136,8 @@ export const getYearMonthDates = (state: StateSchema) => {
     result.push({ 
       monthIndex: index,
       name: months[index],
-      weeks: getMonthDates(state, index) 
+      weeks: getMonthDates(state, index), 
+      isSelected: index === state.monthForm.showedMonthNumber,
     })
   }
 

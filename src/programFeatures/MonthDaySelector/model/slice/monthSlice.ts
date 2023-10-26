@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MonthSchema } from "../types/monthSchema";
+import { Holiday, MonthSchema } from "../types/monthSchema";
 import { getMonth, getYear } from 'date-fns'
 
 const initialState: MonthSchema = {
   selectedDay: new Date(),
   showedMonthNumber: getMonth(new Date()), //0-11
   showedYear: getYear(new Date()),
+  holidays: [],
 };
 
 const monthSlice = createSlice({
@@ -48,9 +49,12 @@ const monthSlice = createSlice({
         state.showedMonthNumber = state.showedMonthNumber - 1;
       }
     },
+    setHolidays: (state, action: PayloadAction<Holiday[]>) => {
+        state.holidays = action.payload;
+      }
+    },
   },
-
-});
+);
 
 export const { actions: monthActions } = monthSlice;
 export const { reducer: monthReducer } = monthSlice;

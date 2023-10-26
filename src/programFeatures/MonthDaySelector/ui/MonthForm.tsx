@@ -15,9 +15,15 @@ import {
   getShowedYear,
 } from "../model/selectors/selectors";
 import { useNavigate, useParams } from "react-router-dom";
-import { getRouteMain } from "@/sharedComponents/config/routeConfig/routeConfig";
+import { getRouteCalendar, getRouteMain } from "@/sharedComponents/config/routeConfig/routeConfig";
 import { MonthDay, MonthWeek, YearMonth } from "../model/types/monthSchema";
 import { DD_MM_YYYYtoDate } from "@/sharedComponents/lib/helpers/DD_MM_YYYYtoDate";
+import { ReactComponent as Left } from "@/sharedComponents/assets/icons/left-arrow.svg";
+import { ReactComponent as Right } from "@/sharedComponents/assets/icons/right-arrow.svg";
+import { ReactComponent as Close } from "@/sharedComponents/assets/icons/close.svg";
+import { ReactComponent as Link } from "@/sharedComponents/assets/icons/link.svg";
+import { getAllHolidays } from "@/sharedComponents/lib/helpers/holidays/getAllHolidays";
+import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 
 export interface MonthFormProps {
   className?: string;
@@ -49,6 +55,8 @@ const MonthDayForm = memo(
       <div
         className={classNames(cls.WeekDay, {
           [cls.SelectedWeekDay]: day.isSelected,
+          [cls.CurrentDate]: day.isCurrent,
+          [cls.DayOffDate]: day.isDayOff || !!day.holiday,
         })}
         onClick={onClickHandler}
       >
@@ -90,7 +98,13 @@ const YearMonthForm = memo(
     }, [month.monthIndex, onClick]);
 
     return (
-      <div className={cls.Month} key={month.monthIndex} onClick={onClickHandler}>
+      <div
+        className={classNames(cls.Month, {
+          [cls.SelectedMonth]: month.isSelected,
+        })}
+        key={month.monthIndex}
+        onClick={onClickHandler}
+      >
         <div className={cls.MonthName}>{month.name}</div>
 
         <div className={cls.WeekDaysNames}>
@@ -133,6 +147,12 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
   const monthDates = useSelector(getMonthDates);
   const yearMonthDates = useSelector(getYearMonthDates);
 
+  useEffect(() => {
+    if (showedYear) {
+      dispatch(monthActions.setHolidays(getAllHolidays(showedYear)));
+    }
+  }, [dispatch, showedYear]);
+
   const onBack = useCallback(() => {
     navigate(getRouteMain(date));
   }, [date, navigate]);
@@ -150,6 +170,14 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
     },
     [dispatch, onChangeShowMonth]
   );
+  
+  const onSelectToday = useCallback(
+    () => {
+      navigate(getRouteCalendar(getDD_MM_YYYY(new Date)));
+    },
+    [navigate]
+  );
+  
   const onSwipeRight = useCallback(() => {
     if (showYear) {
       dispatch(monthActions.showNextYear());
@@ -172,6 +200,7 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
   const handleTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       setTouchStart(e.targetTouches[0].clientX);
+      setTouchEnd(0);
     },
     []
   );
@@ -181,10 +210,10 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
   }, []);
 
   const handleTouchEnd = useCallback(() => {
-    if (touchStart - touchEnd > 150) {
+    if (touchStart - touchEnd > 150 && touchEnd !== 0) {
       onSwipeRight();
     }
-    if (touchStart - touchEnd < -150) {
+    if (touchStart - touchEnd < -150 && touchEnd !== 0) {
       onSwipeLeft();
     }
   }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart]);
@@ -196,9 +225,9 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        
       >
         <div className={cls.Header}>
-          <div className={cls.HeaderContent}>
             <div className={cls.DatesHeader}>
               <div className={cls.DatesHeaderLeft}>
                 <div className={cls.WeekOrMonthSelector}>
@@ -221,25 +250,35 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
                 </div>
               </div>
               <div className={cls.DatesHeaderCenter}>
-                <button onClick={onSwipeLeft}>{"<"}</button>
+                <div className={cls.Icon} onClick={onSwipeLeft}>
+                  <Left />
+                </div>
                 <div className={cls.Month}>
                   {showYear ? showedYear : showedMonthYearString}
                 </div>
-                <button onClick={onSwipeRight}>{">"}</button>
+                <div className={cls.Icon} onClick={onSwipeRight}>
+                  <Right />
+                </div>
               </div>
               <div className={cls.DatesHeaderRight}>
-                <button onClick={onBack}>Назад</button>
+                <div className={cls.Icon} onClick={onBack}>
+                  <Close />
+                </div>
               </div>
             </div>
+
+            <div className={cls.TodayLink} onClick={onSelectToday}>
+              <span>cегодня</span> &nbsp; <Link />
+            </div>
+
             {!showYear && (
               <div className={cls.WeekDaysNames}>
                 <div className={cls.WeekDayName}>#</div>
                 {weekDayNames.map((name) => (
-                  <div className={cls.WeekDayName}>{name}</div>
+                  <div key={name} className={cls.WeekDayName}>{name}</div>
                 ))}
               </div>
             )}
-          </div>
         </div>
 
         {!showYear && (
@@ -256,16 +295,21 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
               </div>
             </div>
             <div className={cls.Footer}>
-              <div className={cls.FooterContent}>Здесь будут кнопки</div>
+              <div className={cls.FooterContent}>
+                {/* Здесь будут кнопки */}
+              </div>
             </div>
           </>
         )}
 
         {showYear && (
           <div className={cls.Content}>
-            {yearMonthDates.map((month) => (
-              <YearMonthForm month={month} onClick={onSelectMonth} />
-            ))}
+            <div className={cls.Months}>
+              <div className={cls.Margin}></div>
+              {yearMonthDates.map((month) => (
+                <YearMonthForm month={month} onClick={onSelectMonth} />
+              ))}
+            </div>
           </div>
         )}
       </div>

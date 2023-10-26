@@ -12,6 +12,7 @@ import {
   getSelectedDay,
   getShowedMonthYearString,
   getShowedWeekNumber,
+  getShowedYear,
   getWeekDates,
 } from "../model/selectors/selectors";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,6 +26,9 @@ import { DD_MM_YYYYtoDate } from "@/sharedComponents/lib/helpers/DD_MM_YYYYtoDat
 import { ReactComponent as Left } from "@/sharedComponents/assets/icons/left-arrow.svg";
 import { ReactComponent as Right } from "@/sharedComponents/assets/icons/right-arrow.svg";
 import { ReactComponent as Calendar } from "@/sharedComponents/assets/icons/calendar.svg";
+import { ReactComponent as Link } from "@/sharedComponents/assets/icons/link.svg";
+import { getAllHolidays } from "@/sharedComponents/lib/helpers/holidays/getAllHolidays";
+import { UserAuthDataForm } from "@/serviceEntities/User";
 
 export interface WeekFormProps {
   className?: string;
@@ -44,6 +48,8 @@ const WeekDayForm = memo(
       <div
         className={classNames(cls.WeekDay, {
           [cls.SelectedWeekDay]: day.isSelected,
+          [cls.CurrentDate]: day.isCurrent,
+          [cls.DayOffDate]: day.isDayOff || !!day.holiday,
         })}
         onClick={onClickHandler}
       >
@@ -59,21 +65,47 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   const dispatch = useAppDispatch();
 
   const { date } = useParams<{ date: string }>();
-  const paramDate = useMemo(() => DD_MM_YYYYtoDate(date), [date]);
+  const paramDate = useMemo(() => {
+    return DD_MM_YYYYtoDate(String(date));
+  }, [date]);
+
   useEffect(() => {
+    if (
+      getDD_MM_YYYY(paramDate) === getDD_MM_YYYY(new Date()) &&
+      date !== getDD_MM_YYYY(new Date())
+    ) {
+      navigate(getRouteMain(getDD_MM_YYYY(new Date())));
+    }
     dispatch(weekActions.setSelectedDay(paramDate));
-  }, [dispatch, paramDate]);
+  }, [date, dispatch, navigate, paramDate]);
 
   const selectedDay = useSelector(getSelectedDay);
   const showedWeekNumber = useSelector(getShowedWeekNumber);
+  const showedYear = useSelector(getShowedYear);
   const showedMonthYearString = useSelector(getShowedMonthYearString);
   const weekDates = useSelector(getWeekDates);
 
+  useEffect(() => {
+    if (showedYear) {
+      dispatch(weekActions.setHolidays(getAllHolidays(showedYear)));
+    }
+  }, [dispatch, showedYear]);
+
   const onSelectDay = useCallback(
     (value: string) => {
-      navigate(getRouteMain(value));
+      const d = DD_MM_YYYYtoDate(value);
+      dispatch(weekActions.setSelectedDay(d));
+      const route = getRouteMain(value);
+      navigate(route);
     },
-    [navigate]
+    [dispatch, navigate]
+  );
+
+  const onSelectToday = useCallback(
+    () => {
+      onSelectDay(getDD_MM_YYYY(new Date))
+    },
+    [onSelectDay]
   );
 
   const onOpenCalendar = useCallback(() => {
@@ -94,6 +126,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   const handleTouchStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       setTouchStart(e.targetTouches[0].clientX);
+      setTouchEnd(0);
     },
     []
   );
@@ -103,10 +136,10 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   }, []);
 
   const handleTouchEnd = useCallback(() => {
-    if (touchStart - touchEnd > 150) {
+    if (touchStart - touchEnd > 150 && touchEnd !== 0) {
       onSwipeRight();
     }
-    if (touchStart - touchEnd < -150) {
+    if (touchStart - touchEnd < -150 && touchEnd !== 0) {
       onSwipeLeft();
     }
   }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart]);
@@ -121,13 +154,13 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
       >
         <div className={cls.Header}>
           <div className={cls.DatesHeader}>
-            <div></div>
+            <div className={cls.DatesHeaderLeft}></div>
             <div className={cls.DatesHeaderCenter}>
               <div className={cls.Icon} onClick={onSwipeLeft}>
                 <Left />
               </div>
               <div className={cls.Month} onClick={onOpenCalendar}>
-                {showedMonthYearString}{" "}
+                {showedMonthYearString}
                 <div className={cls.Icon} onClick={onSwipeLeft}>
                   <Calendar />
                 </div>
@@ -136,8 +169,15 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
                 <Right />
               </div>
             </div>
-            <div></div>
+            <div className={cls.DatesHeaderRight}>
+              <UserAuthDataForm />
+            </div>
           </div>
+
+          <div className={cls.TodayLink} onClick={onSelectToday}>
+            <span>cегодня</span> &nbsp; <Link />
+          </div>
+
           <div className={cls.Dates}>
             <div className={cls.WeekDay}>
               <div className={cls.WeekDayName}>#</div>
@@ -151,7 +191,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         </div>
 
         <div className={cls.Content}>
-          Здесь будут задачи
+          {/* Здесь будут задачи
           <div className={cls.TestRow}>TestRow</div>
           <div className={cls.TestRow}>TestRow</div>
           <div className={cls.TestRow}>TestRow</div>
@@ -173,10 +213,10 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
           <div className={cls.TestRow}>TestRow</div>
           <div className={cls.TestRow}>TestRow</div>
           <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
+          <div className={cls.TestRow}>TestRow</div> */}
         </div>
 
-        <div className={cls.Footer}>Здесь будут кнопки</div>
+        <div className={cls.Footer}>{/* Здесь будут кнопки */}</div>
       </div>
     </DynamicModuleLoader>
   );

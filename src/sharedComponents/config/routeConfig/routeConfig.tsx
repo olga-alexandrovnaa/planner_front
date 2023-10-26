@@ -6,16 +6,18 @@ import { format } from "date-fns";
 import { RouteProps } from "react-router-dom";
 
 export enum AppRoutes {
+  ROOT = "root",
   MAIN = "main",
-  CALENDAR='calendar',
-  LOGIN = 'login',
-  NOT_FOUND = 'not_found'
+  CALENDAR = "calendar",
+  LOGIN = "login",
+  NOT_FOUND = "not_found",
 }
 
-export const getRoutelogin = () => '/login';
-export const getRouteMain = (date: string) => `/${date ?? format(new Date(), "dd-MM-yyyy")}`;
-export const getRouteCalendar = (date: string) => `/calendar/${date ?? format(new Date(), "dd-MM-yyyy")}`;
-export const getRouteNOT_FOUND = () => '*';
+export const getRouteMain = (date: string) => `/${date}`;
+export const getRouteRoot = () => "/";
+export const getRoutelogin = () => "/login";
+export const getRouteCalendar = (date: string) => `/calendar/${date}`;
+export const getRouteNOT_FOUND = () => "*";
 
 export const routeConfig: Record<AppRoutes, RouteProps> = {
   [AppRoutes.LOGIN]: {
@@ -23,16 +25,19 @@ export const routeConfig: Record<AppRoutes, RouteProps> = {
     element: <LoginPage />,
   },
   [AppRoutes.MAIN]: {
-    path: getRouteMain(':date'),
+    path: getRouteMain(":date"),
     element: <MainPage />,
   },
   [AppRoutes.CALENDAR]: {
-    path: getRouteCalendar(':date'),
+    path: getRouteCalendar(":date"),
     element: <CalendarPage />,
   },
-  
+  [AppRoutes.ROOT]: {
+    path: getRouteRoot(),
+    element: <MainPage />,
+  },
   [AppRoutes.NOT_FOUND]: {
     path: getRouteNOT_FOUND(),
     element: <NotFoundPage />,
-},
+  },
 };

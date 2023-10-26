@@ -7,6 +7,7 @@ import { WeekDay } from "../types/weekSchema";
 import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 import { getWeekStart } from "@/sharedComponents/lib/helpers/getWeekStart";
 import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNumber";
+import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
 
 export const getSelectedDay = (state: StateSchema) => state.weekForm?.selectedDay;
 export const getShowedWeekNumber = (state: StateSchema) => state.weekForm?.showedWeekNumber;
@@ -36,7 +37,10 @@ export const getWeekDates = (state: StateSchema) => {
             day: date.getDate(),
             date: getDD_MM_YYYY(date),
             shortName: weekDayNames[index],
-            isSelected: getDD_MM_YYYY(date) === getDD_MM_YYYY(state.weekForm.selectedDay)
+            isSelected: getDD_MM_YYYY(date) === getDD_MM_YYYY(state.weekForm.selectedDay),
+            isCurrent: getDD_MM_YYYY(date) === getDD_MM_YYYY(new Date()),
+            isDayOff: [5,6].includes(getWeekDayNumber(date)),
+            holiday: state.weekForm.holidays.find((e)=>getDD_MM_YYYY(e.date) === getDD_MM_YYYY(date)),
         });
         date = addDays(date, 1)
     }

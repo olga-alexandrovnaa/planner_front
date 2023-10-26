@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { WeekSchema } from "../types/weekSchema";
+import { Holiday, WeekSchema } from "../types/weekSchema";
 import { getISOWeeksInYear, getYear} from 'date-fns'
 import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNumber";
 
@@ -8,6 +8,7 @@ const initialState: WeekSchema = {
   selectedDay: new Date(),
   showedWeekNumber: getYearWeekNumber(new Date()), 
   showedYear: getYear(new Date()),
+  holidays: []
 };
 
 const weekSlice = createSlice({
@@ -51,6 +52,9 @@ const weekSlice = createSlice({
       }
     },
 
+    setHolidays: (state, action: PayloadAction<Holiday[]>) => {
+      state.holidays = action.payload;
+    }
   },
 
 });

@@ -3,10 +3,9 @@
 .WeekForm{
     display: flex;
     flex-direction: column;
-    padding: var(--mainPageMargin);
 
-    width: calc(100vw - (var(--mainPageMargin) * 2));
-    height: calc(100vh - (var(--mainPageMargin) * 2));
+    width: calc(100vw);
+    height: calc(100vh);
 
     font-size: var(--fontSizeSmall);
     background-color: var(--main-bg-color);
@@ -17,14 +16,16 @@
         align-items: center;
         justify-content: center;
         padding: 5px;
-        margin: 5px;
         cursor: pointer;
     }
 
     .Header{
         display: flex;
         flex-direction: column;
-        background-color: var(--main-bg-color);
+
+        background-color: var(--secondary-bg-color);
+        padding: var(--mainPageMargin) var(--mainPageMargin) 5px var(--mainPageMargin);
+        border-bottom: 1px solid var(--borderColor); 
 
 
         display: flex;
@@ -36,10 +37,16 @@
             justify-content: space-between;
             align-items: center;
     
+            .DatesHeaderLeft{
+                display: flex;
+                flex-direction: row;
+                flex-basis: 20%;
+            }
             .DatesHeaderCenter{
                 display: flex;
                 flex-direction: row;
-                justify-content: space-between;
+                flex-basis: 60%;
+                justify-content: center;
                 align-items: center;
                 font-size: var(--fontSize);
     
@@ -50,14 +57,33 @@
                     cursor: pointer;
     
                     font-weight: var(--fontWeightBold);
+                    text-align: center;
     
                     .Icon{
                         margin: 0;
                     }
                 }
             }
+            .DatesHeaderRight{
+                display: flex;
+                flex-direction: row;
+                flex-basis: 20%;
+                justify-content: flex-end;
+            }
             
         }
+
+        .TodayLink{
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            justify-content: right;
+            margin-top: 3px;
+            align-self: flex-end;
+            width: min-content;
+        }
+
         .Dates{
             display: flex;
             flex-direction: row;
@@ -69,21 +95,56 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+
     
                 .WeekDayDate{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    width: 2em;
+                    height: 2em;
+                    border-radius: 2em !important;
     
                 }
                 .WeekDayName{
-                    color: var(--secondary-text)
+                    color: var(--secondary-text);
+
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    width: 2em;
+                    height: 2em;
                 }
     
             }
+            .DayOffDate{
+                .WeekDayDate{
+                    color: var(--red);
+                    // font-weight: var(--fontWeightBold);
+                }
+            }
+            .CurrentDate{
+                .WeekDayDate{
+                    color: var(--blue);
+                    // font-weight: var(--fontWeightBold);
+                }
+            }
             .SelectedWeekDay{
                 .WeekDayDate{
-                    color: red;
-                    font-weight: var(--fontWeightBold);
+                    // color: var(--primary);
+                    // font-weight: var(--fontWeightBold);
+
+                    background-color: var(--primary) !important;
+                    color: var(--white-text);
+
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 }
                 .WeekDayName{
+                    
                 }
             }
         
@@ -96,22 +157,27 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        background-color: azure;
+        // background-color: azure;
         overflow-y: auto;
+
+        padding: 0 var(--mainPageMargin) 0 var(--mainPageMargin);
 
         .TestRow {
             height: 30px;
-            background-color: rgba(0, 191, 255, 0.145);
+            // background-color: rgba(0, 191, 255, 0.145);
             margin: 10px;
         }
     }
 
     .Footer{
+
+        padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);
+
         background-color: var(--main-bg-color);
         height: 40px;
         display: flex;
         flex-direction: row;
-        background-color: rgb(251, 240, 255);
+        // background-color: rgb(251, 240, 255);
         
     }
 
