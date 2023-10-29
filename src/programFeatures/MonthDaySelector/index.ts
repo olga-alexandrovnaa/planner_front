@@ -1,1 +1,1 @@
-export type { WeekSchema } from "./model/types/monthSchema";
+export type { MonthSchema } from "./model/types/monthSchema";

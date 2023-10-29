@@ -1,0 +1,12 @@
+@import "@/app/styles/mixins/adaptive.scss";
+
+.TaskForm{
+    color: var(--primary);
+    font-size: larger;
+    display: flex;
+    align-items: center;
+   
+    svg {
+        cursor: pointer;
+    }
+}

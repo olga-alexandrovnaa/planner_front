@@ -2,13 +2,14 @@ import { CalendarPage } from "@/pagesContent/CalendarPage";
 import { LoginPage } from "@/pagesContent/LoginPage";
 import { MainPage } from "@/pagesContent/MainPage";
 import { NotFoundPage } from "@/pagesContent/NotFoundPage";
-import { format } from "date-fns";
+import { TaskPage } from "@/pagesContent/TaskPage";
 import { RouteProps } from "react-router-dom";
 
 export enum AppRoutes {
   ROOT = "root",
   MAIN = "main",
   CALENDAR = "calendar",
+  TASK = "task",
   LOGIN = "login",
   NOT_FOUND = "not_found",
 }
@@ -17,6 +18,7 @@ export const getRouteMain = (date: string) => `/${date}`;
 export const getRouteRoot = () => "/";
 export const getRoutelogin = () => "/login";
 export const getRouteCalendar = (date: string) => `/calendar/${date}`;
+export const getRouteTask = (id: string) => `/task/${id}`;
 export const getRouteNOT_FOUND = () => "*";
 
 export const routeConfig: Record<AppRoutes, RouteProps> = {
@@ -31,6 +33,10 @@ export const routeConfig: Record<AppRoutes, RouteProps> = {
   [AppRoutes.CALENDAR]: {
     path: getRouteCalendar(":date"),
     element: <CalendarPage />,
+  },
+  [AppRoutes.TASK]: {
+    path: getRouteTask(":id"),
+    element: <TaskPage />,
   },
   [AppRoutes.ROOT]: {
     path: getRouteRoot(),

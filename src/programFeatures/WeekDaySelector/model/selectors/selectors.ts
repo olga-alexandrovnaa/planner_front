@@ -26,12 +26,13 @@ export const getShowedMonthYearString = (state: StateSchema) => {
     return getMonthYearString(state.weekForm?.selectedDay);
 }
 
+const weekDayNames = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+
 export const getWeekDates = (state: StateSchema) => {
     if(!state.weekForm) return []; 
     const result: WeekDay[] = [];
     let date = getWeekStart(state.weekForm?.showedWeekNumber, state.weekForm?.showedYear)
 
-    const weekDayNames = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
     for (let index = 0; index < 7; index++) {
         result.push({
             day: date.getDate(),
