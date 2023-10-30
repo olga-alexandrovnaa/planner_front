@@ -3,6 +3,7 @@ import { LoginPage } from "@/pagesContent/LoginPage";
 import { MainPage } from "@/pagesContent/MainPage";
 import { NotFoundPage } from "@/pagesContent/NotFoundPage";
 import { TaskPage } from "@/pagesContent/TaskPage";
+import { getQueryParams } from "@/sharedComponents/lib/addQueryParams/addQueryParams";
 import { RouteProps } from "react-router-dom";
 
 export enum AppRoutes {
@@ -18,7 +19,7 @@ export const getRouteMain = (date: string) => `/${date}`;
 export const getRouteRoot = () => "/";
 export const getRoutelogin = () => "/login";
 export const getRouteCalendar = (date: string) => `/calendar/${date}`;
-export const getRouteTask = (id: string) => `/task/${id}`;
+export const getRouteTask = (id: string | 'new', params?: OptionalRecord<string, string>) => `/task/${id}${getQueryParams(params)}`;
 export const getRouteNOT_FOUND = () => "*";
 
 export const routeConfig: Record<AppRoutes, RouteProps> = {

@@ -29,6 +29,8 @@ import { ReactComponent as Calendar } from "@/sharedComponents/assets/icons/cale
 import { ReactComponent as Link } from "@/sharedComponents/assets/icons/link.svg";
 import { getAllHolidays } from "@/sharedComponents/lib/helpers/holidays/getAllHolidays";
 import { UserAuthDataForm } from "@/serviceEntities/User";
+import { DayTasksListForm } from "@/programFeatures/DayTasksList";
+import { tasksType } from "@/serviceEntities/Task";
 
 export interface WeekFormProps {
   className?: string;
@@ -101,12 +103,9 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
     [dispatch, navigate]
   );
 
-  const onSelectToday = useCallback(
-    () => {
-      onSelectDay(getDD_MM_YYYY(new Date))
-    },
-    [onSelectDay]
-  );
+  const onSelectToday = useCallback(() => {
+    onSelectDay(getDD_MM_YYYY(new Date()));
+  }, [onSelectDay]);
 
   const onOpenCalendar = useCallback(() => {
     navigate(getRouteCalendar(getDD_MM_YYYY(selectedDay)));
@@ -191,29 +190,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         </div>
 
         <div className={cls.Content}>
-          {/* Здесь будут задачи
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div>
-          <div className={cls.TestRow}>TestRow</div> */}
+          <DayTasksListForm date={selectedDay} type={tasksType.all} />
         </div>
 
         <div className={cls.Footer}>{/* Здесь будут кнопки */}</div>

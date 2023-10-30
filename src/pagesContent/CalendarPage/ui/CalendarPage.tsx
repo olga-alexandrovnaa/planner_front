@@ -1,12 +1,9 @@
-import { UserAuthDataForm } from "@/serviceEntities/User";
 import cls from "./CalendarPage.module.scss";
-import MonthForm from "@/programFeatures/MonthDaySelector/ui/MonthForm";
+import { MonthForm } from "@/programFeatures/MonthDaySelector";
 
 function CalendarPage() {
   return (
     <div className={cls.CalendarPage}>
-      {/* <UserAuthDataForm /> */}
-
       <MonthForm />
 
     </div>

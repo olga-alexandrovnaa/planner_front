@@ -1,6 +1,6 @@
 import { UserAuthDataForm } from "@/serviceEntities/User";
 import cls from "./MainPage.module.scss";
-import WeekForm from "@/programFeatures/WeekDaySelector/ui/WeekForm";
+import { WeekForm } from "@/programFeatures/WeekDaySelector";
 // import { Button } from "@/sharedComponents/ui/Button";
 // import $api from "@/sharedComponents/api/api";
 // import { useCallback } from "react";

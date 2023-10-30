@@ -4,4 +4,34 @@
     display: flex;
     flex-direction: column;
 
+    .Loader{
+        
+    }
+
+    .List{
+        display: flex;
+        flex-direction: column;
+
+        .DayTasksListItem{
+            display: flex;
+            flex-direction: row;
+
+            .Icon{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
+
+    .ButtonBlock{
+        display: flex;
+        .Button{
+            display: flex;
+            background-color: var(--primary);
+            color: var(--white-text);
+        }
+    }
+
+    
 }

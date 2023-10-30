@@ -79,10 +79,8 @@ export type RepeatDayTaskCheck = {
   isDeleted: boolean;
 };
 
-export type TaskExt = {
+export interface TaskExt extends Record<string, any> {
   id: number;
-  userId: number;
-  updatedAt: Date;
   date: string;
   name: string;
   isTracker: boolean;
@@ -98,11 +96,10 @@ export type TaskExt = {
   repeatIfYearIntervalDays: RepeatDayTaskWithYearInterval[];
   taskRepeatDayCheck: RepeatDayTaskCheck[];
   isDeleted: boolean;
-  deletedAt: Date;
-};
+  deletedAt?: Date;
+}
 
-export type CreateTaskDto = {
-  userId: number;
+export interface CreateTaskDto extends Record<string, any> {
   date: string;
   name: string;
   isTracker?: boolean;
@@ -117,10 +114,9 @@ export type CreateTaskDto = {
   repeatDays?: RepeatDayTaskWithNotYearInterval[];
   repeatIfYearIntervalDays?: RepeatDayTaskWithYearInterval[];
   taskRepeatDayCheck?: RepeatDayTaskCheck[];
-};
+}
 
-export type UpdateTaskDto = {
-  id: number;
+export interface UpdateTaskDto extends Record<string, any> {
   name?: string;
   isTracker?: boolean;
   intervalPart?: IntervalType;
@@ -161,13 +157,14 @@ export type UpdateTaskDto = {
     moneyOutcomeFact?: number;
     deadline?: string;
   }[];
-};
+}
 
 export type DeleteTaskDto = {
   id: number;
 };
 
 export type DeleteTaskInDateDto = {
+  id: number;
   date: number;
 };
 
@@ -181,34 +178,33 @@ export enum tasksType {
 }
 
 export type GetDayTasksDto = {
-  userId: number;
   date: string;
   type: tasksType;
 };
 
-export class GetUserTrackersDto {
-  userId: number;
-}
-
 export class ResheduleTaskDto {
+  id: number;
   date: string;
   newDate: string;
 }
 
 export class SetTaskCheckDto {
+  id: number;
   date: string;
   checked: boolean;
 }
 
 export class TaskProgressDto {
+  id: number;
   dateStart: string;
   dateEnd: string;
 }
 
 export interface TaskSchema {
-  isCreating?: boolean;
+  id: number;
   form?: TaskExt;
   data?: TaskExt;
   isLoading?: boolean;
+  isCreateMode?: boolean;
   error?: string;
 }
