@@ -12,7 +12,7 @@ export const removeTaskCheck = createAsyncThunk<
     try {
         const responseData = await $api( __API__ + `tasks/${id}/removeTaskCheck`, { method: "PATCH" });
         
-        if (!responseData ) {
+        if (responseData.error) {
             throw new Error();
         }
 

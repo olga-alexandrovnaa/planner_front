@@ -12,7 +12,7 @@ export const deleteTask = createAsyncThunk<
     try {
         const responseData = await $api( __API__ + 'tasks/' + id, { method: "DELETE" });
         
-        if (!responseData ) {
+        if (responseData.error) {
             throw new Error();
         }
 

@@ -16,9 +16,20 @@ export const getTaskIdForService = createSelector(getTaskId, (id) => {
 });
 
 export const getCreateTaskDtoForService = createSelector(getTask, (data): { id: number, dto:  CreateTaskDto } => {
+
+    if(!data || !data.isCreateMode || !data.form) return;
+
+    const dto: CreateTaskDto = {};
+
+    for (const [k , v] of Object.entries(data.form)) {
+        if( v !== null ){
+            dto[k] = v;
+        }
+    }
+
     return {
         id: data.id,
-        dto: data.form,
+        dto: dto,
     };
 });
 

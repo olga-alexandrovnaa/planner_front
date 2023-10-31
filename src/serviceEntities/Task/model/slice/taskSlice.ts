@@ -20,13 +20,13 @@ const taskSlice = createSlice({
     setId: (state, action: PayloadAction<number>) => {
       state.id = action.payload;
     },
-    setCreateMode: (state, action: PayloadAction<{date: string, isFood?: string}>) => {
+    setCreateMode: (state, action: PayloadAction<{date: string, isFood?: boolean}>) => {
       state.isCreateMode = true;
       state.form = {
         id: 0,
         date: action.payload.date,
         isDeleted: false,
-        isFood: !!action.payload.isFood,
+        isFood: action.payload.isFood,
         isTracker: false,
         name: '',
          intervalLength: null,

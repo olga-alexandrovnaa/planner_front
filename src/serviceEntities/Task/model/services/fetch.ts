@@ -16,7 +16,7 @@ export const fetchTask = createAsyncThunk<
     try {
         const responseData = await $api( __API__ + `tasks/${id}`, { method: "GET" });
         
-        if (!responseData ) {
+        if (responseData.error) {
             throw new Error();
         }
 

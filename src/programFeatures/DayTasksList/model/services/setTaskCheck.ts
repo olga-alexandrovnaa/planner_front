@@ -12,7 +12,7 @@ export const setTaskCheck = createAsyncThunk<
     try {
         const responseData = await $api( __API__ + `tasks/${id}/setTaskCheck`, { method: "PATCH" });
         
-        if (!responseData ) {
+        if (responseData.error) {
             throw new Error();
         }
 

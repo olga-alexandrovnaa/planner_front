@@ -22,11 +22,11 @@ const App = () => {
     dispatch(userActions.initAuthData());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (inited && !authData && location.pathname !== getRoutelogin()) {
-      navigate(getRoutelogin(), { replace: true });
-    }
-  }, [inited, authData, location, navigate]);
+  // useEffect(() => {
+  //   if (inited && !authData && location.pathname !== getRoutelogin()) {
+  //     navigate(getRoutelogin(), { replace: true });
+  //   }
+  // }, [inited, authData, location, navigate]);
 
   return (
     <div className={classNames("app")}>

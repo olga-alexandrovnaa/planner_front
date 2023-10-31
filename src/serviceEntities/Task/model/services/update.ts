@@ -21,7 +21,7 @@ export const update = createAsyncThunk<
             { method: "PATCH", body: JSON.stringify(data.dto)}
         );
         
-        if (!responseData ) {
+        if (responseData.error) {
             throw new Error();
         }
 

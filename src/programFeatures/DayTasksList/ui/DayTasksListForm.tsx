@@ -53,9 +53,14 @@ const DayTasksListForm = memo(
 
     const onTaskClick = useCallback(
       (id: number) => {
-        navigate(getRouteTask(String(id)));
+        const params: OptionalRecord<string, string> = {
+          date: currentDate.toISOString(),
+          isFood: currentType === tasksType.food ? "1" : "0",
+        };
+
+        navigate(getRouteTask(String(id), params));
       },
-      [navigate]
+      [currentDate, currentType, navigate]
     );
 
     const onTaskDelete = useCallback(
@@ -77,8 +82,13 @@ const DayTasksListForm = memo(
     );
 
     const onCreate = useCallback(() => {
-      navigate(getRouteTask("new"));
-    }, [navigate]);
+      const params: OptionalRecord<string, string> = {
+        date: currentDate.toISOString(),
+        isFood: currentType === tasksType.food ? "1" : "0",
+      };
+
+      navigate(getRouteTask("new"), params);
+    }, [currentDate, currentType, navigate]);
 
     useEffect(() => {
       dispatch(dayTasksListActions.setDate(date));
@@ -87,7 +97,9 @@ const DayTasksListForm = memo(
 
     useEffect(() => {
       if (!isLoading) dispatch(fetchList());
-    }, [currentDate, dispatch, currentType, isLoading]);
+    }, [currentDate, dispatch, currentType]);
+
+    console.log(list);
 
     return (
       <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
@@ -99,14 +111,15 @@ const DayTasksListForm = memo(
           )}
 
           <div className={cls.List}>
-            {list.map((item) => (
-              <DayTasksListItem
-                data={item}
-                onClick={onTaskClick}
-                onDelete={onTaskDelete}
-                onCheckChange={onCheckChange}
-              />
-            ))}
+            {!!list &&
+              list.map((item) => (
+                <DayTasksListItem
+                  data={item}
+                  onClick={onTaskClick}
+                  onDelete={onTaskDelete}
+                  onCheckChange={onCheckChange}
+                />
+              ))}
           </div>
 
           <div className={cls.ButtonBlock}>

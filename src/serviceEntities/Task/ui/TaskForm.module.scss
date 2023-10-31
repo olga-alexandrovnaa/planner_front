@@ -9,4 +9,49 @@
     svg {
         cursor: pointer;
     }
+
+
+    .Header{
+        display: flex;
+
+
+        
+    }
+    .Data{
+        display: flex;
+
+        .Input {
+
+        }
+
+        .Selector{
+            // background-color: var(--dark-bg-color);
+            display: flex;
+            flex-direction: row;
+            // padding: 5px;
+            // border-radius: 5px;
+            .SelectorItem{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: var(--main-bg-color);
+                border: 1px solid var(--btn-active);
+                cursor: pointer;
+                padding:  5px 10px 5px 10px;
+                margin-right: 2px;
+                border-radius: 5px;
+                // min-width: 40px;
+                text-align: center;
+            }
+            .SelectorItemActive{
+                background-color: var(--btn-active);
+                color: var(--white-text);
+            }   
+        }
+    }
+    .ButtonBlock{
+        .Button{
+
+        }
+    }
 }

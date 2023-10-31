@@ -24,6 +24,7 @@ import { update } from "../model/services/update";
 import { fetchTask } from "../model/services/fetch";
 import { Button } from "@/sharedComponents/ui/Button";
 import { Input } from "@/sharedComponents/ui/Inputs/Input";
+import { startOfDay } from "date-fns";
 
 export interface TaskFormProps {
   className?: string;
@@ -48,13 +49,12 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     if (id === "new") {
       const dateFromUrl = searchParams.get("date") as string;
       const isFoodFromUrl = searchParams.get("isFood") as string;
-      if (dateFromUrl)
-        dispatch(
-          taskActions.setCreateMode({
-            date: dateFromUrl,
-            isFood: isFoodFromUrl,
-          })
-        );
+      dispatch(
+        taskActions.setCreateMode({
+          date: dateFromUrl ? dateFromUrl : startOfDay(new Date()).toISOString(),
+          isFood: isFoodFromUrl === "1" ? true : false,
+        })
+      );
     } else {
       dispatch(taskActions.setId(Number(id)));
       dispatch(fetchTask());
@@ -68,12 +68,12 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
       await dispatch(update());
     }
     if (error) alert(error);
-    if (form.date) navigate(getRouteMain(getDD_MM_YYYY(new Date(form.date))));
-  }, [dispatch, error, form.date, isCreateMode, navigate]);
+    // if (form?.date) navigate(getRouteMain(getDD_MM_YYYY(new Date(form?.date))));
+  }, [dispatch, error, form?.date, isCreateMode, navigate]);
 
   const onBack = useCallback(() => {
-    if (form.date) navigate(getRouteMain(getDD_MM_YYYY(new Date(form.date))));
-  }, [form.date, navigate]);
+    if (form?.date) navigate(getRouteMain(getDD_MM_YYYY(new Date(form?.date))));
+  }, [form?.date, navigate]);
 
   const onChangeName = useCallback(
     (val: string) => {
@@ -89,40 +89,41 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     [dispatch]
   );
 
+  console.log(form)
+
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
       <div className={classNames(cls.UserForm, {}, [className])}>
-        <div>
-          <div></div>
-          <div onClick={onBack}>
+        <div className={cls.Header}>
+          <div className={cls.HeaderText}></div>
+          <div className={cls.HeaderCloseIcon} onClick={onBack}>
             <Close />
           </div>
         </div>
-        <div>
-          <div>
-            <div className={cls.WeekOrMonthSelector}>
+        <div className={cls.Data}>
+          <Input className={cls.Input} placeholder={"Название"} value={form?.name} onChange={onChangeName} />
+
+            <div className={cls.Selector}>
               <div
                 onClick={() => onChangeIsTracker(false)}
-                className={classNames(cls.WeekOrMonthSelectorItem, {
-                  [cls.WeekOrMonthSelectorItemActive]: form.isTracker,
+                className={classNames(cls.Item, {
+                  [cls.ItemActive]: form?.isTracker,
                 })}
               >
                 Задача
               </div>
               <div
                 onClick={() => onChangeIsTracker(true)}
-                className={classNames(cls.WeekOrMonthSelectorItem, {
-                  [cls.WeekOrMonthSelectorItemActive]: form.isTracker,
+                className={classNames(cls.SelectorItem, {
+                  [cls.SelectorItemActive]: form?.isTracker,
                 })}
               >
                 Трекер
               </div>
             </div>
-          </div>
-          <Input value={form.name} onChange={onChangeName} />
         </div>
-        <div>
-          <Button onClick={onSave}>Сохранить</Button>
+        <div className={cls.ButtonBlock}>
+          <Button className={cls.Button} onClick={onSave}>Сохранить</Button>
         </div>
       </div>
     </DynamicModuleLoader>

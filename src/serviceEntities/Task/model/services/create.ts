@@ -15,11 +15,11 @@ export const create = createAsyncThunk<
 
     try {
         const responseData = await $api(
-            __API__ + `tasks/${data.id}`, 
+            __API__ + `tasks`, 
             { method: "POST", body: JSON.stringify(data.dto)}
         );
         
-        if (!responseData ) {
+        if (responseData.error) {
             throw new Error();
         }
 
