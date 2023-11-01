@@ -1,10 +1,22 @@
 @import "@/app/styles/mixins/adaptive.scss";
 
 .TaskForm{
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 100vw;
+    max-width: 100vw;
+    min-height: 100vh;
+
     color: var(--primary);
     font-size: larger;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+
+    font-size: var(--fontSize);
+
+    color: var(--primary-text);
    
     svg {
         cursor: pointer;
@@ -13,16 +25,60 @@
 
     .Header{
         display: flex;
+        flex-direction: row;
+        min-width: calc(100% - (var(--mainPageMargin) * 2));
+        max-width: calc(100% - (var(--mainPageMargin) * 2));
 
-
+        padding: var(--mainPageMargin) var(--mainPageMargin) 0 var(--mainPageMargin);
         
+
+        justify-content: space-between;
+        align-items: center;
     }
+
     .Data{
         display: flex;
+        flex-direction: column;
 
-        .Input {
+        flex-grow: 1;
 
+        min-width: calc(100% - (var(--mainPageMargin) * 2));
+        max-width: calc(100% - (var(--mainPageMargin) * 2));
+
+        padding: var(--mainPageMargin);
+
+        justify-content: stretch;
+
+        .MainInput {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0);
+            border: none;
+            font-size: var(--fontSizeLarge) !important;
         }
+
+        .InputBlock{
+
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+
+            .Label{
+                margin-right: 5px;
+                width: 70px;
+            }
+            .Input {
+                display: flex;
+                background-color: var(--input-bg);
+                border: none;
+                
+            }
+            .Button {
+
+            }
+        }
+        
 
         .Selector{
             // background-color: var(--dark-bg-color);
@@ -37,10 +93,10 @@
                 background-color: var(--main-bg-color);
                 border: 1px solid var(--btn-active);
                 cursor: pointer;
-                padding:  5px 10px 5px 10px;
+                padding: 12px;
                 margin-right: 2px;
                 border-radius: 5px;
-                // min-width: 40px;
+                
                 text-align: center;
             }
             .SelectorItemActive{
@@ -49,9 +105,22 @@
             }   
         }
     }
-    .ButtonBlock{
-        .Button{
+    .Footer{
+        height: 60px;
+        display: flex;
+        width: calc(100% - (var(--mainPageMargin) * 2));
+        flex-direction: row;
+        padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);
+        justify-content: flex-end;
 
+        .ButtonBlock{
+            display: flex;
+            flex-direction: row;
+            .Button{
+                font-size: var(--fontSize);
+                color: var(--white-text);
+            }
         }
     }
+    
 }

@@ -51,7 +51,9 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
       const isFoodFromUrl = searchParams.get("isFood") as string;
       dispatch(
         taskActions.setCreateMode({
-          date: dateFromUrl ? dateFromUrl : startOfDay(new Date()).toISOString(),
+          date: dateFromUrl
+            ? dateFromUrl
+            : startOfDay(new Date()).toISOString(),
           isFood: isFoodFromUrl === "1" ? true : false,
         })
       );
@@ -89,11 +91,11 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     [dispatch]
   );
 
-  console.log(form)
+  console.log(form);
 
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
-      <div className={classNames(cls.UserForm, {}, [className])}>
+      <div className={classNames(cls.TaskForm, {}, [className])}>
         <div className={cls.Header}>
           <div className={cls.HeaderText}></div>
           <div className={cls.HeaderCloseIcon} onClick={onBack}>
@@ -101,29 +103,57 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
           </div>
         </div>
         <div className={cls.Data}>
-          <Input className={cls.Input} placeholder={"Название"} value={form?.name} onChange={onChangeName} />
+          <Input
+            className={cls.MainInput}
+            placeholder={"Название"}
+            value={form?.name}
+            onChange={onChangeName}
+          />
 
-            <div className={cls.Selector}>
-              <div
-                onClick={() => onChangeIsTracker(false)}
-                className={classNames(cls.Item, {
-                  [cls.ItemActive]: form?.isTracker,
-                })}
-              >
-                Задача
-              </div>
-              <div
-                onClick={() => onChangeIsTracker(true)}
-                className={classNames(cls.SelectorItem, {
-                  [cls.SelectorItemActive]: form?.isTracker,
-                })}
-              >
-                Трекер
-              </div>
+          <div className={cls.Selector}>
+            <div
+              onClick={() => onChangeIsTracker(false)}
+              className={classNames(cls.SelectorItem, {
+                [cls.SelectorItemActive]: !form?.isTracker,
+              })}
+            >
+              Задача
             </div>
+            <div
+              onClick={() => onChangeIsTracker(true)}
+              className={classNames(cls.SelectorItem, {
+                [cls.SelectorItemActive]: form?.isTracker,
+              })}
+            >
+              Трекер
+            </div>
+          </div>
+
+          <div className={cls.InputBlock}>
+            <div className={cls.Label}>Расход</div>
+            <Input
+              className={cls.Input}
+              value={form?.name}
+              onChange={onChangeName}
+            />
+          </div>
+
+          <div className={cls.InputBlock}>
+            <div className={cls.Label}>Доход</div>
+            <Input
+              className={cls.Input}
+              value={form?.name}
+              onChange={onChangeName}
+            />
+          </div>
+
         </div>
-        <div className={cls.ButtonBlock}>
-          <Button className={cls.Button} onClick={onSave}>Сохранить</Button>
+        <div className={cls.Footer}>
+          <div className={cls.ButtonBlock}>
+            <Button className={cls.Button} onClick={onSave}>
+              Сохранить
+            </Button>
+          </div>
         </div>
       </div>
     </DynamicModuleLoader>
