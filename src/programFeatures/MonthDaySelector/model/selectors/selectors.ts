@@ -4,17 +4,19 @@ import { StateSchema } from "@/app/providers/StoreProvider";
 import { getMonthYearString } from "@/sharedComponents/lib/helpers/getMonthYearString";
 import {
   addDays,
-  getDay,
   getDaysInMonth,
-  getWeek,
   getWeeksInMonth,
 } from "date-fns";
 import { MonthWeek, YearMonth } from "../types/monthSchema";
-import { ru } from "date-fns/locale";
 import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNumber";
 import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
+import { createSelector } from "@reduxjs/toolkit";
 
+export const getForm = (state: StateSchema) =>
+state.monthForm;
+export const getFormAndMonth = (state: StateSchema, month?: number) =>
+({monthForm: state.monthForm, month});
 export const getSelectedDay = (state: StateSchema) =>
   state.monthForm?.selectedDay;
 export const getShowedMonthNumber = (state: StateSchema) =>
@@ -27,25 +29,27 @@ export const getShowedMonthYearString = (state: StateSchema) => {
     new Date(state.monthForm?.showedYear, state.monthForm?.showedMonthNumber, 1)
   );
 };
-export const getMonthDates = (state: StateSchema, month?: number) => {
 
-  if(!state.monthForm) return []; 
+export const getMonthDates = createSelector(getFormAndMonth, (data) => {
+  const {monthForm, month} = data;
 
-  const showedMonthNumber = month !== undefined ? month : state.monthForm?.showedMonthNumber;
+  if(!monthForm) return []; 
+
+  const showedMonthNumber = month !== undefined ? month : monthForm?.showedMonthNumber;
 
   const result: MonthWeek[] = [];
   let date = new Date(
-    state.monthForm?.showedYear,
+    monthForm?.showedYear,
     showedMonthNumber,
     1
   );
 
   const daysCount = getDaysInMonth(
-    new Date(state.monthForm?.showedYear, showedMonthNumber)
+    new Date(monthForm?.showedYear, showedMonthNumber)
   );
   const weeksCount = getWeeksInMonth(
     new Date(
-      state.monthForm?.showedYear,
+      monthForm?.showedYear,
       showedMonthNumber,
       1
     ),
@@ -81,10 +85,10 @@ export const getMonthDates = (state: StateSchema, month?: number) => {
         date: getDD_MM_YYYY(date),
         day: date.getDate(),
         isSelected:
-        getDD_MM_YYYY(date) === getDD_MM_YYYY(state.monthForm?.selectedDay),
+        getDD_MM_YYYY(date) === getDD_MM_YYYY(monthForm?.selectedDay),
         isCurrent: getDD_MM_YYYY(date) === getDD_MM_YYYY(new Date()),
         isDayOff: [5,6].includes(getWeekDayNumber(date)),
-        holiday: state.monthForm.holidays.find((e)=>getDD_MM_YYYY(e.date) === getDD_MM_YYYY(date)),
+        holiday: monthForm.holidays.find((e)=>getDD_MM_YYYY(e.date) === getDD_MM_YYYY(date)),
       });
 
       //все дни выведены - заполнить пустыми днями
@@ -110,12 +114,9 @@ export const getMonthDates = (state: StateSchema, month?: number) => {
   }
 
   return result;
-};
+});
 
 export const getYearMonthDates = (state: StateSchema) => {
-
-  if(!state.monthForm) return []; 
-
   const months = [
     "Январь",
     "Февраль",
@@ -137,7 +138,7 @@ export const getYearMonthDates = (state: StateSchema) => {
       monthIndex: index,
       name: months[index],
       weeks: getMonthDates(state, index), 
-      isSelected: index === state.monthForm.showedMonthNumber,
+      isSelected: index === state?.monthForm?.showedMonthNumber,
     })
   }
 

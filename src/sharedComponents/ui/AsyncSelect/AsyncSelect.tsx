@@ -1,41 +1,53 @@
-
-import { StylesConfig } from 'react-select';
-import AsyncSelect from 'react-select/async';
-import AsyncCreatableSelect from 'react-select/async-creatable';
-import ReactSelect from 'react-select'
+import { StylesConfig } from "react-select";
+import AsyncSelect from "react-select/async";
+import AsyncCreatableSelect from "react-select/async-creatable";
+import ReactSelect from "react-select";
 
 export const selectCustomStyles: StylesConfig = {
   container: (provided) => ({
     ...provided,
-    width: '100%',
-    height: '30px'
+    width: "100%",
+    height: "30px",
+    backgroundColor: "#F2F2F2",
+    borderRadius: "14px",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: "10px",
+    paddingTop: "22px",
+    paddingBottom: "22px",
+    fontSize: "20px",
   }),
-  
+
   control: (provided, state) => ({
     ...provided,
+    width: "100%",
     border: "none",
-    minHeight: 'auto',
-    boxShadow: 'none',
-    backgroundColor: '#00000000',
-    borderColor: '#00000000',
+    boxShadow: "none",
+    backgroundColor: "#00000000",
+    borderColor: "#00000000",
     ":hover": {
       border: "none",
-      boxShadow: 'none'
+      boxShadow: "none",
     },
   }),
 
   valueContainer: (provided, state) => ({
     ...provided,
-    padding: '0px'
+    padding: "0px",
+    height: "22px !important",
   }),
   indicatorSeparator: () => ({
-    display: 'none',
+    display: "none",
   }),
-  option: (provided, state) => (
-    {
+  option: (provided, state) => ({
     ...provided,
-    backgroundColor: state.isSelected ? 'rgba(174, 5, 5, 0.311)' : state.isFocused ? '#00000010' : '',
-    color: '#000000',
+    backgroundColor: state.isSelected
+      ? "rgba(174, 5, 5, 0.311)"
+      : state.isFocused
+      ? "#00000010"
+      : "",
+    color: "#000000",
   }),
 };
 
@@ -43,17 +55,15 @@ export const selectCustomTheme = (theme: any) => ({
   ...theme,
   colors: {
     ...theme.colors,
-    primary25: '#f3f3f3',
-    primary: '#7ba7ab',
-    danger: '#fffff',
-    dangerLight: '#7ba7ab',
+    primary25: "#f3f3f3",
+    primary: "#7ba7ab",
+    danger: "#fffff",
+    dangerLight: "#7ba7ab",
   },
   borderRadius: 4,
 });
 
-
 const CustomAsyncSelect: AsyncSelect = (props) => {
-
   return (
     <AsyncSelect
       blurInputOnSelect
@@ -61,21 +71,20 @@ const CustomAsyncSelect: AsyncSelect = (props) => {
       escapeClearsValue
       isSearchable={true}
       menuPlacement="auto"
-      placeholder={''}
-      noOptionsMessage={() => ''}
-      loadingMessage={() => 'Загрузка...'}
+      placeholder={""}
+      noOptionsMessage={() => ""}
+      loadingMessage={() => "Загрузка..."}
       styles={selectCustomStyles}
       theme={selectCustomTheme}
       // menuPortalTarget={portal}
       {...props}
     />
   );
-}
+};
 
 export default CustomAsyncSelect;
 
 export const CustomAsyncCreatableSelect: AsyncCreatableSelect = (props) => {
-
   return (
     <AsyncCreatableSelect
       blurInputOnSelect
@@ -83,33 +92,34 @@ export const CustomAsyncCreatableSelect: AsyncCreatableSelect = (props) => {
       escapeClearsValue
       isSearchable
       menuPlacement="auto"
-      placeholder={''}
-      noOptionsMessage={() => ''}
-      loadingMessage={() => 'Загрузка...'}
+      placeholder={""}
+      noOptionsMessage={() => ""}
+      loadingMessage={() => "Загрузка..."}
       styles={selectCustomStyles}
       theme={selectCustomTheme}
       // menuPortalTarget={portal}
       {...props}
     />
   );
-}
+};
 
 export const CustomSelect: AsyncCreatableSelect = (props) => {
-
   return (
     <ReactSelect
-          classNamePrefix="react-select"
-          closeMenuOnScroll
-          closeMenuOnSelect
-          instanceId={ props.instanceId }
-          // absolute: корректно в списке, некорректно в модале. fixed – наоборот, проблемы в модале
-          isSearchable={ false }
-          menuPosition={ props.menuPosition ? props.menuPosition : 'fixed' }
-          menuShouldBlockScroll={ props.menuShouldBlockScroll ? props.menuShouldBlockScroll : true }
-          options={ props.options }
-          styles={selectCustomStyles}
-          theme={selectCustomTheme}
-          { ...props }
-      />
+      classNamePrefix="react-select"
+      closeMenuOnScroll
+      closeMenuOnSelect
+      instanceId={props.instanceId}
+      // absolute: корректно в списке, некорректно в модале. fixed – наоборот, проблемы в модале
+      isSearchable={false}
+      menuPosition={props.menuPosition ? props.menuPosition : "fixed"}
+      menuShouldBlockScroll={
+        props.menuShouldBlockScroll ? props.menuShouldBlockScroll : true
+      }
+      options={props.options}
+      styles={selectCustomStyles}
+      theme={selectCustomTheme}
+      {...props}
+    />
   );
-}
+};

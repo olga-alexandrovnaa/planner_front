@@ -8,7 +8,9 @@ import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 import { getWeekStart } from "@/sharedComponents/lib/helpers/getWeekStart";
 import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNumber";
 import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
+import { createSelector } from "@reduxjs/toolkit";
 
+export const getForm = (state: StateSchema) => state.weekForm;
 export const getSelectedDay = (state: StateSchema) => state.weekForm?.selectedDay;
 export const getShowedWeekNumber = (state: StateSchema) => state.weekForm?.showedWeekNumber;
 export const getShowedYear = (state: StateSchema) => state.weekForm?.showedYear;
@@ -28,22 +30,22 @@ export const getShowedMonthYearString = (state: StateSchema) => {
 
 const weekDayNames = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
 
-export const getWeekDates = (state: StateSchema) => {
-    if(!state.weekForm) return []; 
+export const getWeekDates = createSelector(getForm, (weekForm) => {
+    if(!weekForm) return []; 
     const result: WeekDay[] = [];
-    let date = getWeekStart(state.weekForm?.showedWeekNumber, state.weekForm?.showedYear)
+    let date = getWeekStart(weekForm?.showedWeekNumber, weekForm?.showedYear)
 
     for (let index = 0; index < 7; index++) {
         result.push({
             day: date.getDate(),
             date: getDD_MM_YYYY(date),
             shortName: weekDayNames[index],
-            isSelected: getDD_MM_YYYY(date) === getDD_MM_YYYY(state.weekForm.selectedDay),
+            isSelected: getDD_MM_YYYY(date) === getDD_MM_YYYY(weekForm.selectedDay),
             isCurrent: getDD_MM_YYYY(date) === getDD_MM_YYYY(new Date()),
             isDayOff: [5,6].includes(getWeekDayNumber(date)),
-            holiday: state.weekForm.holidays.find((e)=>getDD_MM_YYYY(e.date) === getDD_MM_YYYY(date)),
+            holiday: weekForm.holidays.find((e)=>getDD_MM_YYYY(e.date) === getDD_MM_YYYY(date)),
         });
         date = addDays(date, 1)
     }
     return result;
-}
+});

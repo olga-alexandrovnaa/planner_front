@@ -6,79 +6,85 @@ import { isArray, isObject } from "lodash";
 export const getTask = (state: StateSchema) => state.task;
 export const getTaskData = (state: StateSchema) => state.task?.data;
 export const getTaskForm = (state: StateSchema) => state.task?.form;
+export const getTaskFormRepeatDaysForChanging = (state: StateSchema) => state.task?.formRepeatDays;
+export const getTaskFormRepeatYearDaysForChanging = (state: StateSchema) => state.task?.formRepeatIfYearIntervalDays;
+
+export const getTaskFormIntervalPart = (state: StateSchema) => state.task?.form.intervalPart;
+export const getTaskFormRepeatDays = (state: StateSchema) => state.task?.form?.repeatDays;
+export const getTaskFormRepeatYearDays = (state: StateSchema) => state.task?.form?.repeatIfYearIntervalDays;
 export const getTaskId = (state: StateSchema) => state.task?.id;
 export const getTaskCreateMode = (state: StateSchema) => state.task?.isCreateMode;
 export const getTaskIsLoading = (state: StateSchema) => state.task?.isLoading;
 export const getTaskError = (state: StateSchema) => state.task?.error;
 
 export const getTaskIdForService = createSelector(getTaskId, (id) => {
-    return id;
+  return id;
 });
 
-export const getCreateTaskDtoForService = createSelector(getTask, (data): { id: number, dto:  CreateTaskDto } => {
+export const getCreateTaskDtoForService = createSelector(getTask, (data): { id: number, dto: CreateTaskDto } => {
 
-    if(!data || !data.isCreateMode || !data.form) return;
+  if (!data || !data.isCreateMode || !data.form) return;
 
-    const dto: CreateTaskDto = {};
+  const dto: CreateTaskDto = {};
 
-    for (const [k , v] of Object.entries(data.form)) {
-        if( v !== null ){
-            dto[k] = v;
-        }
+  for (const [k, v] of Object.entries(data.form)) {
+    if (v !== null) {
+      dto[k] = v;
     }
+  }
 
-    return {
-        id: data.id,
-        dto: dto,
-    };
+  return {
+    id: data.id,
+    dto: dto,
+  };
 });
 
 export const getUpdateTaskDtoForService = createSelector(getTask, (data): { id: number, dto: UpdateTaskDto } => {
-    if(!data || !data.data || !data.form) return;
+  if (!data || !data.data || !data.form) return;
 
-    const loaded = data.data;
-    const changed = data.form;
+  const loaded = data.data;
+  const changed = data.form;
 
-    const dto: UpdateTaskDto = {
-        id: loaded.id,
-    };
+  const dto: UpdateTaskDto = {
+    id: loaded.id,
+  };
 
-    const compare = (l: any, c: any, level = 1) => () => {
-        for (const [k , v] of Object.entries(l)) {
-            if(!isObject(v) && l[k] === c[k]){
-                return false;
-            }
-            if(!isObject(v) && l[k] !== c[k]){
-                dto[k] = c[k];
-                return true;
-            } else if (isArray(v)) {
-                if(v.length !== c[k].length){
-                    if(level === 1){
-                        dto[k] = c[k];
-                    }
-                    return true;
-                }
-                for (const i of v) {
-                    const res = compare(i, c[k][i], level + 1);
-                    if(res && level === 1){
-                        dto[k] = c[k];
-                    }
-                    return res;
-                }
-            } else {
-                const res = compare(v, c[k], level + 1);
-                if(res && level === 1){
-                    dto[k] = c[k];
-                }
-                return res;
-            }
+  const compare = (l: any, c: any, level = 1) => () => {
+    for (const [k, v] of Object.entries(l)) {
+      if (!isObject(v) && l[k] === c[k]) {
+        return false;
+      }
+      if (!isObject(v) && l[k] !== c[k]) {
+        dto[k] = c[k];
+        return true;
+      } else if (isArray(v)) {
+        if (v.length !== c[k].length) {
+          if (level === 1) {
+            dto[k] = c[k];
+          }
+          return true;
         }
+        for (const i of v) {
+          const res = compare(i, c[k][i], level + 1);
+          if (res && level === 1) {
+            dto[k] = c[k];
+          }
+          return res;
+        }
+      } else {
+        const res = compare(v, c[k], level + 1);
+        if (res && level === 1) {
+          dto[k] = c[k];
+        }
+        return res;
+      }
     }
+  }
 
-    compare(loaded, changed);
+  compare(loaded, changed);
 
-    return {
-        id: data.id,
-        dto: dto,
-    };
+  return {
+    id: data.id,
+    dto: dto,
+  };
 });

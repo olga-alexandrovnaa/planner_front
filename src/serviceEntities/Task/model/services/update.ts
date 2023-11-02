@@ -13,20 +13,20 @@ export const update = createAsyncThunk<
 
     const data = getUpdateTaskDtoForService(getState());
 
-    if(!Object.entries(data.dto).length) return null;
+    if (!Object.entries(data.dto).length) return null;
 
     try {
         const responseData = await $api(
-            __API__ + `tasks/${data.id}`, 
-            { method: "PATCH", body: JSON.stringify(data.dto)}
+            __API__ + `tasks/${data.id}`,
+            { method: "PATCH", body: JSON.stringify(data.dto) }
         );
-        
-        if (responseData.error) {
+
+        if (!responseData.data) {
             throw new Error();
         }
 
-        return responseData;
- 
+        return responseData.data;
+
     } catch (e) {
         return rejectWithValue('error');
     }

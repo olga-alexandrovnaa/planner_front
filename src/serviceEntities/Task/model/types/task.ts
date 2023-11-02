@@ -4,6 +4,7 @@ export enum IntervalType {
   Month,
   Year,
 }
+
 export enum WeekNumber {
   first,
   second,
@@ -36,7 +37,7 @@ export type Ingredient = {
     };
   };
   count: number;
-  measureUnitId?: number;
+  measureUnitId?: number | null;
   measureUnit?: {
     measureUnitId: number;
     measureUnit: {
@@ -50,11 +51,11 @@ export type Ingredient = {
 export type RepeatDayTaskWithNotYearInterval = {
   id: number;
   trackerId: number;
-  intervalPartIndex?: number;
-  dayFromBeginningInterval?: number;
-  weekNumber?: WeekNumber;
-  weekDayNumber?: number;
-  moveTypeIfDayNotExists?: MoveTypeIfDayNotExists;
+  intervalPartIndex?: number | null;
+  dayFromBeginningInterval?: number | null;
+  weekNumber?: WeekNumber | null;
+  weekDayNumber?: number | null;
+  moveTypeIfDayNotExists?: MoveTypeIfDayNotExists | null;
 };
 
 export type RepeatDayTaskWithYearInterval = {
@@ -63,19 +64,19 @@ export type RepeatDayTaskWithYearInterval = {
   intervalPartIndex: number;
   yearDateDay: number;
   yearDateMonth: number;
-  moveTypeIfDayNotExists?: MoveTypeIfDayNotExists;
+  moveTypeIfDayNotExists?: MoveTypeIfDayNotExists | null;
 };
 
 export type RepeatDayTaskCheck = {
   id: number;
   trackerId: number;
   date: string;
-  newDate?: string;
+  newDate?: string | null;
   checked: boolean;
   note?: string;
-  moneyIncomeFact?: number;
-  moneyOutcomeFact?: number;
-  deadline?: string;
+  moneyIncomeFact?: number | null;
+  moneyOutcomeFact?: number | null;
+  deadline?: string | null;
   isDeleted: boolean;
 };
 
@@ -84,13 +85,13 @@ export interface TaskExt extends Record<string, any> {
   date: string;
   name: string;
   isTracker: boolean;
-  intervalPart?: IntervalType;
-  intervalLength?: number;
-  repeatCount?: number;
-  moneyIncomePlan?: number;
-  moneyOutcomePlan?: number;
+  intervalPart?: IntervalType | null;
+  intervalLength?: number | null;
+  repeatCount?: number | null;
+  moneyIncomePlan?: number | null;
+  moneyOutcomePlan?: number | null;
   isFood: boolean;
-  recipe?: string;
+  recipe?: string | null;
   ingredients: Ingredient[];
   repeatDays: RepeatDayTaskWithNotYearInterval[];
   repeatIfYearIntervalDays: RepeatDayTaskWithYearInterval[];
@@ -103,13 +104,13 @@ export interface CreateTaskDto extends Record<string, any> {
   date: string;
   name: string;
   isTracker?: boolean;
-  intervalPart?: IntervalType;
-  intervalLength?: number;
-  repeatCount?: number;
-  moneyIncomePlan?: number;
-  moneyOutcomePlan?: number;
+  intervalPart?: IntervalType | null;
+  intervalLength?: number | null;
+  repeatCount?: number | null;
+  moneyIncomePlan?: number | null;
+  moneyOutcomePlan?: number | null;
   isFood?: boolean;
-  recipe?: string;
+  recipe?: string | null;
   ingredients?: Ingredient[];
   repeatDays?: RepeatDayTaskWithNotYearInterval[];
   repeatIfYearIntervalDays?: RepeatDayTaskWithYearInterval[];
@@ -119,13 +120,13 @@ export interface CreateTaskDto extends Record<string, any> {
 export interface UpdateTaskDto extends Record<string, any> {
   name?: string;
   isTracker?: boolean;
-  intervalPart?: IntervalType;
-  intervalLength?: number;
-  repeatCount?: number;
-  moneyIncomePlan?: number;
-  moneyOutcomePlan?: number;
+  intervalPart?: IntervalType | null;
+  intervalLength?: number | null;
+  repeatCount?: number | null;
+  moneyIncomePlan?: number | null;
+  moneyOutcomePlan?: number | null;
   isFood?: boolean;
-  recipe?: string;
+  recipe?: string | null;
   ingredients?: {
     trackerId: number;
     productId: number;
@@ -148,6 +149,7 @@ export interface UpdateTaskDto extends Record<string, any> {
     yearDateMonth: number;
   }[];
   taskRepeatDayCheck?: {
+    id: number;
     trackerId: number;
     date: string;
     newDate?: string;
@@ -204,6 +206,8 @@ export interface TaskSchema {
   id: number;
   form?: TaskExt;
   data?: TaskExt;
+  formRepeatDays?: RepeatDayTaskWithNotYearInterval[];
+  formRepeatIfYearIntervalDays?: RepeatDayTaskWithYearInterval[];
   isLoading?: boolean;
   isCreateMode?: boolean;
   error?: string;

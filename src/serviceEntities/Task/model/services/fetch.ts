@@ -14,14 +14,14 @@ export const fetchTask = createAsyncThunk<
     const id = getTaskIdForService(getState());
 
     try {
-        const responseData = await $api( __API__ + `tasks/${id}`, { method: "GET" });
-        
-        if (responseData.error) {
+        const responseData = await $api(__API__ + `tasks/${id}`, { method: "GET" });
+
+        if (!responseData.data) {
             throw new Error();
         }
 
-        return responseData;
- 
+        return responseData.data;
+
     } catch (e) {
         return rejectWithValue('error');
     }

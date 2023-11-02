@@ -22,6 +22,14 @@
         cursor: pointer;
     }
 
+    .Icon{
+        background-color: rgba(255, 255, 255, 0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        cursor: pointer;
+    }
 
     .Header{
         display: flex;
@@ -35,6 +43,86 @@
         justify-content: space-between;
         align-items: center;
     }
+
+
+    .WeekSelector{
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        width: 100%;
+
+        .WeekSelectorWeek{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex-grow: 1;
+            margin-top: 10px;
+
+            .SelectorDayBlock{
+                margin: 5px;
+                display: flex;
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+
+                .SelectorDay{
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 14px;
+                    height: 50px;
+                    width: 70%;
+                    background-color: var(--light-bg-color);
+    
+                }
+                .SelectorSelectedDay{
+                    background-color: var(--primary);
+                    color: var(--white-text);
+                }
+            }
+            
+        }
+
+        .SelectorHeader {
+            display: flex;
+            flex-direction: row;
+    
+            .DatesHeaderLeft{
+                display: flex;
+                flex-direction: row;
+                flex-basis: 30%;
+            }
+            .DatesHeaderCenter{
+                display: flex;
+                flex-direction: row;
+                flex-basis: 40%;
+                justify-content: center;
+                align-items: center;
+                font-size: var(--fontSize);
+                font-weight: var(--fontWeightBold);
+    
+                .Month{
+                    cursor: pointer;
+                    font-weight: var(--fontWeightBold);
+                    text-align: center;
+                    width: min-content;
+                }
+            }
+            .DatesHeaderRight{
+                display: flex;
+                flex-direction: row;
+                flex-basis: 30%;
+                justify-content: flex-end;
+            }
+            
+        }
+    }
+    
+
+
+
 
     .Data{
         display: flex;
@@ -54,38 +142,68 @@
             background-color: rgba(255, 255, 255, 0);
             border: none;
             font-size: var(--fontSizeLarge) !important;
+            padding: 0px !important;
+        }
+
+        .CurrentDate{
+            font-weight: var(--fontWeightBold);
+            margin-top: 30px;
         }
 
         .InputBlock{
-
-
             display: flex;
             flex-direction: row;
             align-items: center;
-
+            margin-top: 10px;
 
             .Label{
-                margin-right: 5px;
+                margin-right: 10px;
                 width: 70px;
             }
-            .Input {
+            .Icon{
+               margin-top: 5px;
+            }
+            .NumberInput{
                 display: flex;
                 background-color: var(--input-bg);
                 border: none;
-                
+                margin-left: 10px;
+                width: 100px;
             }
+            .Input {
+                display: flex;
+                flex-grow: 1;
+                background-color: var(--input-bg);
+                border: none;
+                margin-left: 10px;
+            }
+            
             .Button {
+                padding: 8px;
+
+                background-color: var(--btn-active);
+                color: var(--white-text);
+                width: min-content;
+
+                margin-left: 10px;
+
+                font-size: var(--fontSizeSmall);
 
             }
+        }
+
+        .TextArea{
+            margin-top: 10px;
+            background-color: var(--input-bg);
+            border: none !important;
+            min-height: 100px;
         }
         
 
         .Selector{
-            // background-color: var(--dark-bg-color);
+            margin-top: 10px;
             display: flex;
             flex-direction: row;
-            // padding: 5px;
-            // border-radius: 5px;
             .SelectorItem{
                 display: flex;
                 justify-content: center;
@@ -96,7 +214,6 @@
                 padding: 12px;
                 margin-right: 2px;
                 border-radius: 5px;
-                
                 text-align: center;
             }
             .SelectorItemActive{
@@ -116,9 +233,10 @@
         .ButtonBlock{
             display: flex;
             flex-direction: row;
-            .Button{
+            .MainButton{
                 font-size: var(--fontSize);
                 color: var(--white-text);
+                min-width: 100px;
             }
         }
     }

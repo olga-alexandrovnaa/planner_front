@@ -15,7 +15,10 @@ import {
   getShowedYear,
 } from "../model/selectors/selectors";
 import { useNavigate, useParams } from "react-router-dom";
-import { getRouteCalendar, getRouteMain } from "@/sharedComponents/config/routeConfig/routeConfig";
+import {
+  getRouteCalendar,
+  getRouteMain,
+} from "@/sharedComponents/config/routeConfig/routeConfig";
 import { MonthDay, MonthWeek, YearMonth } from "../model/types/monthSchema";
 import { DD_MM_YYYYtoDate } from "@/sharedComponents/lib/helpers/DD_MM_YYYYtoDate";
 import { ReactComponent as Left } from "@/sharedComponents/assets/icons/left-arrow.svg";
@@ -110,7 +113,7 @@ const YearMonthForm = memo(
         <div className={cls.WeekDaysNames}>
           <div className={cls.WeekDayName}>#</div>
           {weekDayNames.map((name) => (
-            <div className={cls.WeekDayName}>{name}</div>
+            <div className={cls.WeekDayName} key={name}>{name}</div>
           ))}
         </div>
 
@@ -170,14 +173,11 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
     },
     [dispatch, onChangeShowMonth]
   );
-  
-  const onSelectToday = useCallback(
-    () => {
-      navigate(getRouteCalendar(getDD_MM_YYYY(new Date)));
-    },
-    [navigate]
-  );
-  
+
+  const onSelectToday = useCallback(() => {
+    navigate(getRouteCalendar(getDD_MM_YYYY(new Date())));
+  }, [navigate]);
+
   const onSwipeRight = useCallback(() => {
     if (showYear) {
       dispatch(monthActions.showNextYear());
@@ -225,60 +225,61 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        
       >
         <div className={cls.Header}>
-            <div className={cls.DatesHeader}>
-              <div className={cls.DatesHeaderLeft}>
-                <div className={cls.WeekOrMonthSelector}>
-                  <div
-                    onClick={onChangeShowMonth}
-                    className={classNames(cls.WeekOrMonthSelectorItem, {
-                      [cls.WeekOrMonthSelectorItemActive]: !showYear,
-                    })}
-                  >
-                    Месяц
-                  </div>
-                  <div
-                    onClick={onChangeShowYear}
-                    className={classNames(cls.WeekOrMonthSelectorItem, {
-                      [cls.WeekOrMonthSelectorItemActive]: showYear,
-                    })}
-                  >
-                    Год
-                  </div>
+          <div className={cls.DatesHeader}>
+            <div className={cls.DatesHeaderLeft}>
+              <div className={cls.WeekOrMonthSelector}>
+                <div
+                  onClick={onChangeShowMonth}
+                  className={classNames(cls.WeekOrMonthSelectorItem, {
+                    [cls.WeekOrMonthSelectorItemActive]: !showYear,
+                  })}
+                >
+                  Месяц
                 </div>
-              </div>
-              <div className={cls.DatesHeaderCenter}>
-                <div className={cls.Icon} onClick={onSwipeLeft}>
-                  <Left />
-                </div>
-                <div className={cls.Month}>
-                  {showYear ? showedYear : showedMonthYearString}
-                </div>
-                <div className={cls.Icon} onClick={onSwipeRight}>
-                  <Right />
-                </div>
-              </div>
-              <div className={cls.DatesHeaderRight}>
-                <div className={cls.Icon} onClick={onBack}>
-                  <Close />
+                <div
+                  onClick={onChangeShowYear}
+                  className={classNames(cls.WeekOrMonthSelectorItem, {
+                    [cls.WeekOrMonthSelectorItemActive]: showYear,
+                  })}
+                >
+                  Год
                 </div>
               </div>
             </div>
-
-            <div className={cls.TodayLink} onClick={onSelectToday}>
-              <span>cегодня</span> &nbsp; <Link />
-            </div>
-
-            {!showYear && (
-              <div className={cls.WeekDaysNames}>
-                <div className={cls.WeekDayName}>#</div>
-                {weekDayNames.map((name) => (
-                  <div key={name} className={cls.WeekDayName}>{name}</div>
-                ))}
+            <div className={cls.DatesHeaderCenter}>
+              <div className={cls.Icon} onClick={onSwipeLeft}>
+                <Left />
               </div>
-            )}
+              <div className={cls.Month}>
+                {showYear ? showedYear : showedMonthYearString}
+              </div>
+              <div className={cls.Icon} onClick={onSwipeRight}>
+                <Right />
+              </div>
+            </div>
+            <div className={cls.DatesHeaderRight}>
+              <div className={cls.Icon} onClick={onBack}>
+                <Close />
+              </div>
+            </div>
+          </div>
+
+          <div className={cls.TodayLink} onClick={onSelectToday}>
+            <span>cегодня</span> &nbsp; <Link />
+          </div>
+
+          {!showYear && (
+            <div className={cls.WeekDaysNames}>
+              <div className={cls.WeekDayName}>#</div>
+              {weekDayNames.map((name) => (
+                <div key={name} className={cls.WeekDayName}>
+                  {name}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {!showYear && (
@@ -307,7 +308,7 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
             <div className={cls.Months}>
               <div className={cls.Margin}></div>
               {yearMonthDates.map((month) => (
-                <YearMonthForm month={month} onClick={onSelectMonth} />
+                <YearMonthForm month={month} onClick={onSelectMonth} key={month.monthIndex}/>
               ))}
             </div>
           </div>

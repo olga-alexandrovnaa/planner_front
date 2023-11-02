@@ -15,16 +15,16 @@ export const create = createAsyncThunk<
 
     try {
         const responseData = await $api(
-            __API__ + `tasks`, 
-            { method: "POST", body: JSON.stringify(data.dto)}
+            __API__ + `tasks`,
+            { method: "POST", body: JSON.stringify(data.dto) }
         );
-        
-        if (responseData.error) {
+
+        if (!responseData.data) {
             throw new Error();
         }
 
-        return responseData;
- 
+        return responseData.data;
+
     } catch (e) {
         return rejectWithValue('error');
     }
