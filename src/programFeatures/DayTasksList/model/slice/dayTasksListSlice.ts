@@ -3,14 +3,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DayTasksListSchema } from "../..";
 import { fetchList } from "../services/fetchList";
 import { ListTask } from "../types/dayTasksListSchema";
-import { tasksType } from "@/serviceEntities/Task";
-import { deleteTask } from "../services/deleteTask";
+import { deleteTask } from "../services/deleteTaskInDate";
 import { removeTaskCheck } from "../services/removeTaskCheck";
 import { setTaskCheck } from "../services/setTaskCheck";
 const initialState: DayTasksListSchema = {
   list: [],
-  date: null,
-  type: null,
   isLoading: false,
 };
 
@@ -18,15 +15,9 @@ const dayTasksListSlice = createSlice({
   name: "dayTasksList",
   initialState,
   reducers: {
-    setDate: (state, action: PayloadAction<Date>) => {
-      state.date = action.payload;
-    },
-    setType: (state, action: PayloadAction<tasksType>) => {
-      state.type = action.payload;
-    },
   },
   extraReducers: (builder) => {
-    builder 
+    builder
       .addCase(fetchList.pending, (state) => {
         state.error = undefined;
         state.isLoading = true;
@@ -43,8 +34,8 @@ const dayTasksListSlice = createSlice({
       .addCase(deleteTask.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteTask.fulfilled, (state, action: PayloadAction<{id: number, res: boolean}>) => {
-        if(action.payload.res){
+      .addCase(deleteTask.fulfilled, (state, action: PayloadAction<{ id: number, res: boolean }>) => {
+        if (action.payload.res) {
           state.list = state.list.filter((e) => e.id !== action.payload.id);
         }
         state.isLoading = false;
@@ -53,8 +44,8 @@ const dayTasksListSlice = createSlice({
       .addCase(removeTaskCheck.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(removeTaskCheck.fulfilled, (state, action: PayloadAction<{id: number, res: boolean}>) => {
-        if(action.payload.res){
+      .addCase(removeTaskCheck.fulfilled, (state, action: PayloadAction<{ id: number, res: boolean }>) => {
+        if (action.payload.res) {
           const item = state.list.find((e) => e.id === action.payload.id);
           item.checked = false;
         }
@@ -64,8 +55,8 @@ const dayTasksListSlice = createSlice({
       .addCase(setTaskCheck.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(setTaskCheck.fulfilled, (state, action: PayloadAction<{id: number, res: boolean}>) => {
-        if(action.payload.res){
+      .addCase(setTaskCheck.fulfilled, (state, action: PayloadAction<{ id: number, res: boolean }>) => {
+        if (action.payload.res) {
           const item = state.list.find((e) => e.id === action.payload.id);
           item.checked = true;
         }

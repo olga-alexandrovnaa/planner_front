@@ -19,8 +19,8 @@ export const Checkbox: FC<Props> = ({
   onChange,
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
     onChange(!checked);
+    e.stopPropagation();
   };
 
   return (

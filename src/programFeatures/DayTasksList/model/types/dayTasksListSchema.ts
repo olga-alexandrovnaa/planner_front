@@ -16,8 +16,6 @@ export type ListTask = {
 
 export interface DayTasksListSchema {
   list: ListTask[];
-  date: Date;
-  type: tasksType;
   isLoading: boolean;
   error?: string;
 }

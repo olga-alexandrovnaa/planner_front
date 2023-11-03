@@ -1,19 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ThunkConfig } from "@/app/providers/StoreProvider";
-import { getDayTasksDayAndTypeForService } from "../selectors/selectors";
 import $api from "@/sharedComponents/api/api";
 import { ListTask } from "../types/dayTasksListSchema";
 import { startOfDay } from "date-fns";
 import { isArray } from "lodash";
+import { tasksType } from "@/serviceEntities/Task";
 
 export const fetchList = createAsyncThunk<
   ListTask[],
-  undefined,
+  { date: Date, type: tasksType },
   ThunkConfig<string>
->("dayTasksList/fetchList", async (_, thunkApi) => {
-  const { rejectWithValue, getState } = thunkApi;
-
-  const data = getDayTasksDayAndTypeForService(getState());
+>("dayTasksList/fetchList", async (data, thunkApi) => {
+  const { rejectWithValue } = thunkApi;
 
   const params = new URLSearchParams({
     date: startOfDay(data.date).toISOString(),
@@ -26,6 +24,7 @@ export const fetchList = createAsyncThunk<
     });
 
     if (!isArray(responseData)) {
+
       throw new Error();
     }
 

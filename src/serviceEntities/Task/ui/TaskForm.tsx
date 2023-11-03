@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { memo, useCallback, useState, useEffect } from "react";
+import { memo, useCallback, useState, useEffect, useMemo } from "react";
 import cls from "./TaskForm.module.scss";
 // import { getUserAuthData, getuserName } from "../model/selectors/selectors";
 import {
@@ -13,9 +13,12 @@ import { ReactComponent as Close } from "@/sharedComponents/assets/icons/close.s
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { taskActions, taskReducer } from "../model/slice/taskSlice";
 import {
+  getCreateTaskDtoForService,
+  getTask,
   getTaskCreateMode,
   getTaskError,
   getTaskForm,
+  getUpdateTaskDtoForService,
 } from "../model/selectors/selectors";
 import { create } from "../model/services/create";
 import { getRouteMain } from "@/sharedComponents/config/routeConfig/routeConfig";
@@ -27,12 +30,19 @@ import { Input } from "@/sharedComponents/ui/Inputs/Input";
 import { startOfDay } from "date-fns";
 import { CustomSelect } from "@/sharedComponents/ui/AsyncSelect/AsyncSelect";
 import { getDD_Month_NotReqYYYY } from "@/sharedComponents/lib/helpers/getDD_Month_NotReqYYYY";
-import { IntervalType } from "../model/types/task";
+import {
+  IntervalType,
+  MoveTypeIfDayNotExists,
+  UpdateTaskDto,
+  WeekNumber,
+} from "../model/types/task";
 import WeekSelector from "./WeekSelector";
 import {
   intervalTypeName,
   intervalTypeOptions,
 } from "../model/consts/interval";
+import { isArray, isObject } from "lodash";
+import MonthSelector from "./MonthSelector";
 
 export interface TaskFormProps {
   className?: string;
@@ -55,6 +65,11 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
 
   const [openModalDays, setOpenModalDays] = useState(false);
   const [openModalYearDays, setOpenModalYearDays] = useState(false);
+
+  const intervalOptions = useMemo(
+    () => intervalTypeOptions(form?.intervalLength ?? 0),
+    [form?.intervalLength]
+  );
 
   useEffect(() => {
     if (id === "new") {
@@ -175,17 +190,84 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
 
   const onSaveDays = useCallback(() => {
     dispatch(taskActions.onSaveDays());
-    onEndChangeDays()
+    onEndChangeDays();
   }, [dispatch, onEndChangeDays]);
 
   const onSaveYearDays = useCallback(() => {
     dispatch(taskActions.onSaveYearDays());
-    onEndChangeYearDays()
+    onEndChangeYearDays();
   }, [dispatch, onEndChangeYearDays]);
 
-  const onChangeWeekDays = useCallback(
-    (intervalIndex: number, dayNumber: number) => {
-      dispatch(taskActions.onChangeWeekDays({ intervalIndex, dayNumber }));
+  const onChangeDays = useCallback(
+    ({
+      intervalIndex,
+      dayNumber,
+      moveTypeIfDayNotExists,
+    }: {
+      intervalIndex: number;
+      dayNumber: number;
+      moveTypeIfDayNotExists: MoveTypeIfDayNotExists | null;
+    }) => {
+      dispatch(
+        taskActions.onChangeDays({
+          intervalIndex,
+          dayNumber,
+          moveTypeIfDayNotExists,
+        })
+      );
+    },
+    [dispatch]
+  );
+  const onChangeMonthWeekDays = useCallback(
+    ({
+      intervalIndex,
+      weekDayNumber,
+      weekNumber,
+      moveTypeIfDayNotExists,
+      isDelete,
+    }: {
+      intervalIndex: number;
+      weekDayNumber: number;
+      weekNumber: WeekNumber;
+      moveTypeIfDayNotExists: MoveTypeIfDayNotExists | null;
+      isDelete: boolean;
+    }) => {
+      dispatch(
+        taskActions.onChangeMonthWeekDays({
+          intervalIndex,
+          weekNumber,
+          weekDayNumber,
+          moveTypeIfDayNotExists,
+          isDelete,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const onChangeYearDays = useCallback(
+    ({
+      intervalIndex,
+      dayNumber,
+      monthNumber,
+      moveTypeIfDayNotExists,
+      isDelete,
+    }: {
+      intervalIndex: number;
+      dayNumber: number;
+      monthNumber: number;
+      moveTypeIfDayNotExists: MoveTypeIfDayNotExists | null;
+      isDelete: boolean;
+    }) => {
+      dispatch(
+        taskActions.onChangeYearDays({
+          intervalIndex,
+          dayNumber,
+          monthNumber,
+          moveTypeIfDayNotExists,
+          isDelete,
+        })
+      );
     },
     [dispatch]
   );
@@ -260,7 +342,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                       ),
                     }}
                     onChange={onChangeIntervalPart}
-                    options={intervalTypeOptions}
+                    options={intervalOptions}
                   />
 
                   {form.intervalPart === IntervalType.Week && (
@@ -401,8 +483,15 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
         )}
 
         {openModalDays && form?.intervalPart === IntervalType.Week && (
-          <WeekSelector onClick={onChangeWeekDays} />
+          <WeekSelector onClick={onChangeDays} />
         )}
+        {openModalDays && form?.intervalPart === IntervalType.Month && (
+          <MonthSelector
+            onClick={onChangeDays}
+            onChangeMonthWeekDays={onChangeMonthWeekDays}
+          />
+        )}
+
         <div className={cls.Footer}>
           <div className={cls.ButtonBlock}>
             {openModalDays && (

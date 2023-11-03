@@ -3,35 +3,64 @@
 .DayTasksListForm{
     display: flex;
     flex-direction: column;
+    position: relative;
+    flex-grow: 1;
+    justify-content: stretch;
+    max-height: (100%);
 
     .Loader{
-        
+        position: absolute;
     }
 
     .List{
         display: flex;
         flex-direction: column;
+        margin-top: 10px;
+        flex-grow: 1;
+        align-items: stretch;
+        overflow-y: auto;
+        max-height: (100%);
 
         .DayTasksListItem{
             display: flex;
             flex-direction: row;
+            align-items: center;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            min-height: 40px;
 
-            .Icon{
+            .DayTasksListCheckBox{
                 display: flex;
-                justify-content: center;
+
+            }
+            .DayTasksListItemData{
+                display: flex;
+                flex-direction: row;
                 align-items: center;
+                flex-grow: 1;
+                background-color: var(--input-bg);
+                padding: 10px;
+                border-radius: 5px;
+
+                .DayTasksListItemText{
+                    display: flex;
+                    flex-grow: 1;
+                }
+                .Icon{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+        }
+        .DayTasksListItemChecked{
+            .DayTasksListItemData{
+                background-color: var(--light-bg-color);
             }
         }
     }
 
-    .ButtonBlock{
-        display: flex;
-        .Button{
-            display: flex;
-            background-color: var(--primary);
-            color: var(--white-text);
-        }
-    }
+    
 
     
 }

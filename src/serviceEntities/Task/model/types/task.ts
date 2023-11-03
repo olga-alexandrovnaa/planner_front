@@ -1,19 +1,19 @@
 export enum IntervalType {
-  Day,
-  Week,
-  Month,
-  Year,
+  Day = 'Day',
+  Week = 'Week',
+  Month = 'Month',
+  Year = 'Year',
 }
 
 export enum WeekNumber {
-  first,
-  second,
-  third,
-  last,
+  first = 'first',
+  second = 'second',
+  third = 'third',
+  last = 'last',
 }
 export enum MoveTypeIfDayNotExists {
-  nextIntervalFirstDay,
-  currentIntervalLastDay,
+  nextIntervalFirstDay = 'nextIntervalFirstDay',
+  currentIntervalLastDay = 'currentIntervalLastDay',
 }
 
 export type Ingredient = {

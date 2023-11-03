@@ -19,6 +19,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   getRouteCalendar,
   getRouteMain,
+  getRouteTask,
 } from "@/sharedComponents/config/routeConfig/routeConfig";
 import { WeekDay } from "../model/types/weekSchema";
 import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
@@ -31,6 +32,7 @@ import { getAllHolidays } from "@/sharedComponents/lib/helpers/holidays/getAllHo
 import { UserAuthDataForm } from "@/serviceEntities/User";
 import { DayTasksListForm } from "@/programFeatures/DayTasksList";
 import { tasksType } from "@/serviceEntities/Task";
+import { Button } from "@/sharedComponents/ui/Button";
 
 export interface WeekFormProps {
   className?: string;
@@ -143,6 +145,16 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
     }
   }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart]);
 
+
+  const onCreate = useCallback(() => {
+    const params: OptionalRecord<string, string> = {
+      date: selectedDay.toISOString(),
+      isFood: '0', //tasksType.all === tasksType.food ? "1" : "0",
+    };
+
+    navigate(getRouteTask("new"), params);
+  }, [selectedDay, navigate]);
+
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
       <div
@@ -191,6 +203,12 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
 
         <div className={cls.Content}>
           <DayTasksListForm date={selectedDay} type={tasksType.all} />
+        </div>
+
+        <div className={cls.ButtonBlock}>
+            <Button className={cls.Button} onClick={onCreate}>
+              Создать
+            </Button>
         </div>
 
         <div className={cls.Footer}>{/* Здесь будут кнопки */}</div>

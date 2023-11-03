@@ -67,7 +67,11 @@ const Input = forwardRef<HTMLInputElement, Props>(
     forwardedRef
   ) => {
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(e.target.value);
+      if (type === "number") {
+        onChange?.(Number(e.target.value));
+      } else {
+        onChange?.(e.target.value);
+      }
     };
 
     const onChangeTextAreaHandler = (

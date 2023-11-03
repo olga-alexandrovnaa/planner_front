@@ -8,9 +8,18 @@ import {
 import { ReactComponent as Left } from "@/sharedComponents/assets/icons/left-arrow.svg";
 import { ReactComponent as Right } from "@/sharedComponents/assets/icons/right-arrow.svg";
 import { classNames } from "@/sharedComponents/lib/classNames/classNames";
+import { MoveTypeIfDayNotExists } from "../model/types/task";
 
 export interface Props {
-  onClick: (intervalIndex: number, dayNumber: number) => void;
+  onClick: ({
+    intervalIndex,
+    dayNumber,
+    moveTypeIfDayNotExists,
+  }: {
+    intervalIndex: number;
+    dayNumber: number;
+    moveTypeIfDayNotExists: MoveTypeIfDayNotExists | null;
+  }) => void;
 }
 
 const weekDayNames = [
@@ -53,21 +62,24 @@ const WeekSelector = memo((props: Props) => {
   const { onClick } = props;
 
   const days = useSelector(getTaskFormRepeatDaysForChanging);
+  const length = useSelector(getTaskFormIntervalLength);
 
   const [currentIndex, setCurrentIndex] = useState(1);
 
   const onChangeIndex = useCallback(
     (value: number) => {
-      setCurrentIndex(
-        value >= 1 && value <= days.length ? value : currentIndex
-      );
+      setCurrentIndex(value >= 1 && value <= length ? value : currentIndex);
     },
-    [currentIndex, days.length]
+    [currentIndex, length]
   );
 
   const onClickHandler = useCallback(
     (day: number) => {
-      onClick(currentIndex, day);
+      onClick({
+        intervalIndex: currentIndex,
+        dayNumber: day,
+        moveTypeIfDayNotExists: null,
+      });
     },
     [currentIndex, onClick]
   );
@@ -116,11 +128,11 @@ const WeekSelector = memo((props: Props) => {
         <div className={cls.DatesHeaderLeft}></div>
         <div className={cls.DatesHeaderCenter}>
           <div className={cls.Icon} onClick={onSwipeLeft}>
-            <Left />
+            {length > 1 && <Left />}
           </div>
           <div className={cls.Month}>Неделя&nbsp;№{currentIndex}</div>
           <div className={cls.Icon} onClick={onSwipeRight}>
-            <Right />
+            {length > 1 && <Right />}
           </div>
         </div>
         <div className={cls.DatesHeaderRight}></div>

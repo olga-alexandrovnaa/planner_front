@@ -12,6 +12,7 @@ export const update = createAsyncThunk<
     const { rejectWithValue, getState } = thunkApi;
 
     const data = getUpdateTaskDtoForService(getState());
+    console.log(data)
 
     if (!Object.entries(data.dto).length) return null;
 

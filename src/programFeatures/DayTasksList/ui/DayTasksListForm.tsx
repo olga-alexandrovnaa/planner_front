@@ -1,12 +1,10 @@
 import { useSelector } from "react-redux";
-import { memo, useCallback, useState, useEffect } from "react";
+import { memo, useCallback, useEffect } from "react";
 import cls from "./DayTasksListForm.module.scss";
 import {
   getDayTasksList,
   getDayTasksError,
   getDayTasksIsLoading,
-  getDayTasksDate,
-  getDayTasksType,
 } from "../model/selectors/selectors";
 import { useAppDispatch } from "@/sharedComponents/lib/hooks/useAppDispatch/useAppDispatch";
 import {
@@ -22,9 +20,8 @@ import { tasksType } from "@/serviceEntities/Task";
 import { fetchList } from "../model/services/fetchList";
 import { useNavigate } from "react-router-dom";
 import { getRouteTask } from "@/sharedComponents/config/routeConfig/routeConfig";
-import { deleteTask } from "../model/services/deleteTask";
+import { deleteTask } from "../model/services/deleteTaskInDate";
 import DayTasksListItem from "./DayTasksListItem";
-import { Button } from "@/sharedComponents/ui/Button";
 import { removeTaskCheck } from "../model/services/removeTaskCheck";
 import { setTaskCheck } from "../model/services/setTaskCheck";
 import { Loader } from "@/sharedComponents/ui/Loader";
@@ -46,28 +43,26 @@ const DayTasksListForm = memo(
     const navigate = useNavigate();
 
     const list = useSelector(getDayTasksList);
-    const currentDate = useSelector(getDayTasksDate);
-    const currentType = useSelector(getDayTasksType);
     const isLoading = useSelector(getDayTasksIsLoading);
     const error = useSelector(getDayTasksError);
 
     const onTaskClick = useCallback(
       (id: number) => {
         const params: OptionalRecord<string, string> = {
-          date: currentDate.toISOString(),
-          isFood: currentType === tasksType.food ? "1" : "0",
+          date: date.toISOString(),
+          isFood: type === tasksType.food ? "1" : "0",
         };
 
         navigate(getRouteTask(String(id), params));
       },
-      [currentDate, currentType, navigate]
+      [date, type, navigate]
     );
 
     const onTaskDelete = useCallback(
       (id: number) => {
-        dispatch(deleteTask(id));
+        dispatch(deleteTask({ id, date }));
       },
-      [dispatch]
+      [date, dispatch]
     );
 
     const onCheckChange = useCallback(
@@ -81,25 +76,9 @@ const DayTasksListForm = memo(
       [dispatch]
     );
 
-    const onCreate = useCallback(() => {
-      const params: OptionalRecord<string, string> = {
-        date: currentDate.toISOString(),
-        isFood: currentType === tasksType.food ? "1" : "0",
-      };
-
-      navigate(getRouteTask("new"), params);
-    }, [currentDate, currentType, navigate]);
-
     useEffect(() => {
-      dispatch(dayTasksListActions.setDate(date));
-      dispatch(dayTasksListActions.setType(type));
+      if (!isLoading && date) dispatch(fetchList({ date, type }));
     }, [date, dispatch, type]);
-
-    useEffect(() => {
-      if (!isLoading) dispatch(fetchList());
-    }, [currentDate, dispatch, currentType]);
-
-    console.log(list);
 
     return (
       <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
@@ -118,15 +97,11 @@ const DayTasksListForm = memo(
                   onClick={onTaskClick}
                   onDelete={onTaskDelete}
                   onCheckChange={onCheckChange}
+                  key={item.id}
                 />
               ))}
           </div>
 
-          <div className={cls.ButtonBlock}>
-            <Button className={cls.Button} onClick={onCreate}>
-              Создать
-            </Button>
-          </div>
         </div>
       </DynamicModuleLoader>
     );

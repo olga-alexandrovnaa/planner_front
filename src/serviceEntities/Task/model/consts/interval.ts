@@ -1,13 +1,114 @@
 import { GroupBase, OptionsOrGroups } from "react-select";
 import { IntervalType } from "../..";
+import { MoveTypeIfDayNotExists, WeekNumber } from "../types/task";
 
-export const intervalTypeOptions: OptionsOrGroups<any, GroupBase<any>> = [
+export const moveTypeIfDayNotExistsText: Record<MoveTypeIfDayNotExists, string> = {
+  [MoveTypeIfDayNotExists.currentIntervalLastDay]: 'На конец текущего месяца',
+  [MoveTypeIfDayNotExists.nextIntervalFirstDay]: 'На начало следующего месяца'
+}
+
+
+export const moveTypeIfDayNotExistsOptions = [
+  { label: moveTypeIfDayNotExistsText[MoveTypeIfDayNotExists.currentIntervalLastDay], value: MoveTypeIfDayNotExists.currentIntervalLastDay },
+  { label: moveTypeIfDayNotExistsText[MoveTypeIfDayNotExists.nextIntervalFirstDay], value: MoveTypeIfDayNotExists.nextIntervalFirstDay },
+];
+
+export const WeekNumberName = (
+  number: WeekNumber,
+  week: number
+): string => {
+  const numberType =
+    week === 6 ? 3 : [0, 1, 3].includes(week) ? 1 : 2;
+
+  let res = "";
+
+  switch (number) {
+    case WeekNumber.first:
+      switch (numberType) {
+        case 3:
+          res = "Первое";
+          break;
+        case 2:
+          res = "Первая";
+          break;
+        case 1:
+          res = "Первый";
+          break;
+        default:
+          break;
+      }
+      break;
+    case WeekNumber.second:
+      switch (numberType) {
+        case 3:
+          res = "Второе";
+          break;
+        case 2:
+          res = "Вторая";
+          break;
+        case 1:
+          res = "Второй";
+          break;
+        default:
+          break;
+      }
+      break;
+    case WeekNumber.third:
+      switch (numberType) {
+        case 3:
+          res = "Третье";
+          break;
+        case 2:
+          res = "Третья";
+          break;
+        case 1:
+          res = "Третий";
+          break;
+        default:
+          break;
+      }
+      break;
+    case WeekNumber.last:
+      switch (numberType) {
+        case 3:
+          res = "Последнее";
+          break;
+        case 2:
+          res = "Последняя";
+          break;
+        case 1:
+          res = "Последний";
+          break;
+        default:
+          break;
+      }
+      break;
+    default:
+      res = "";
+      break;
+  }
+
+  return res;
+};
+
+export const weekNumberOptions = (length: number): OptionsOrGroups<any, GroupBase<any>> => [
   {
     options: [
-      { label: "день", value: IntervalType.Day },
-      { label: "неделя", value: IntervalType.Week },
-      { label: "месяц", value: IntervalType.Month },
-      { label: "год", value: IntervalType.Year },
+      { label: WeekNumberName(WeekNumber.first, length), value: WeekNumber.first },
+      { label: WeekNumberName(WeekNumber.second, length), value: WeekNumber.second },
+      { label: WeekNumberName(WeekNumber.third, length), value: WeekNumber.third },
+      { label: WeekNumberName(WeekNumber.last, length), value: WeekNumber.last },
+    ],
+  },
+];
+
+export const intervalTypeOptions = (length: number): OptionsOrGroups<any, GroupBase<any>> => [
+  {
+    options: [
+      { label: intervalTypeName(IntervalType.Day, length), value: IntervalType.Day },
+      { label: intervalTypeName(IntervalType.Week, length), value: IntervalType.Week },
+      { label: intervalTypeName(IntervalType.Month, length), value: IntervalType.Month },
+      { label: intervalTypeName(IntervalType.Year, length), value: IntervalType.Year },
     ],
   },
 ];

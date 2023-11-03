@@ -9,23 +9,22 @@
 }
 
 .checkbox {
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     margin-right: 10px;
     border-radius: 50%;
-    border: 1px solid var(--primary);
+    border: 2px solid var(--btn-active);
     box-sizing: border-box;
     cursor: pointer;
     flex-shrink: 0;
 }
 
 .checkboxChecked {
-    background: var(--primary);
-    background-image: url("@/sharedComponents/assets/icons/circle-svgrepo-com.svg");
+    border: 2px solid var(--btn-active);
+    background-image: url("@/sharedComponents/assets/icons/checkbox-mark-svgrepo-com.png");
     background-repeat: no-repeat;
-    background-size: 24px 24px;
+    background-size: 14px 14px;
     background-position: 50% 50%;
-    border: none;
 }
 
 .label {

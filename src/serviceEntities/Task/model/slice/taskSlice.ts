@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IntervalType, TaskExt, TaskSchema } from "../types/task";
+import { IntervalType, MoveTypeIfDayNotExists, TaskExt, TaskSchema, WeekNumber } from "../types/task";
 import { fetchTask } from "../services/fetch";
 import { create } from "../services/create";
 import { update } from "../services/update";
@@ -66,75 +66,44 @@ const taskSlice = createSlice({
     onChangeIntervalLength: (state, action: PayloadAction<number>) => {
       state.form.intervalLength = action.payload;
 
-      if (action.payload === IntervalType.Year) {
+      if (state.form.intervalPart === IntervalType.Year) {
         if (state.form.repeatIfYearIntervalDays.length > action.payload) {
           state.form.repeatIfYearIntervalDays = state.form.repeatIfYearIntervalDays
             .filter((e) => e.intervalPartIndex <= action.payload)
-        } else {
-          for (let index = state.form.repeatIfYearIntervalDays.length + 1; index <= action.payload; index++) {
-            state.form.repeatIfYearIntervalDays.push({
-              id: 0,
-              intervalPartIndex: index,
-              trackerId: state.form.id,
-              yearDateDay: index === 1 ? (new Date(state.form.date)).getDate() : null,
-              yearDateMonth: index === 1 ? (new Date(state.form.date)).getMonth() : null,
-            })
-          }
         }
 
-      } else if (action.payload !== IntervalType.Day) {
+      } else if (state.form.intervalPart !== IntervalType.Day) {
         if (state.form.repeatDays.length > action.payload) {
           state.form.repeatDays = state.form.repeatDays
             .filter((e) => e.intervalPartIndex <= action.payload)
-        } else {
-          for (let index = state.form.repeatIfYearIntervalDays.length + 1; index <= action.payload; index++) {
-            state.form.repeatDays.push({
-              id: 0,
-              intervalPartIndex: index,
-              trackerId: state.form.id,
-              weekDayNumber: null,
-              weekNumber: null,
-              moveTypeIfDayNotExists: null,
-              dayFromBeginningInterval: index === 1 ? action.payload === IntervalType.Month
-                ? (new Date(state.form.date)).getDate()
-                : getWeekDayNumber(new Date(state.form.date)) : null
-            })
-          }
         }
       }
-
-
     },
     onChangeIntervalPart: (state, action: PayloadAction<IntervalType>) => {
       state.form.intervalPart = action.payload;
       state.form.repeatDays = [];
       state.form.repeatIfYearIntervalDays = [];
 
-
       if (action.payload === IntervalType.Year) {
-        for (let index = 1; index <= state.form.intervalLength; index++) {
-          state.form.repeatIfYearIntervalDays.push({
-            id: 0,
-            intervalPartIndex: index,
-            trackerId: state.form.id,
-            yearDateDay: index === 1 ? (new Date(state.form.date)).getDate() : null,
-            yearDateMonth: index === 1 ? (new Date(state.form.date)).getMonth() : null,
-          })
-        }
+        state.form.repeatIfYearIntervalDays.push({
+          id: 0,
+          intervalPartIndex: 1,
+          trackerId: state.form.id,
+          yearDateDay: (new Date(state.form.date)).getDate(),
+          yearDateMonth: (new Date(state.form.date)).getMonth(),
+        })
       } else if (action.payload !== IntervalType.Day) {
-        for (let index = 1; index <= state.form.intervalLength; index++) {
-          state.form.repeatDays.push({
-            id: 0,
-            intervalPartIndex: index,
-            trackerId: state.form.id,
-            weekDayNumber: null,
-            weekNumber: null,
-            moveTypeIfDayNotExists: null,
-            dayFromBeginningInterval: index === 1 ? action.payload === IntervalType.Month
-              ? (new Date(state.form.date)).getDate()
-              : getWeekDayNumber(new Date(state.form.date)) : null
-          })
-        }
+        state.form.repeatDays.push({
+          id: 0,
+          intervalPartIndex: 1,
+          trackerId: state.form.id,
+          weekDayNumber: null,
+          weekNumber: null,
+          moveTypeIfDayNotExists: null,
+          dayFromBeginningInterval: action.payload === IntervalType.Month
+            ? (new Date(state.form.date)).getDate()
+            : getWeekDayNumber(new Date(state.form.date))
+        })
       }
     },
     onChangeRepeatCount: (state, action: PayloadAction<number | undefined>) => {
@@ -172,7 +141,7 @@ const taskSlice = createSlice({
       state.formRepeatIfYearIntervalDays = JSON.parse(JSON.stringify(state.form.repeatIfYearIntervalDays));
     },
 
-    onChangeWeekDays: (state, action: PayloadAction<{ intervalIndex: number, dayNumber: number }>) => {
+    onChangeDays: (state, action: PayloadAction<{ intervalIndex: number, dayNumber: number, moveTypeIfDayNotExists: MoveTypeIfDayNotExists | null }>) => {
       const arr = state.formRepeatDays
         .filter((e) => e.intervalPartIndex === action.payload.intervalIndex)
         .map(e => e.dayFromBeginningInterval);
@@ -189,13 +158,68 @@ const taskSlice = createSlice({
             trackerId: state.form.id,
             dayFromBeginningInterval: action.payload.dayNumber,
             intervalPartIndex: action.payload.intervalIndex,
-            moveTypeIfDayNotExists: null,
+            moveTypeIfDayNotExists: action.payload.moveTypeIfDayNotExists,
             weekDayNumber: null,
             weekNumber: null,
           },
         ];
       }
     },
+    onChangeMonthWeekDays: (state, action: PayloadAction<{
+      intervalIndex: number,
+      weekDayNumber: number,
+      weekNumber: WeekNumber,
+      moveTypeIfDayNotExists: MoveTypeIfDayNotExists | null,
+      isDelete: boolean
+    }>) => {
+      if (action.payload.isDelete) {
+        state.formRepeatDays = state.formRepeatDays
+          .filter((e) => !(e.intervalPartIndex === action.payload.intervalIndex
+            && e.weekNumber === action.payload.weekNumber
+            && e.weekDayNumber === action.payload.weekDayNumber
+          ))
+      } else {
+        state.formRepeatDays = [
+          ...state.formRepeatDays,
+          {
+            id: 0,
+            trackerId: state.form.id,
+            dayFromBeginningInterval: null,
+            intervalPartIndex: action.payload.intervalIndex,
+            moveTypeIfDayNotExists: action.payload.moveTypeIfDayNotExists,
+            weekDayNumber: action.payload.weekDayNumber,
+            weekNumber: action.payload.weekNumber,
+          },
+        ];
+      }
+    },
+    onChangeYearDays: (state, action: PayloadAction<{
+      intervalIndex: number,
+      dayNumber: number,
+      monthNumber: number,
+      moveTypeIfDayNotExists: MoveTypeIfDayNotExists | null,
+      isDelete: boolean
+    }>) => {
+      if (action.payload.isDelete) {
+        state.formRepeatIfYearIntervalDays = state.formRepeatIfYearIntervalDays
+          .filter((e) => !(e.intervalPartIndex === action.payload.intervalIndex
+            && e.yearDateDay === action.payload.dayNumber && e.yearDateMonth === action.payload.monthNumber))
+      } else {
+        state.formRepeatIfYearIntervalDays = [
+          ...state.formRepeatIfYearIntervalDays,
+          {
+            id: 0,
+            trackerId: state.form.id,
+            intervalPartIndex: action.payload.intervalIndex,
+            moveTypeIfDayNotExists: action.payload.moveTypeIfDayNotExists,
+            yearDateDay: action.payload.dayNumber,
+            yearDateMonth: action.payload.monthNumber,
+          },
+        ];
+      }
+    },
+
+
 
     onSaveDays: (state) => {
       state.form.repeatDays = JSON.parse(JSON.stringify(state.formRepeatDays));

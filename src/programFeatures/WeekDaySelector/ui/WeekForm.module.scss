@@ -169,6 +169,23 @@
         }
     }
 
+    .ButtonBlock{
+        display: flex;
+       
+        padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);
+        height: 50px;
+        .Button{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: var(--white-text);
+            width: 100%;
+            height: 50px;
+            font-size: var(--fontSize);
+        }
+    }
+
     .Footer{
 
         padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);

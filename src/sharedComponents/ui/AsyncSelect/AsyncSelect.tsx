@@ -119,6 +119,7 @@ export const CustomSelect: AsyncCreatableSelect = (props) => {
       options={props.options}
       styles={selectCustomStyles}
       theme={selectCustomTheme}
+      placeholder=""
       {...props}
     />
   );
