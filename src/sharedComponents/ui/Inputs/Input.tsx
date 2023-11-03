@@ -139,7 +139,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
 
     if (type === "textarea") {
       input = (
-        <div className={styles.htmlInputBlock}>
+        <div className={styles.htmlInputBlockTextArea}>
           <textarea
             onChange={onChangeTextAreaHandler}
             className={classNames(styles.htmlInput, {
@@ -200,7 +200,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
 
           {clearable && !!value && (
             <div className={styles.clear} onClick={() => onChange(undefined)}>
-              <Clear width={12} height={12} />
+              <Clear width={10} height={10} />
             </div>
           )}
         </div>
@@ -248,6 +248,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
         <div
           className={classNames(styles.inputBlock, {
             [styles.inputBlockFile]: type === "file",
+            [styles.inputBlockTextArea]: type === "textarea",
           })}
         >
           {children ? children : input}

@@ -43,6 +43,7 @@ import {
 } from "../model/consts/interval";
 import { isArray, isObject } from "lodash";
 import MonthSelector from "./MonthSelector";
+import YearSelector from "./YearSelector";
 
 export interface TaskFormProps {
   className?: string;
@@ -370,7 +371,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                     className={cls.Input} //бессрочно или число
                     value={form?.repeatCount ?? undefined}
                     onChange={onChangeRepeatCount}
-                    buttonIcon={<Close className={cls.Icon} />}
+                    buttonIcon={<Close className={cls.SmallClearIcon}/>}
                     isWithEvent={true}
                     eventAction={() => onChangeRepeatCount(undefined)}
                     type="number"
@@ -491,6 +492,8 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
             onChangeMonthWeekDays={onChangeMonthWeekDays}
           />
         )}
+
+        {openModalYearDays && <YearSelector onChangeYearDays={onChangeYearDays} />}
 
         <div className={cls.Footer}>
           <div className={cls.ButtonBlock}>

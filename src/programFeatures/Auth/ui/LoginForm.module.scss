@@ -1,122 +1,128 @@
 @import "@/app/styles/mixins/adaptive.scss";
 
-.LoginForm{
+.LoginForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.WelcomeText {
+  font-weight: bolder;
+  text-align: center;
+  font-size: var(--fontSizeLarge);
+}
+
+.LoginWidget {
+  background-color: var(--bg-color);
+  border-radius: 30px;
+  padding: 0px 20px 20px 20px;
+  flex-grow: 1;
+
+  .Logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+
+  .Input {
+    display: flex;
+    flex-grow: 1;
+    font-size: var(--fontSize);
+    color: var(--primary-text);
+    margin: 10px 0 10px 0;
+  }
+
+  .LastInput {
+    margin-bottom: 0px;
+  }
+
+  .Error {
+    font-size: var(--fontSizeSmall);
+    color: var(--primary);
+  }
+
+  .AccountAlrearyExists {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    .AccountAlrearyExistsText {
+      font-size: var(--fontSizeSmall);
+      color: var(--primary-text);
+    }
+    .AccountAlrearyExistsLink {
+      font-size: var(--fontSizeSmall);
+      color: var(--primary);
+      // text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  .loader {
+    margin-top: 20px;
+    padding: 15px 20px 15px 20px;
+  }
+
+  .loginBtn {
+    margin-top: 20px;
+    background-color: var(--primary) !important;
+    color: var(--white-text) !important;
+    // padding: 10px 20px 10px 20px;
+    height: 50px;
+    font-size: var(--fontSize);
+    font-weight: bolder;
+    width: 100%;
+  }
+  .changeToRegistration {
+    margin-top: 20px;
+    background-color: var(--btn-active) !important;
+    color: var(--white-text) !important;
+    // padding: 20px 20px 20px 20px;
+    height: 50px;
+    font-size: var(--fontSize);
+    font-weight: bolder;
+    width: 100%;
+  }
+}
+
+.CantLoginWidget {
+  margin-top: 10px;
+  border-radius: 30px;
+  border: 1px solid var(--borderColor);
+  display: flex;
+  flex-direction: row;
+  padding: 50px;
+
+  .left {
     display: flex;
     flex-direction: column;
-
-}
-
-.WelcomeText{
-    font-weight: bolder;
-    text-align: center;
-    font-size: var(--fontSizeLarge);
-}
-
-.LoginWidget{
-    background-color: var(--bg-color);
-    border-radius: 30px;
-    padding: 0px 20px 20px 20px;
     flex-grow: 1;
-
-    .Logo {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 20px;
-        margin-bottom: 20px;
-        margin-left: -10px;
-        margin-right: -10px;
+    .header {
+      font-size: var(--fontSizeLarge);
     }
-
-    .LastInput {
-        margin-bottom: 0px;
+    .info {
+      margin-top: 15px;
+      font-size: var(--fontSizeSmall);
+      color: var(--light-text);
     }
-
-    .Error{
-        font-size: var(--fontSizeSmall);
-        color: var(--primary)
+    .phone {
+      margin-top: 5px;
+      font-size: var(--fontSizeLarge);
+      font-weight: bolder;
     }
-
-    .AccountAlrearyExists{
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-        .AccountAlrearyExistsText{
-            font-size: var(--fontSizeSmall);
-            color: var(--primary-text);
-        }
-        .AccountAlrearyExistsLink{
-            font-size: var(--fontSizeSmall);
-            color: var(--primary);
-            // text-decoration: underline;
-            cursor: pointer;
-        }
-    }
-
-    .loader{
-        margin-top: 20px;
-        padding: 15px 20px 15px 20px;
-    }
-
-    .loginBtn{
-        margin-top: 20px;
-        background-color: var(--primary) !important;;
-        color: var(--white-text) !important;
-        // padding: 10px 20px 10px 20px;
-        height: 50px;
-        font-size: var(--fontSize);
-        font-weight: bolder;
-        width: 100%;
-    }
-    .changeToRegistration{
-        margin-top: 20px;
-        background-color: var(--btn-active) !important;;
-        color: var(--white-text) !important;
-        // padding: 20px 20px 20px 20px;
-        height: 50px;
-        font-size: var(--fontSize);
-        font-weight: bolder;
-        width: 100%;
-    }
-}
-
-.CantLoginWidget{
-    margin-top: 10px;
-    border-radius: 30px;
-    border: 1px solid var(--borderColor);
+  }
+  .right {
+    border-radius: 10px;
+    background-color: var(--bg-color);
+    padding: 10px;
     display: flex;
-    flex-direction: row;
-    padding: 50px;
+    justify-content: center;
+    align-items: center;
 
-    .left{
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        .header{
-            font-size: var(--fontSizeLarge);
-        }
-        .info{
-            margin-top: 15px;
-            font-size: var(--fontSizeSmall);
-            color: var(--light-text)
-        }
-        .phone{
-            margin-top: 5px;
-            font-size: var(--fontSizeLarge);
-            font-weight: bolder;
-        }
+    path {
+      stroke: var(--primary-text);
     }
-    .right{
-        border-radius: 10px;
-        background-color: var(--bg-color);
-        padding: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        path {
-            stroke: var(--primary-text);
-        }
-    }
-    
+  }
 }

@@ -126,30 +126,33 @@ const LoginForm = memo(({ className, onSuccess }: LoginFormProps) => {
               placeholder="Имя"
               onChange={onChangeName}
               value={name}
-              rowStartIcon={<Profile width={25} />}
+              className={cls.Input}
+              rowStartIcon={<Profile width={25} height={25} />}
             />
           )}
           <Input
             placeholder="Имя пользователя"
             onChange={onChangeUserName}
             value={userName}
-            rowStartIcon={<Profile width={25} />}
+            className={cls.Input}
+            rowStartIcon={<Profile width={25} height={25} />}
           />
           <Input
             placeholder="Пароль"
             type="password"
             onChange={onChangePassword}
             value={password}
-            rowStartIcon={<Lock width={25} />}
+            className={cls.Input}
+            rowStartIcon={<Lock width={25} height={25} />}
           />
           {isRegistrationOpen && (
             <Input
-              className={cls.LastInput}
+              className={classNames(cls.Input, {}, [cls.LastInput])}
               placeholder="Подтвердите пароль"
               type="password"
               onChange={onChangePasswordConfirm}
               value={passwordConfirm}
-              rowStartIcon={<Lock width={25} />}
+              rowStartIcon={<Lock width={25} height={25} />}
             />
           )}
           {isRegistrationOpen &&
