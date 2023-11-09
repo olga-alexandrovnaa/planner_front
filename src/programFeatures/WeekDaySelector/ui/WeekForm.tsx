@@ -33,6 +33,7 @@ import { UserAuthDataForm } from "@/serviceEntities/User";
 import { DayTasksListForm } from "@/programFeatures/DayTasksList";
 import { tasksType } from "@/serviceEntities/Task";
 import { Button } from "@/sharedComponents/ui/Button";
+import { isoString } from "@/sharedComponents/lib/helpers/isoString";
 
 export interface WeekFormProps {
   className?: string;
@@ -148,7 +149,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
 
   const onCreate = useCallback(() => {
     const params: OptionalRecord<string, string> = {
-      date: selectedDay.toISOString(),
+      date: isoString(selectedDay),
       isFood: '0', //tasksType.all === tasksType.food ? "1" : "0",
     };
 

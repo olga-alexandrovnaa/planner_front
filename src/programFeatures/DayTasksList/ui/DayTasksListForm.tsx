@@ -25,6 +25,7 @@ import DayTasksListItem from "./DayTasksListItem";
 import { removeTaskCheck } from "../model/services/removeTaskCheck";
 import { setTaskCheck } from "../model/services/setTaskCheck";
 import { Loader } from "@/sharedComponents/ui/Loader";
+import { isoString } from "@/sharedComponents/lib/helpers/isoString";
 
 export interface DayTasksListFormProps {
   date: Date;
@@ -49,7 +50,7 @@ const DayTasksListForm = memo(
     const onTaskClick = useCallback(
       (id: number) => {
         const params: OptionalRecord<string, string> = {
-          date: date.toISOString(),
+          date: isoString(date),
           isFood: type === tasksType.food ? "1" : "0",
         };
 

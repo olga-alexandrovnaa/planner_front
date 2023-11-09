@@ -5,6 +5,7 @@ import { ListTask } from "../types/dayTasksListSchema";
 import { startOfDay } from "date-fns";
 import { isArray } from "lodash";
 import { tasksType } from "@/serviceEntities/Task";
+import { isoString } from "@/sharedComponents/lib/helpers/isoString";
 
 export const fetchList = createAsyncThunk<
   ListTask[],
@@ -14,7 +15,7 @@ export const fetchList = createAsyncThunk<
   const { rejectWithValue } = thunkApi;
 
   const params = new URLSearchParams({
-    date: startOfDay(data.date).toISOString(),
+    date: isoString(startOfDay(data.date)),
     type: String(data.type),
   });
 

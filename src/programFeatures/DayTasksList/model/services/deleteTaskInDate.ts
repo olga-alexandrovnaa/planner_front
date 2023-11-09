@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
 import $api from '@/sharedComponents/api/api';
 import { startOfDay } from 'date-fns';
+import { isoString } from '@/sharedComponents/lib/helpers/isoString';
 
 export const deleteTask = createAsyncThunk<
     { id: number, res: boolean },
@@ -11,7 +12,7 @@ export const deleteTask = createAsyncThunk<
     const { rejectWithValue } = thunkApi;
 
     const params = new URLSearchParams({
-        date: startOfDay(data.date).toISOString(),
+        date: isoString(startOfDay(data.date)),
     });
 
     try {

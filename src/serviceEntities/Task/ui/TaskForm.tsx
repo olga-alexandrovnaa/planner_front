@@ -44,6 +44,7 @@ import {
 import { isArray, isObject } from "lodash";
 import MonthSelector from "./MonthSelector";
 import YearSelector from "./YearSelector";
+import { isoString } from "@/sharedComponents/lib/helpers/isoString";
 
 export interface TaskFormProps {
   className?: string;
@@ -80,7 +81,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
         taskActions.setCreateMode({
           date: dateFromUrl
             ? dateFromUrl
-            : startOfDay(new Date()).toISOString(),
+            : isoString(startOfDay(new Date())),
           isFood: isFoodFromUrl === "1" ? true : false,
         })
       );
