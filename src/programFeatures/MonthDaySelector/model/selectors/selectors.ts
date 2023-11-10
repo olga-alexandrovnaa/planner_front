@@ -4,6 +4,7 @@ import { StateSchema } from "@/app/providers/StoreProvider";
 import { getMonthYearString } from "@/sharedComponents/lib/helpers/getMonthYearString";
 import {
   addDays,
+  endOfMonth,
   getDaysInMonth,
   getWeeksInMonth,
 } from "date-fns";
@@ -12,17 +13,34 @@ import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNumber";
 import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
 import { createSelector } from "@reduxjs/toolkit";
+import { isoString } from "@/sharedComponents/lib/helpers/isoString";
 
 export const getForm = (state: StateSchema) =>
-state.monthForm;
+  state.monthForm;
 export const getFormAndMonth = (state: StateSchema, month?: number) =>
-({monthForm: state.monthForm, month});
+  ({ monthForm: state.monthForm, month });
 export const getSelectedDay = (state: StateSchema) =>
   state.monthForm?.selectedDay;
 export const getShowedMonthNumber = (state: StateSchema) =>
   state.monthForm?.showedMonthNumber;
 export const getShowedYear = (state: StateSchema) =>
   state.monthForm?.showedYear;
+export const getCurrentSelectedTracker = (state: StateSchema) =>
+  state.monthForm?.currentSelectedTracker;
+export const getTrackerProgressInfo = (state: StateSchema) =>
+  state.monthForm?.trackerProgressInfo;
+export const getUserTrackers = (state: StateSchema) =>
+  state.monthForm?.userTrackers;
+
+export const getDtoForTrackerProgress = createSelector(getForm, (data) => {
+  if (!data || !data.currentSelectedTracker || !data.showedMonthNumber || !data.showedYear) return null;
+  return {
+    id: data.currentSelectedTracker.id,
+    dateStart: isoString(new Date(data.showedYear, data.showedMonthNumber, 1)),
+    dateEnd: isoString(endOfMonth(new Date(data.showedYear, data.showedMonthNumber, 1))),
+  }
+})
+
 export const getShowedMonthYearString = (state: StateSchema) => {
   if (!state.monthForm) return "";
   return getMonthYearString(
@@ -31,9 +49,9 @@ export const getShowedMonthYearString = (state: StateSchema) => {
 };
 
 export const getMonthDates = createSelector(getFormAndMonth, (data) => {
-  const {monthForm, month} = data;
+  const { monthForm, month } = data;
 
-  if(!monthForm) return []; 
+  if (!monthForm) return [];
 
   const showedMonthNumber = month !== undefined ? month : monthForm?.showedMonthNumber;
 
@@ -85,10 +103,10 @@ export const getMonthDates = createSelector(getFormAndMonth, (data) => {
         date: getDD_MM_YYYY(date),
         day: date.getDate(),
         isSelected:
-        getDD_MM_YYYY(date) === getDD_MM_YYYY(monthForm?.selectedDay),
+          getDD_MM_YYYY(date) === getDD_MM_YYYY(monthForm?.selectedDay),
         isCurrent: getDD_MM_YYYY(date) === getDD_MM_YYYY(new Date()),
-        isDayOff: [5,6].includes(getWeekDayNumber(date)),
-        holiday: monthForm.holidays.find((e)=>getDD_MM_YYYY(e.date) === getDD_MM_YYYY(date)),
+        isDayOff: [5, 6].includes(getWeekDayNumber(date)),
+        holiday: monthForm.holidays.find((e) => getDD_MM_YYYY(e.date) === getDD_MM_YYYY(date)),
       });
 
       //все дни выведены - заполнить пустыми днями
@@ -105,9 +123,9 @@ export const getMonthDates = createSelector(getFormAndMonth, (data) => {
       }
 
       isFirstWeekDay = false;
-        index = index + 1;
-        date = addDays(date, 1);
-        weekDay = getWeekDayNumber(date);
+      index = index + 1;
+      date = addDays(date, 1);
+      weekDay = getWeekDayNumber(date);
     }
 
     result.push(week);
@@ -134,14 +152,14 @@ export const getYearMonthDates = (state: StateSchema) => {
 
   const result: YearMonth[] = [];
   for (let index = 0; index < 12; index++) {
-    result.push({ 
+    result.push({
       monthIndex: index,
       name: months[index],
-      weeks: getMonthDates(state, index), 
+      weeks: getMonthDates(state, index),
       isSelected: index === state?.monthForm?.showedMonthNumber,
     })
   }
 
   return result;
-  
+
 };

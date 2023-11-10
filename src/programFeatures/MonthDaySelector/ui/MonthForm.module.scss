@@ -105,13 +105,27 @@
             
         }
 
+        .MonthNavbar{
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            margin-top: 5px;
+            justify-content: space-between;
+
+            .Selector {
+                display: flex;
+                background-color: var(--input-bg);
+                border: none;
+                flex-basis: 50%;
+            }
+            
+        }
         .TodayLink{
             color: var(--primary);
             display: flex;
             align-items: center;
             cursor: pointer;
-            align-self: flex-end;
-            margin-top: 3px;
+            // align-self: flex-end;
             width: min-content;
         }
 
@@ -174,6 +188,18 @@
                 .DayOffDate{
                     .WeekDayDate{
                         color: var(--red);
+                    }
+                }
+                .isPlanned{
+                    .WeekDayDate{
+                        color: var(--blue);
+                       border: 2px solid var(--green-bg-color) !important;
+                    }
+                }
+                .isChecked{
+                    .WeekDayDate{
+                        color: var(--blue);
+                        background-color: var(--green-bg-color) !important;
                     }
                 }
                 .CurrentDate{

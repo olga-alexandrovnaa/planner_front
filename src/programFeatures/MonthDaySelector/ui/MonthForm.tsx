@@ -13,13 +13,21 @@ import {
   getMonthDates,
   getYearMonthDates,
   getShowedYear,
+  getCurrentSelectedTracker,
+  getUserTrackers,
+  getTrackerProgressInfo,
 } from "../model/selectors/selectors";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   getRouteCalendar,
   getRouteMain,
 } from "@/sharedComponents/config/routeConfig/routeConfig";
-import { MonthDay, MonthWeek, YearMonth } from "../model/types/monthSchema";
+import {
+  MonthDay,
+  MonthWeek,
+  TaskShort,
+  YearMonth,
+} from "../model/types/monthSchema";
 import { DD_MM_YYYYtoDate } from "@/sharedComponents/lib/helpers/DD_MM_YYYYtoDate";
 import { ReactComponent as Left } from "@/sharedComponents/assets/icons/left-arrow.svg";
 import { ReactComponent as Right } from "@/sharedComponents/assets/icons/right-arrow.svg";
@@ -27,6 +35,9 @@ import { ReactComponent as Close } from "@/sharedComponents/assets/icons/close.s
 import { ReactComponent as Link } from "@/sharedComponents/assets/icons/link.svg";
 import { getAllHolidays } from "@/sharedComponents/lib/helpers/holidays/getAllHolidays";
 import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
+import { fetchTrackers } from "../model/services/fetchTrackers";
+import { fetchTrackerProgress } from "../model/services/fetchTrackerProgress";
+import { CustomSelect } from "@/sharedComponents/ui/AsyncSelect/AsyncSelect";
 
 export interface MonthFormProps {
   className?: string;
@@ -42,9 +53,13 @@ const MonthDayForm = memo(
   ({
     day,
     onClick,
+    isPlanned,
+    isChecked,
   }: {
     day: MonthDay | null;
     onClick?: (value: string) => void;
+    isPlanned?: boolean;
+    isChecked?: boolean;
   }) => {
     const onClickHandler = useCallback(() => {
       if (!day || !onClick) return;
@@ -57,9 +72,12 @@ const MonthDayForm = memo(
     return (
       <div
         className={classNames(cls.WeekDay, {
+          [cls.isPlanned]: isPlanned,
+          [cls.isChecked]: isChecked,
           [cls.SelectedWeekDay]: day.isSelected,
           [cls.CurrentDate]: day.isCurrent,
           [cls.DayOffDate]: day.isDayOff || !!day.holiday,
+          
         })}
         onClick={onClickHandler}
       >
@@ -77,6 +95,11 @@ const MonthWeekForm = memo(
     week: MonthWeek;
     onDayClick?: (value: string) => void;
   }) => {
+
+  const trackerProgressInfo = useSelector(getTrackerProgressInfo);
+
+  console.log(trackerProgressInfo, week)
+
     return (
       <div className={cls.Week}>
         <div className={cls.WeekNumber}>{week.weekNumber}</div>
@@ -113,7 +136,9 @@ const YearMonthForm = memo(
         <div className={cls.WeekDaysNames}>
           <div className={cls.WeekDayName}>#</div>
           {weekDayNames.map((name) => (
-            <div className={cls.WeekDayName} key={name}>{name}</div>
+            <div className={cls.WeekDayName} key={name}>
+              {name}
+            </div>
           ))}
         </div>
 
@@ -149,6 +174,40 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
   const showedYear = useSelector(getShowedYear);
   const monthDates = useSelector(getMonthDates);
   const yearMonthDates = useSelector(getYearMonthDates);
+
+  const currentSelectedTracker = useSelector(getCurrentSelectedTracker);
+  const userTrackers = useSelector(getUserTrackers);
+
+  const userTrackersOptions = useMemo(() => {
+    return userTrackers ? userTrackers.map((e) => ({
+      value: e.id,
+      label: e.name,
+      data: e,
+    })) : [];
+  }, [userTrackers]);
+
+  const currentSelectedTrackerValue = useMemo(() => {
+    return currentSelectedTracker ? {
+      value: currentSelectedTracker.id,
+      label: currentSelectedTracker.name,
+      data: currentSelectedTracker,
+    } : undefined;
+  }, [currentSelectedTracker]);
+
+  const setCurrentSelectedTracker = useCallback(
+    (value: { value: number; label: string; data: TaskShort }) => {
+      dispatch(monthActions.setCurrentSelectedTracker(value.data));
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    dispatch(fetchTrackers());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchTrackerProgress());
+  }, [dispatch, currentSelectedTracker]);
 
   useEffect(() => {
     if (showedYear) {
@@ -266,8 +325,17 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
             </div>
           </div>
 
-          <div className={cls.TodayLink} onClick={onSelectToday}>
-            <span>cегодня</span> &nbsp; <Link />
+          <div className={cls.MonthNavbar}>
+            <CustomSelect
+              className={cls.Selector}
+              value={currentSelectedTrackerValue}
+              onChange={setCurrentSelectedTracker}
+              options={userTrackersOptions}
+            />
+
+            <div className={cls.TodayLink} onClick={onSelectToday}>
+              <span>cегодня</span> &nbsp; <Link />
+            </div>
           </div>
 
           {!showYear && (
@@ -308,7 +376,11 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
             <div className={cls.Months}>
               <div className={cls.Margin}></div>
               {yearMonthDates.map((month) => (
-                <YearMonthForm month={month} onClick={onSelectMonth} key={month.monthIndex}/>
+                <YearMonthForm
+                  month={month}
+                  onClick={onSelectMonth}
+                  key={month.monthIndex}
+                />
               ))}
             </div>
           </div>

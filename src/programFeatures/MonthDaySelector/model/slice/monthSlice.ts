@@ -1,13 +1,18 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Holiday, MonthSchema } from "../types/monthSchema";
+import { Holiday, MonthSchema, TaskProgressItem, TaskShort } from "../types/monthSchema";
 import { getMonth, getYear } from 'date-fns'
+import { fetchTrackers } from "../services/fetchTrackers";
+import { fetchTrackerProgress } from "../services/fetchTrackerProgress";
 
 const initialState: MonthSchema = {
   selectedDay: new Date(),
   showedMonthNumber: getMonth(new Date()), //0-11
   showedYear: getYear(new Date()),
   holidays: [],
+  currentSelectedTracker: null,
+  trackerProgressInfo: [],
+  userTrackers: [],
 };
 
 const monthSlice = createSlice({
@@ -25,12 +30,16 @@ const monthSlice = createSlice({
     // setShowedYear: (state, action: PayloadAction<number>) => {
     //   state.showedYear = action.payload;
     // },
-    
+
     showNextYear: (state) => {
       state.showedYear = state.showedYear + 1;
     },
     showLastYear: (state) => {
       state.showedYear = state.showedYear - 1;
+    },
+
+    setCurrentSelectedTracker: (state, action: PayloadAction<TaskShort>) => {
+      state.currentSelectedTracker = action.payload;
     },
 
     showNextMonth: (state) => {
@@ -50,10 +59,28 @@ const monthSlice = createSlice({
       }
     },
     setHolidays: (state, action: PayloadAction<Holiday[]>) => {
-        state.holidays = action.payload;
-      }
-    },
+      state.holidays = action.payload;
+    }
   },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTrackers.pending, (state) => {
+        state.userTrackers = [];
+      })
+      .addCase(fetchTrackers.fulfilled, (state, action: PayloadAction<TaskShort[]>) => {
+        state.userTrackers = action.payload;
+      })
+
+      .addCase(fetchTrackerProgress.pending, (state) => {
+        state.trackerProgressInfo = [];
+      })
+      .addCase(fetchTrackerProgress.fulfilled, (state, action: PayloadAction<TaskProgressItem[]>) => {
+        state.trackerProgressInfo = action.payload;
+      })
+  },
+
+},
 );
 
 export const { actions: monthActions } = monthSlice;

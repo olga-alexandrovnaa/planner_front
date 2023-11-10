@@ -3,7 +3,23 @@ export interface MonthSchema {
   showedMonthNumber: number;
   showedYear: number;
   holidays: Holiday[];
+  userTrackers: TaskShort[];
+  currentSelectedTracker: TaskShort;
+  trackerProgressInfo: TaskProgressItem[];
 }
+
+export type TaskProgressItem = {
+  date: string;
+  planed: boolean;
+  checked: boolean;
+};
+
+export type TaskShort = {
+  id: number;
+  name: string;
+  isFood: boolean;
+  isMoney: boolean;
+};
 
 export type YearMonth = {
   monthIndex: number;
