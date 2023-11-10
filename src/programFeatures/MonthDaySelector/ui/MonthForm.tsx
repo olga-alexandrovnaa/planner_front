@@ -16,6 +16,9 @@ import {
   getCurrentSelectedTracker,
   getUserTrackers,
   getTrackerProgressInfo,
+  getMoneyInfo,
+  getRemainder,
+  getInvestment,
 } from "../model/selectors/selectors";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -38,6 +41,8 @@ import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 import { fetchTrackers } from "../model/services/fetchTrackers";
 import { fetchTrackerProgress } from "../model/services/fetchTrackerProgress";
 import { CustomSelect } from "@/sharedComponents/ui/AsyncSelect/AsyncSelect";
+import { fetchMonthWalletInfo } from "../model/services/fetchMonthWalletInfo";
+import { Input } from "@/sharedComponents/ui/Inputs/Input";
 
 export interface MonthFormProps {
   className?: string;
@@ -55,11 +60,17 @@ const MonthDayForm = memo(
     onClick,
     isPlanned,
     isChecked,
+    income,
+    outcome,
+    remainder,
   }: {
     day: MonthDay | null;
     onClick?: (value: string) => void;
     isPlanned?: boolean;
     isChecked?: boolean;
+    income?: number;
+    outcome?: number;
+    remainder?: number;
   }) => {
     const onClickHandler = useCallback(() => {
       if (!day || !onClick) return;
@@ -77,11 +88,14 @@ const MonthDayForm = memo(
           [cls.SelectedWeekDay]: day.isSelected,
           [cls.CurrentDate]: day.isCurrent,
           [cls.DayOffDate]: day.isDayOff || !!day.holiday,
-          
         })}
         onClick={onClickHandler}
       >
         <div className={cls.WeekDayDate}>{day.day}</div>
+
+        {!!income && <div className={cls.WeekDayIncome}>{income}</div>}
+        {!!outcome && <div className={cls.WeekDayOutcome}>{outcome}</div>}
+        {!!remainder && <div className={cls.WeekDayRemainder}>{remainder}</div>}
       </div>
     );
   }
@@ -89,22 +103,38 @@ const MonthDayForm = memo(
 
 const MonthWeekForm = memo(
   ({
+    isYear,
     week,
     onDayClick,
   }: {
+    isYear?: boolean;
     week: MonthWeek;
     onDayClick?: (value: string) => void;
   }) => {
+    const trackerProgressInfo = useSelector(getTrackerProgressInfo);
+    const trackerMoneyInfo = useSelector(getMoneyInfo);
 
-  const trackerProgressInfo = useSelector(getTrackerProgressInfo);
-
-  console.log(trackerProgressInfo, week)
+    console.log(trackerProgressInfo, trackerMoneyInfo, week);
+    const isPlanned = true;
+    const isChecked = true;
+    const income = 111220;
+    const outcome = 135220;
+    const remainder = 124330;
 
     return (
       <div className={cls.Week}>
         <div className={cls.WeekNumber}>{week.weekNumber}</div>
         {week.days.map((d, index) => (
-          <MonthDayForm day={d} onClick={onDayClick} key={index} />
+          <MonthDayForm
+            day={d}
+            onClick={onDayClick}
+            key={index}
+            isPlanned={isPlanned}
+            isChecked={isChecked}
+            income={!isYear && income}
+            outcome={!isYear && outcome}
+            remainder={!isYear && remainder}
+          />
         ))}
       </div>
     );
@@ -144,7 +174,7 @@ const YearMonthForm = memo(
 
         <div className={cls.Weeks}>
           {month.weeks.map((week) => (
-            <MonthWeekForm key={String(week.weekIndex)} week={week} />
+            <MonthWeekForm key={String(week.weekIndex)} week={week} isYear={true}/>
           ))}
         </div>
       </div>
@@ -153,6 +183,7 @@ const YearMonthForm = memo(
 );
 
 const MonthForm = memo(({ className }: MonthFormProps) => {
+  //получение данных
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -162,6 +193,7 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
     dispatch(monthActions.setSelectedDay(paramDate));
   }, [dispatch, paramDate]);
 
+  //даты
   const [showYear, setShowYear] = useState(false);
   const onChangeShowYear = useCallback(() => {
     setShowYear(true);
@@ -174,40 +206,6 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
   const showedYear = useSelector(getShowedYear);
   const monthDates = useSelector(getMonthDates);
   const yearMonthDates = useSelector(getYearMonthDates);
-
-  const currentSelectedTracker = useSelector(getCurrentSelectedTracker);
-  const userTrackers = useSelector(getUserTrackers);
-
-  const userTrackersOptions = useMemo(() => {
-    return userTrackers ? userTrackers.map((e) => ({
-      value: e.id,
-      label: e.name,
-      data: e,
-    })) : [];
-  }, [userTrackers]);
-
-  const currentSelectedTrackerValue = useMemo(() => {
-    return currentSelectedTracker ? {
-      value: currentSelectedTracker.id,
-      label: currentSelectedTracker.name,
-      data: currentSelectedTracker,
-    } : undefined;
-  }, [currentSelectedTracker]);
-
-  const setCurrentSelectedTracker = useCallback(
-    (value: { value: number; label: string; data: TaskShort }) => {
-      dispatch(monthActions.setCurrentSelectedTracker(value.data));
-    },
-    [dispatch]
-  );
-
-  useEffect(() => {
-    dispatch(fetchTrackers());
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchTrackerProgress());
-  }, [dispatch, currentSelectedTracker]);
 
   useEffect(() => {
     if (showedYear) {
@@ -277,6 +275,70 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
     }
   }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart]);
 
+  //трекер
+  const currentSelectedTracker = useSelector(getCurrentSelectedTracker);
+  const userTrackers = useSelector(getUserTrackers);
+
+  const userTrackersOptions = useMemo(() => {
+    return userTrackers
+      ? userTrackers.map((e) => ({
+          value: e.id,
+          label: e.name,
+          data: e,
+        }))
+      : [];
+  }, [userTrackers]);
+
+  const currentSelectedTrackerValue = useMemo(() => {
+    return currentSelectedTracker
+      ? {
+          value: currentSelectedTracker.id,
+          label: currentSelectedTracker.name,
+          data: currentSelectedTracker,
+        }
+      : undefined;
+  }, [currentSelectedTracker]);
+
+  const setCurrentSelectedTracker = useCallback(
+    (value: { value: number; label: string; data: TaskShort }) => {
+      dispatch(monthActions.setCurrentSelectedTracker(value.data));
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    dispatch(fetchTrackers());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchTrackerProgress());
+  }, [dispatch, currentSelectedTracker]);
+
+  //деньги
+  const trackerMoneyInfo = useSelector(getMoneyInfo);
+  const remainder = useSelector(getRemainder);
+  const investment = useSelector(getInvestment);
+
+  const setRemainder = useCallback(
+    async (value: number) => {
+      await dispatch(monthActions.setRemainder(value));
+      dispatch(fetchMonthWalletInfo());
+    },
+    [dispatch]
+  );
+
+  const setInvestment = useCallback(
+    async (value: number) => {
+      await dispatch(monthActions.setRemainder(value));
+      dispatch(fetchMonthWalletInfo());
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    dispatch(fetchMonthWalletInfo());
+  }, [dispatch, showedMonthYearString]);
+
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
       <div
@@ -333,8 +395,20 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
               options={userTrackersOptions}
             />
 
-            <div className={cls.TodayLink} onClick={onSelectToday}>
-              <span>cегодня</span> &nbsp; <Link />
+            <div className={cls.MonthNavbarRight}>
+              <div className={cls.MoneyDesc}>
+                <div className={cls.MoneyDescCircleGreen}></div>
+                <span>&nbsp;Доход</span>
+                &nbsp;&nbsp;
+                <div className={cls.MoneyDescCircleRed}></div>
+                <span>&nbsp;Расход</span>
+                &nbsp;&nbsp;
+                <div className={cls.MoneyDescCircleBlue}></div>
+                <span>&nbsp;Баланс</span>
+              </div>
+              <div className={cls.TodayLink} onClick={onSelectToday}>
+                <span>cегодня</span> &nbsp; <Link />
+              </div>
             </div>
           </div>
 
@@ -362,12 +436,48 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
                   />
                 ))}
               </div>
-            </div>
-            <div className={cls.Footer}>
-              <div className={cls.FooterContent}>
-                {/* Здесь будут кнопки */}
+
+              <div className={cls.MoneyInfoBlock}>
+                <div className={cls.MoneyInfoBlockLeft}>
+                  <div className={cls.InputBlock}>
+                    <div className={cls.Label}>На начало</div>
+                    <Input
+                      className={cls.Input}
+                      value={remainder ?? undefined}
+                      onChange={setRemainder}
+                      textAfterInput="₽"
+                      type="number"
+                    />
+                  </div>
+                  <div className={cls.InputBlock}>
+                    <div className={cls.Label}>Отложить</div>
+                    <Input
+                      className={cls.Input}
+                      value={investment ?? undefined}
+                      onChange={setInvestment}
+                      textAfterInput="₽"
+                      type="number"
+                    />
+                  </div>
+                </div>
+
+                <div className={cls.MoneyInfoBlockRight}>
+                  <div className={cls.MoneyInfoBlockLabel}>
+                    Остаток на конец месяца:
+                  </div>
+                  {!!trackerMoneyInfo && (
+                    <div className={cls.MoneyInfoBlockEndRemainder}>
+                      {trackerMoneyInfo.endRemainder} ₽
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
+            {/* <div className={cls.Footer}>
+              <div className={cls.FooterContent}>
+                
+              </div>
+            </div> */}
           </>
         )}
 

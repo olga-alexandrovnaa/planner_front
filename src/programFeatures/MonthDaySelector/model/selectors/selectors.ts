@@ -32,12 +32,36 @@ export const getTrackerProgressInfo = (state: StateSchema) =>
 export const getUserTrackers = (state: StateSchema) =>
   state.monthForm?.userTrackers;
 
+export const getRemainder = (state: StateSchema) =>
+  state.monthForm?.remainder;
+export const getInvestment = (state: StateSchema) =>
+  state.monthForm?.investment;
+export const getMoneyInfo = (state: StateSchema) =>
+  state.monthForm?.moneyInfo;
+
 export const getDtoForTrackerProgress = createSelector(getForm, (data) => {
   if (!data || !data.currentSelectedTracker || !data.showedMonthNumber || !data.showedYear) return null;
   return {
     id: data.currentSelectedTracker.id,
     dateStart: isoString(new Date(data.showedYear, data.showedMonthNumber, 1)),
     dateEnd: isoString(endOfMonth(new Date(data.showedYear, data.showedMonthNumber, 1))),
+  }
+})
+
+export const getDtoForMoneyInfo = createSelector(getForm, (data) => {
+  if (!data || !data.showedMonthNumber || !data.showedYear) return null;
+  return {
+    dateStart: isoString(new Date(data.showedYear, data.showedMonthNumber, 1)),
+    dateEnd: isoString(endOfMonth(new Date(data.showedYear, data.showedMonthNumber, 1))),
+  }
+})
+
+export const getDtoForUpdateMoneyInfo = createSelector(getForm, (data) => {
+  if (!data || !data.showedMonthNumber || !data.showedYear) return null;
+  return {
+    date: isoString(new Date(data.showedYear, data.showedMonthNumber, 1)),
+    remainder: data.remainder,
+    investment: data.investment,
   }
 })
 

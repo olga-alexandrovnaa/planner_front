@@ -118,18 +118,42 @@
                 border: none;
                 flex-basis: 50%;
             }
-            
-        }
-        .TodayLink{
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            // align-self: flex-end;
-            width: min-content;
-        }
 
-        
+            .MonthNavbarRight{
+                display: flex;
+                flex-direction: column;
+
+                .MoneyDesc{
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    font-size: var(--fontSizeSmaller);
+                    
+                    div{
+                        width: 5px;
+                        height: 5px;
+                        border-radius: 50%;
+                    }
+                    .MoneyDescCircleGreen{
+                        background-color: var(--green);
+                    }
+                    .MoneyDescCircleRed{
+                        background-color: var(--red);
+                    }
+                    .MoneyDescCircleBlue{
+                        background-color: var(--blue);
+                    }
+                }
+                .TodayLink{
+                    color: var(--primary);
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    align-self: flex-end;
+                    width: min-content;
+                } 
+            }
+        }
     }
 
     .Content{
@@ -139,6 +163,61 @@
         justify-content: stretch;
         overflow-y: auto;
 
+
+        .MoneyInfoBlock{
+            display: flex;
+            flex-direction: row;
+
+            .MoneyInfoBlockLeft{
+                display: flex;
+                flex-direction: column;
+                flex-basis: 50%;
+                margin-left: 10px;
+
+                .InputBlock{
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    margin-top: 5px;
+                    .Label{
+                        margin-right: 5px;
+                        min-width: 70px;
+                        line-height: 90%;
+                    }
+                    .Input{
+                        display: flex;
+                        flex-grow: 1;
+                        background-color: var(--input-bg);
+                        border: none;
+                    }
+                }
+            }
+            .MoneyInfoBlockRight{
+                display: flex;
+                flex-direction: column;
+                flex-basis: 50%;
+                background-color: var(--light-bg-color);
+                margin-top: 5px;
+                margin-left: 10px;
+                margin-right: 10px;
+                padding: 10px;
+                border-radius: 10px;
+
+                .MoneyInfoBlockLabel{
+                    font-weight: var(--fontWeightBold);
+                    display: flex;
+                    flex-grow: 1;
+                    text-align: center;
+                }
+                .MoneyInfoBlockEndRemainder{
+                    font-weight: var(--fontWeightBold);
+                    font-size: var(--fontSizeLarge);
+                    display: flex;
+                    flex-grow: 1;
+                    text-align: center;
+                }
+            }
+        }
 
         .Weeks{
             display: flex;
@@ -169,7 +248,7 @@
                     flex-direction: column;
                     align-items: center;
                     width: 2em;
-                    height: 4em;
+                    height: 4.5em;
                     // background-color: rgba(127, 255, 212, 0.201);
                     
 
@@ -181,7 +260,21 @@
                         width: 2em;
                         height: 2em;
                         border-radius: 2em  !important;
+                        margin-bottom: 5px;
                         // background-color: aquamarine;
+                    }
+
+                    .WeekDayIncome{
+                        color: var(--green);
+                        font-size: var(--fontSizeSmaller);
+                    }
+                    .WeekDayOutcome{
+                        color: var(--red);
+                        font-size: var(--fontSizeSmaller);
+                    }
+                    .WeekDayRemainder{
+                        color: var(--blue);
+                        font-size: var(--fontSizeSmaller);
                     }
         
                 }
@@ -192,13 +285,11 @@
                 }
                 .isPlanned{
                     .WeekDayDate{
-                        color: var(--blue);
-                       border: 2px solid var(--green-bg-color) !important;
+                       border: 1px solid var(--green) !important;
                     }
                 }
                 .isChecked{
                     .WeekDayDate{
-                        color: var(--blue);
                         background-color: var(--green-bg-color) !important;
                     }
                 }
@@ -218,6 +309,7 @@
             }
             
 
+            
         }
 
 

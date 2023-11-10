@@ -3,9 +3,27 @@ export interface MonthSchema {
   showedMonthNumber: number;
   showedYear: number;
   holidays: Holiday[];
+
+  remainder: number;
+  investment: number;
+  moneyInfo: MoneyInfo;
+
   userTrackers: TaskShort[];
   currentSelectedTracker: TaskShort;
   trackerProgressInfo: TaskProgressItem[];
+}
+export type MoneyInfoDaysItem = {
+  date: string;
+  income: number;
+  outcome: number;
+  remainder: number;
+}
+
+export type MoneyInfo = {
+  startRemainder: number;
+  investSum: number;
+  endRemainder: number;
+  days: MoneyInfoDaysItem[];
 }
 
 export type TaskProgressItem = {

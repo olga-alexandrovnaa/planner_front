@@ -1,9 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Holiday, MonthSchema, TaskProgressItem, TaskShort } from "../types/monthSchema";
+import { Holiday, MoneyInfo, MonthSchema, TaskProgressItem, TaskShort } from "../types/monthSchema";
 import { getMonth, getYear } from 'date-fns'
 import { fetchTrackers } from "../services/fetchTrackers";
 import { fetchTrackerProgress } from "../services/fetchTrackerProgress";
+import { fetchMonthWalletInfo } from "../services/fetchMonthWalletInfo";
+import { editMonthMoneyInfo } from "../services/editMonthMoneyInfo";
 
 const initialState: MonthSchema = {
   selectedDay: new Date(),
@@ -13,8 +15,10 @@ const initialState: MonthSchema = {
   currentSelectedTracker: null,
   trackerProgressInfo: [],
   userTrackers: [],
+  investment: 0,
+  remainder: 0,
+  moneyInfo: null,
 };
-
 const monthSlice = createSlice({
   name: "month",
   initialState,
@@ -27,9 +31,6 @@ const monthSlice = createSlice({
     setShowedMonthNumber: (state, action: PayloadAction<number>) => {
       state.showedMonthNumber = action.payload;
     },
-    // setShowedYear: (state, action: PayloadAction<number>) => {
-    //   state.showedYear = action.payload;
-    // },
 
     showNextYear: (state) => {
       state.showedYear = state.showedYear + 1;
@@ -38,9 +39,6 @@ const monthSlice = createSlice({
       state.showedYear = state.showedYear - 1;
     },
 
-    setCurrentSelectedTracker: (state, action: PayloadAction<TaskShort>) => {
-      state.currentSelectedTracker = action.payload;
-    },
 
     showNextMonth: (state) => {
       if (state.showedMonthNumber === 11) {
@@ -60,7 +58,19 @@ const monthSlice = createSlice({
     },
     setHolidays: (state, action: PayloadAction<Holiday[]>) => {
       state.holidays = action.payload;
-    }
+    },
+
+
+    setCurrentSelectedTracker: (state, action: PayloadAction<TaskShort>) => {
+      state.currentSelectedTracker = action.payload;
+    },
+    setRemainder: (state, action: PayloadAction<number>) => {
+      state.remainder = action.payload;
+    },
+    setInvestment: (state, action: PayloadAction<number>) => {
+      state.investment = action.payload;
+    },
+
   },
 
   extraReducers: (builder) => {
@@ -78,6 +88,14 @@ const monthSlice = createSlice({
       .addCase(fetchTrackerProgress.fulfilled, (state, action: PayloadAction<TaskProgressItem[]>) => {
         state.trackerProgressInfo = action.payload;
       })
+
+      .addCase(fetchMonthWalletInfo.pending, (state) => {
+        state.moneyInfo = null;
+      })
+      .addCase(fetchMonthWalletInfo.fulfilled, (state, action: PayloadAction<MoneyInfo>) => {
+        state.moneyInfo = action.payload;
+      })
+
   },
 
 },
