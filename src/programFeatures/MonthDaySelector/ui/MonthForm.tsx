@@ -43,6 +43,7 @@ import { fetchTrackerProgress } from "../model/services/fetchTrackerProgress";
 import { CustomSelect } from "@/sharedComponents/ui/AsyncSelect/AsyncSelect";
 import { fetchMonthWalletInfo } from "../model/services/fetchMonthWalletInfo";
 import { Input } from "@/sharedComponents/ui/Inputs/Input";
+import { editMonthMoneyInfo } from "../model/services/editMonthMoneyInfo";
 
 export interface MonthFormProps {
   className?: string;
@@ -114,13 +115,6 @@ const MonthWeekForm = memo(
     const trackerProgressInfo = useSelector(getTrackerProgressInfo);
     const trackerMoneyInfo = useSelector(getMoneyInfo);
 
-    console.log(trackerProgressInfo, trackerMoneyInfo, week);
-    const isPlanned = true;
-    const isChecked = true;
-    const income = 111220;
-    const outcome = 135220;
-    const remainder = 124330;
-
     return (
       <div className={cls.Week}>
         <div className={cls.WeekNumber}>{week.weekNumber}</div>
@@ -129,11 +123,37 @@ const MonthWeekForm = memo(
             day={d}
             onClick={onDayClick}
             key={index}
-            isPlanned={isPlanned}
-            isChecked={isChecked}
-            income={!isYear && income}
-            outcome={!isYear && outcome}
-            remainder={!isYear && remainder}
+            isPlanned={
+              trackerProgressInfo?.find(
+                (e) => getDD_MM_YYYY(new Date(e.date)) === d?.date
+              )?.planed ?? false
+            }
+            isChecked={
+              trackerProgressInfo?.find(
+                (e) => getDD_MM_YYYY(new Date(e.date)) === d?.date
+              )?.checked ?? false
+            }
+            income={
+              (!isYear &&
+                trackerMoneyInfo?.days.find(
+                  (e) => getDD_MM_YYYY(new Date(e.date)) === d?.date
+                )?.income) ??
+              0
+            }
+            outcome={
+              (!isYear &&
+                trackerMoneyInfo?.days.find(
+                  (e) => getDD_MM_YYYY(new Date(e.date)) === d?.date
+                )?.outcome) ??
+              0
+            }
+            remainder={
+              (!isYear &&
+                trackerMoneyInfo?.days.find(
+                  (e) => getDD_MM_YYYY(new Date(e.date)) === d?.date
+                )?.remainder) ??
+              0
+            }
           />
         ))}
       </div>
@@ -174,7 +194,11 @@ const YearMonthForm = memo(
 
         <div className={cls.Weeks}>
           {month.weeks.map((week) => (
-            <MonthWeekForm key={String(week.weekIndex)} week={week} isYear={true}/>
+            <MonthWeekForm
+              key={String(week.weekIndex)}
+              week={week}
+              isYear={true}
+            />
           ))}
         </div>
       </div>
@@ -322,6 +346,7 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
   const setRemainder = useCallback(
     async (value: number) => {
       await dispatch(monthActions.setRemainder(value));
+      await dispatch(editMonthMoneyInfo());
       dispatch(fetchMonthWalletInfo());
     },
     [dispatch]
@@ -329,7 +354,8 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
 
   const setInvestment = useCallback(
     async (value: number) => {
-      await dispatch(monthActions.setRemainder(value));
+      await dispatch(monthActions.setInvestment(value));
+      await dispatch(editMonthMoneyInfo());
       dispatch(fetchMonthWalletInfo());
     },
     [dispatch]

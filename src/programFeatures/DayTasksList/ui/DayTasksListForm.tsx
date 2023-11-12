@@ -69,12 +69,12 @@ const DayTasksListForm = memo(
     const onCheckChange = useCallback(
       (id: number, check: boolean) => {
         if (check) {
-          dispatch(setTaskCheck(id));
+          dispatch(setTaskCheck({ id, date }));
         } else {
-          dispatch(removeTaskCheck(id));
+          dispatch(removeTaskCheck({ id, date }));
         }
       },
-      [dispatch]
+      [date, dispatch]
     );
 
     useEffect(() => {

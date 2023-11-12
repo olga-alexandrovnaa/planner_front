@@ -94,6 +94,8 @@ const monthSlice = createSlice({
       })
       .addCase(fetchMonthWalletInfo.fulfilled, (state, action: PayloadAction<MoneyInfo>) => {
         state.moneyInfo = action.payload;
+        state.remainder = action.payload.startRemainder;
+        state.investment = action.payload.investSum;
       })
 
   },
