@@ -15,7 +15,7 @@ import {
   getShowedYear,
   getWeekDates,
 } from "../model/selectors/selectors";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   getRouteCalendar,
   getRouteMain,
@@ -34,6 +34,7 @@ import { DayTasksListForm } from "@/programFeatures/DayTasksList";
 import { tasksType } from "@/serviceEntities/Task";
 import { Button } from "@/sharedComponents/ui/Button";
 import { isoString } from "@/sharedComponents/lib/helpers/isoString";
+import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 
 export interface WeekFormProps {
   className?: string;
@@ -147,14 +148,17 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart]);
 
 
+  const search = useLocation().search;
+
   const onCreate = useCallback(() => {
     const params: OptionalRecord<string, string> = {
-      date: isoString(selectedDay),
+      date: getYYYY_MM_DD(selectedDay),
       isFood: '0', //tasksType.all === tasksType.food ? "1" : "0",
+      backPath: new URLSearchParams(search).get('backPath'),
     };
 
     navigate(getRouteTask("new"), params);
-  }, [selectedDay, navigate]);
+  }, [selectedDay, search, navigate]);
 
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>

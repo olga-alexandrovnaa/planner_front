@@ -14,6 +14,7 @@ import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNum
 import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
 import { createSelector } from "@reduxjs/toolkit";
 import { isoString } from "@/sharedComponents/lib/helpers/isoString";
+import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 
 export const getForm = (state: StateSchema) =>
   state.monthForm;
@@ -43,23 +44,23 @@ export const getDtoForTrackerProgress = createSelector(getForm, (data) => {
   if (!data || !data.currentSelectedTracker || !data.showedMonthNumber || !data.showedYear) return null;
   return {
     id: data.currentSelectedTracker.id,
-    dateStart: isoString(new Date(data.showedYear, data.showedMonthNumber, 1)),
-    dateEnd: isoString(endOfMonth(new Date(data.showedYear, data.showedMonthNumber, 1))),
+    dateStart: getYYYY_MM_DD(new Date(data.showedYear, data.showedMonthNumber, 1)),
+    dateEnd: getYYYY_MM_DD(endOfMonth(new Date(data.showedYear, data.showedMonthNumber, 1))),
   }
 })
 
 export const getDtoForMoneyInfo = createSelector(getForm, (data) => {
   if (!data || !data.showedMonthNumber || !data.showedYear) return null;
   return {
-    dateStart: isoString(new Date(data.showedYear, data.showedMonthNumber, 1)),
-    dateEnd: isoString(endOfMonth(new Date(data.showedYear, data.showedMonthNumber, 1))),
+    dateStart: getYYYY_MM_DD(new Date(data.showedYear, data.showedMonthNumber, 1)),
+    dateEnd: getYYYY_MM_DD(endOfMonth(new Date(data.showedYear, data.showedMonthNumber, 1))),
   }
 })
 
 export const getDtoForUpdateMoneyInfo = createSelector(getForm, (data) => {
   if (!data || !data.showedMonthNumber || !data.showedYear) return null;
   return {
-    date: isoString(new Date(data.showedYear, data.showedMonthNumber, 1)),
+    date: getYYYY_MM_DD(new Date(data.showedYear, data.showedMonthNumber, 1)),
     remainder: data.remainder,
     investment: data.investment,
   }

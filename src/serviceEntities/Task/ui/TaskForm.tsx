@@ -10,7 +10,12 @@ import { classNames } from "@/sharedComponents/lib/classNames/classNames";
 // import { userActions, userReducer } from "..";
 import { useAppDispatch } from "@/sharedComponents/lib/hooks/useAppDispatch/useAppDispatch";
 import { ReactComponent as Close } from "@/sharedComponents/assets/icons/close.svg";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { taskActions, taskReducer } from "../model/slice/taskSlice";
 import {
   getCreateTaskDtoForService,
@@ -45,6 +50,7 @@ import { isArray, isObject } from "lodash";
 import MonthSelector from "./MonthSelector";
 import YearSelector from "./YearSelector";
 import { isoString } from "@/sharedComponents/lib/helpers/isoString";
+import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 
 export interface TaskFormProps {
   className?: string;
@@ -73,15 +79,16 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     [form?.intervalLength]
   );
 
+  const search = useLocation().search;
+  const backPath = new URLSearchParams(search).get("backPath");
+
   useEffect(() => {
     if (id === "new") {
       const dateFromUrl = searchParams.get("date") as string;
       const isFoodFromUrl = searchParams.get("isFood") as string;
       dispatch(
         taskActions.setCreateMode({
-          date: dateFromUrl
-            ? dateFromUrl
-            : isoString(startOfDay(new Date())),
+          date: dateFromUrl ? dateFromUrl : getYYYY_MM_DD(startOfDay(new Date())),
           isFood: isFoodFromUrl === "1" ? true : false,
         })
       );
@@ -98,12 +105,20 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
       await dispatch(update());
     }
     if (error) alert(error);
-    if (form?.date) navigate(getRouteMain(getDD_MM_YYYY(new Date(form?.date))));
-  }, [dispatch, error, form?.date, isCreateMode, navigate]);
+    if (!backPath) {
+       navigate(getRouteMain(getDD_MM_YYYY(new Date(form?.date))));
+    } else {
+      navigate(backPath);
+    }
+  }, [backPath, dispatch, error, form?.date, isCreateMode, navigate]);
 
   const onBack = useCallback(() => {
-    if (form?.date) navigate(getRouteMain(getDD_MM_YYYY(new Date(form?.date))));
-  }, [form?.date, navigate]);
+    if (!backPath) {
+      navigate(getRouteMain(getDD_MM_YYYY(new Date(form?.date))));
+    } else {
+      navigate(backPath);
+    }
+  }, [backPath, form?.date, navigate]);
 
   const onChangeName = useCallback(
     (val: string) => {
@@ -372,7 +387,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                     className={cls.Input} //бессрочно или число
                     value={form?.repeatCount ?? undefined}
                     onChange={onChangeRepeatCount}
-                    buttonIcon={<Close className={cls.SmallClearIcon}/>}
+                    buttonIcon={<Close className={cls.SmallClearIcon} />}
                     isWithEvent={true}
                     eventAction={() => onChangeRepeatCount(undefined)}
                     type="number"
@@ -494,7 +509,9 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
           />
         )}
 
-        {openModalYearDays && <YearSelector onChangeYearDays={onChangeYearDays} />}
+        {openModalYearDays && (
+          <YearSelector onChangeYearDays={onChangeYearDays} />
+        )}
 
         <div className={cls.Footer}>
           <div className={cls.ButtonBlock}>

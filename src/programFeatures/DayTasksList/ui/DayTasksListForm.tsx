@@ -18,7 +18,7 @@ import {
 import { classNames } from "@/sharedComponents/lib/classNames/classNames";
 import { tasksType } from "@/serviceEntities/Task";
 import { fetchList } from "../model/services/fetchList";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getRouteTask } from "@/sharedComponents/config/routeConfig/routeConfig";
 import { deleteTask } from "../model/services/deleteTaskInDate";
 import DayTasksListItem from "./DayTasksListItem";
@@ -26,6 +26,7 @@ import { removeTaskCheck } from "../model/services/removeTaskCheck";
 import { setTaskCheck } from "../model/services/setTaskCheck";
 import { Loader } from "@/sharedComponents/ui/Loader";
 import { isoString } from "@/sharedComponents/lib/helpers/isoString";
+import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 
 export interface DayTasksListFormProps {
   date: Date;
@@ -47,16 +48,19 @@ const DayTasksListForm = memo(
     const isLoading = useSelector(getDayTasksIsLoading);
     const error = useSelector(getDayTasksError);
 
+    const search = useLocation().search;
+
     const onTaskClick = useCallback(
       (id: number) => {
         const params: OptionalRecord<string, string> = {
-          date: isoString(date),
+          date: getYYYY_MM_DD(date),
           isFood: type === tasksType.food ? "1" : "0",
+          backPath: new URLSearchParams(search).get('backPath'),
         };
 
         navigate(getRouteTask(String(id), params));
       },
-      [date, type, navigate]
+      [date, type, search, navigate]
     );
 
     const onTaskDelete = useCallback(
