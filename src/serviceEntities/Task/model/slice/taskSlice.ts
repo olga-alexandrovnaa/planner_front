@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IntervalType, MoveTypeIfDayNotExists, TaskExt, TaskSchema, WeekNumber } from "../types/task";
+import { Food, foodType, IntervalType, MoveTypeIfDayNotExists, TaskExt, TaskSchema, WeekNumber } from "../types/task";
 import { fetchTask } from "../services/fetch";
 import { create } from "../services/create";
 import { update } from "../services/update";
 import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
+import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 
 const initialState: TaskSchema = {
   data: null,
@@ -13,7 +14,8 @@ const initialState: TaskSchema = {
   isLoading: false,
   isCreateMode: false,
   formRepeatDays: [],
-  formRepeatIfYearIntervalDays: []
+  formRepeatIfYearIntervalDays: [],
+  foodOptions: []
 };
 
 const taskSlice = createSlice({
@@ -57,6 +59,28 @@ const taskSlice = createSlice({
     },
     onChangeName: (state, action: PayloadAction<string>) => {
       state.form.name = action.payload;
+    },
+    onFoodType: (state, action: PayloadAction<foodType | undefined>) => {
+      state.form.foodType = action.payload ? action.payload : null;
+    },
+    onChangeFoodCountToPrepare: (state, action: PayloadAction<number | undefined>) => {
+      state.form.foodCountToPrepare = action.payload ? action.payload : null;
+    },
+    onChangeFoodCout: (state, action: PayloadAction<number | undefined>) => {
+      state.form.foodCout = action.payload ? action.payload : null;
+    },
+    onChangeFood: (state, action: PayloadAction<{ value: number; label: string, data: Food } | undefined>) => {
+      state.form.foodId = action.payload ? action.payload.value : null;
+      state.form.food = action.payload ? action.payload.data : null;
+    },
+    onChangeDate: (state, action: PayloadAction<string>) => {
+      if (state.form.taskRepeatDayCheck.length) {
+        if (state.form.date === action.payload) {
+          state.form.taskRepeatDayCheck[0].newDate = null;
+        } else {
+          state.form.taskRepeatDayCheck[0].newDate = action.payload;
+        }
+      }
     },
     onChangeIsTracker: (state, action: PayloadAction<boolean>) => {
       state.form.isTracker = action.payload;
@@ -102,7 +126,7 @@ const taskSlice = createSlice({
           moveTypeIfDayNotExists: null,
           dayFromBeginningInterval: action.payload === IntervalType.Month
             ? (new Date(state.form.date)).getDate()
-            : getWeekDayNumber(new Date(state.form.date))
+            : getWeekDayNumber(new Date(state.form.date)) + 1
         })
       }
     },

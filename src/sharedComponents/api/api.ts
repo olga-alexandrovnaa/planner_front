@@ -14,11 +14,11 @@ const $api = async (
 ) => {
   const [resource, config] = args;
 
-   // Получить юзера и token из localStorage
+  // Получить юзера и token из localStorage
   const authData = localstorageAuthData();
 
   // Настроить config
-  config.credentials = "include";
+  // config.credentials = "include";
   config.headers = getHeaders(authData?.accessToken);
 
   // Отправить запрос
@@ -26,7 +26,7 @@ const $api = async (
 
   // Если не авторизовано и не повторный
   if (response.status === 401) {
-    if( !("_isRetry" in config) && authData) {
+    if (!("_isRetry" in config) && authData) {
       Object.assign(config, { _isRetry: true });
       //Если refresh токен не обновляется - обновить
       if (!isRefreshing) {
@@ -43,27 +43,27 @@ const $api = async (
           throw new Error();
         }
       } else {
-          // Продолжить если refresh токен не обновляется
-          return new Promise((resolve) => {
-            const interval = setInterval(() => {
-              if (!isRefreshing) {
-                clearInterval(interval);
-                resolve($api(resource, config));
-              }
-            }, INTERVAL_MS);
-          })
+        // Продолжить если refresh токен не обновляется
+        return new Promise((resolve) => {
+          const interval = setInterval(() => {
+            if (!isRefreshing) {
+              clearInterval(interval);
+              resolve($api(resource, config));
+            }
+          }, INTERVAL_MS);
+        })
 
       }
     } else {
       //logout
-      
+
       localStorage.removeItem(USER_LOCALSTORAGE_KEY);
       window.location.assign('http://localhost:3050/login')
-      
+
       return;
     }
   }
-  
+
   return response.json();
 };
 

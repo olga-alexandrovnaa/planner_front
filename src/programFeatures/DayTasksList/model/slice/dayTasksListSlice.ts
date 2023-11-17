@@ -22,8 +22,8 @@ const dayTasksListSlice = createSlice({
         state.error = undefined;
         state.isLoading = true;
       })
-      .addCase(fetchList.fulfilled, (state, action: PayloadAction<ListTask[]>) => {
-        state.list = action.payload;
+      .addCase(fetchList.fulfilled, (state, action: PayloadAction<{ data: ListTask[]; }>) => {
+        state.list = action.payload.data;
         state.isLoading = false;
       })
       .addCase(fetchList.rejected, (state, action: any) => {

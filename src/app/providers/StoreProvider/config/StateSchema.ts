@@ -9,6 +9,7 @@ import { WeekSchema } from '@/programFeatures/WeekDaySelector';
 import { TaskSchema } from '@/serviceEntities/Task';
 import { MonthSchema } from '@/programFeatures/MonthDaySelector';
 import { DayTasksListSchema } from '@/programFeatures/DayTasksList';
+import { ProductSchema } from '@/serviceEntities/Product';
 
 export interface StateSchema {
   user: UserSchema;
@@ -21,6 +22,8 @@ export interface StateSchema {
 
   task?: TaskSchema;
   dayTasks?: DayTasksListSchema;
+
+  product?: ProductSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;
@@ -29,8 +32,8 @@ export type MountedReducers = OptionalRecord<StateSchemaKey, boolean>;
 export interface ReducerManager {
   getReducerMap: () => ReducersMapObject<StateSchema>;
   reduce: (
-      state: StateSchema,
-      action: AnyAction,
+    state: StateSchema,
+    action: AnyAction,
   ) => CombinedState<StateSchema>;
   add: (key: StateSchemaKey, reducer: Reducer) => void;
   remove: (key: StateSchemaKey) => void;

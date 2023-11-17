@@ -31,10 +31,17 @@ import { ReactComponent as Link } from "@/sharedComponents/assets/icons/link.svg
 import { getAllHolidays } from "@/sharedComponents/lib/helpers/holidays/getAllHolidays";
 import { UserAuthDataForm } from "@/serviceEntities/User";
 import { DayTasksListForm } from "@/programFeatures/DayTasksList";
-import { tasksType } from "@/serviceEntities/Task";
+import { modeType } from "@/serviceEntities/Task";
 import { Button } from "@/sharedComponents/ui/Button";
 import { isoString } from "@/sharedComponents/lib/helpers/isoString";
 import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
+
+import { ReactComponent as AllTasks } from "@/sharedComponents/assets/icons/tasks.svg";
+import { ReactComponent as Food } from "@/sharedComponents/assets/icons/food.svg";
+import { ReactComponent as Money } from "@/sharedComponents/assets/icons/money.svg";
+import { ReactComponent as SelfData } from "@/sharedComponents/assets/icons/selfData.svg";
+import { ReactComponent as Bag } from "@/sharedComponents/assets/icons/bag.svg";
+import { ReactComponent as Menu } from "@/sharedComponents/assets/icons/menu.svg";
 
 export interface WeekFormProps {
   className?: string;
@@ -71,6 +78,25 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   const dispatch = useAppDispatch();
 
   const { date } = useParams<{ date: string }>();
+
+  const [type, setTypeState] = useState<modeType>();
+
+  useEffect(() => {
+    let t = localStorage.getItem("type");
+
+    if (!t) {
+      t = "all";
+      localStorage.setItem("type", t);
+    }
+
+    setTypeState(t);
+  }, [type]);
+
+  const setType = useCallback((t: modeType) => {
+    setTypeState(t);
+    localStorage.setItem("type", t);
+  }, []);
+
   const paramDate = useMemo(() => {
     return DD_MM_YYYYtoDate(String(date));
   }, [date]);
@@ -147,18 +173,17 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
     }
   }, [onSwipeLeft, onSwipeRight, touchEnd, touchStart]);
 
-
-  const search = useLocation().search;
+  const location = useLocation();
 
   const onCreate = useCallback(() => {
     const params: OptionalRecord<string, string> = {
       date: getYYYY_MM_DD(selectedDay),
-      isFood: '0', //tasksType.all === tasksType.food ? "1" : "0",
-      backPath: new URLSearchParams(search).get('backPath'),
+      isFood: type === modeType.food ? "1" : "0",
+      backPath: location.pathname,
     };
+    navigate(getRouteTask("new", params));
+  }, [selectedDay, type, location.pathname, navigate]);
 
-    navigate(getRouteTask("new"), params);
-  }, [selectedDay, search, navigate]);
 
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
@@ -170,7 +195,16 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
       >
         <div className={cls.Header}>
           <div className={cls.DatesHeader}>
-            <div className={cls.DatesHeaderLeft}></div>
+            <div className={cls.DatesHeaderLeft}>
+              <div
+                className={classNames(cls.Icon)}
+                onClick={() => {
+                  setType(modeType.otherInfo);
+                }}
+              >
+                <Menu width={20} height={20} />
+              </div>
+            </div>
             <div className={cls.DatesHeaderCenter}>
               <div className={cls.Icon} onClick={onSwipeLeft}>
                 <Left />
@@ -190,33 +224,92 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
             </div>
           </div>
 
-          <div className={cls.TodayLink} onClick={onSelectToday}>
-            <span>cегодня</span> &nbsp; <Link />
-          </div>
-
-          <div className={cls.Dates}>
-            <div className={cls.WeekDay}>
-              <div className={cls.WeekDayName}>#</div>
-              <div className={cls.WeekDayName}>{showedWeekNumber}</div>
+          {type !== modeType.otherInfo && type !== modeType.bag && (
+            <div className={cls.TodayLink} onClick={onSelectToday}>
+              <span>cегодня</span> &nbsp; <Link />
             </div>
+          )}
 
-            {weekDates.map((d, index) => (
-              <WeekDayForm day={d} key={index} onClick={onSelectDay} />
-            ))}
+          {type !== modeType.otherInfo && type !== modeType.bag && (
+            <div className={cls.Dates}>
+              <div className={cls.WeekDay}>
+                <div className={cls.WeekDayName}>#</div>
+                <div className={cls.WeekDayName}>{showedWeekNumber}</div>
+              </div>
+
+              {weekDates.map((d, index) => (
+                <WeekDayForm day={d} key={index} onClick={onSelectDay} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {type !== modeType.selfInfo &&
+          type !== modeType.bag &&
+          type !== modeType.otherInfo && (
+            <div className={cls.Content}>
+              {type === modeType.food && (
+                <Button className={cls.BlackButton} onClick={onCreate}>
+                  Все ингриденты
+                </Button>
+              )}
+              <DayTasksListForm date={selectedDay} type={type} />
+            </div>
+          )}
+
+        {type !== modeType.selfInfo &&
+          type !== modeType.bag &&
+          type !== modeType.otherInfo && (
+            <div className={cls.ButtonBlock}>
+              <Button className={cls.Button} onClick={onCreate}>
+                Создать
+              </Button>
+            </div>
+          )}
+
+        <div className={cls.Footer}>
+          <div
+            className={classNames(cls.Icon, {
+              [cls.SelectedIcon]: type === modeType.all,
+            })}
+            onClick={() => {
+              setType(modeType.all);
+            }}
+          >
+            <AllTasks width={50} height={50} />
+          </div>
+          <div
+            className={classNames(cls.Icon, {
+              [cls.SelectedIcon]: type === modeType.food,
+            })}
+            onClick={() => {
+              setType(modeType.food);
+            }}
+          >
+            <Food width={50} height={50} />
+          </div>
+          <div
+            className={classNames(cls.Icon, {
+              [cls.SelectedIcon]: type === modeType.selfInfo,
+            })}
+            onClick={() => {
+              setType(modeType.selfInfo);
+            }}
+          >
+            <SelfData width={45} height={45} />
+          </div>
+
+          <div
+            className={classNames(cls.Icon, {
+              [cls.SelectedIcon]: type === modeType.bag,
+            })}
+            onClick={() => {
+              setType(modeType.bag);
+            }}
+          >
+            <Bag width={50} height={50} />
           </div>
         </div>
-
-        <div className={cls.Content}>
-          <DayTasksListForm date={selectedDay} type={tasksType.all} />
-        </div>
-
-        <div className={cls.ButtonBlock}>
-            <Button className={cls.Button} onClick={onCreate}>
-              Создать
-            </Button>
-        </div>
-
-        <div className={cls.Footer}>{/* Здесь будут кнопки */}</div>
       </div>
     </DynamicModuleLoader>
   );

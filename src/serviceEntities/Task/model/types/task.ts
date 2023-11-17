@@ -80,10 +80,25 @@ export type RepeatDayTaskCheck = {
   isDeleted: boolean;
 };
 
+export type Food = {
+  id: number;
+
+  name: string;
+  proteins?: number;
+  fats?: number;
+  carbohydrates?: number;
+  calories?: number;
+
+  foodType?: foodType;
+  recipe?: string;
+  ingredients: Ingredient[]
+};
+
+
 export interface TaskExt extends Record<string, any> {
   id: number;
   date: string;
-  name: string;
+  name?: string;
   isTracker: boolean;
   intervalPart?: IntervalType | null;
   intervalLength?: number | null;
@@ -91,13 +106,16 @@ export interface TaskExt extends Record<string, any> {
   moneyIncomePlan?: number | null;
   moneyOutcomePlan?: number | null;
   isFood: boolean;
-  recipe?: string | null;
-  ingredients: Ingredient[];
   repeatDays: RepeatDayTaskWithNotYearInterval[];
   repeatIfYearIntervalDays: RepeatDayTaskWithYearInterval[];
   taskRepeatDayCheck: RepeatDayTaskCheck[];
   isDeleted: boolean;
   deletedAt?: Date;
+  foodId?: number | null;
+  food?: Food | null;
+  foodCountToPrepare?: number | null;
+  foodCout?: number | null;
+
 }
 
 export interface CreateTaskDto extends Record<string, any> {
@@ -170,18 +188,31 @@ export type DeleteTaskInDateDto = {
   date: number;
 };
 
-export enum tasksType {
-  all,
-  outcome,
-  income,
-  food,
-  trackers,
-  notTrackers,
+export enum modeType {
+  all = 'all',
+  outcome = 'outcome',
+  income = 'income',
+  food = 'food',
+  trackers = 'trackers',
+  notTrackers = 'notTrackers',
+  selfInfo = 'selfInfo',
+  bag = 'bag',
+  otherInfo = 'otherInfo'
+}
+
+export enum foodType {
+  breakfast = 'breakfast',
+  soup = 'soup',
+  second = 'second',
+  dessert = 'dessert',
+  salad = 'salad',
+  drink = 'drink',
+  snack = 'snack',
 }
 
 export type GetDayTasksDto = {
   date: string;
-  type: tasksType;
+  type: modeType;
 };
 
 export class ResheduleTaskDto {
@@ -208,6 +239,7 @@ export interface TaskSchema {
   data?: TaskExt;
   formRepeatDays?: RepeatDayTaskWithNotYearInterval[];
   formRepeatIfYearIntervalDays?: RepeatDayTaskWithYearInterval[];
+  foodOptions: Food[];
   isLoading?: boolean;
   isCreateMode?: boolean;
   error?: string;

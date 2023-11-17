@@ -1,4 +1,4 @@
-import { IntervalType, tasksType } from "@/serviceEntities/Task";
+import { IntervalType, modeType } from "@/serviceEntities/Task";
 
 export type ListTask = {
   id: number;

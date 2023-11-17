@@ -1,15 +1,15 @@
 import { useSelector } from "react-redux";
 import { memo, useCallback, useState, useEffect, useMemo } from "react";
 import cls from "./TaskForm.module.scss";
-// import { getUserAuthData, getuserName } from "../model/selectors/selectors";
 import {
   DynamicModuleLoader,
   ReducersList,
 } from "@/sharedComponents/lib/components/DynamicModuleLoader/DynamicModuleLoader";
 import { classNames } from "@/sharedComponents/lib/classNames/classNames";
-// import { userActions, userReducer } from "..";
 import { useAppDispatch } from "@/sharedComponents/lib/hooks/useAppDispatch/useAppDispatch";
 import { ReactComponent as Close } from "@/sharedComponents/assets/icons/close.svg";
+import { ReactComponent as Edit } from "@/sharedComponents/assets/icons/edit.svg";
+import { ReactComponent as Create } from "@/sharedComponents/assets/icons/create.svg";
 import {
   useLocation,
   useNavigate,
@@ -18,12 +18,10 @@ import {
 } from "react-router-dom";
 import { taskActions, taskReducer } from "../model/slice/taskSlice";
 import {
-  getCreateTaskDtoForService,
-  getTask,
   getTaskCreateMode,
   getTaskError,
+  getTaskFoodOptions,
   getTaskForm,
-  getUpdateTaskDtoForService,
 } from "../model/selectors/selectors";
 import { create } from "../model/services/create";
 import { getRouteMain } from "@/sharedComponents/config/routeConfig/routeConfig";
@@ -36,9 +34,10 @@ import { startOfDay } from "date-fns";
 import { CustomSelect } from "@/sharedComponents/ui/AsyncSelect/AsyncSelect";
 import { getDD_Month_NotReqYYYY } from "@/sharedComponents/lib/helpers/getDD_Month_NotReqYYYY";
 import {
+  Food,
+  Ingredient,
   IntervalType,
   MoveTypeIfDayNotExists,
-  UpdateTaskDto,
   WeekNumber,
 } from "../model/types/task";
 import WeekSelector from "./WeekSelector";
@@ -46,11 +45,11 @@ import {
   intervalTypeName,
   intervalTypeOptions,
 } from "../model/consts/interval";
-import { isArray, isObject } from "lodash";
 import MonthSelector from "./MonthSelector";
 import YearSelector from "./YearSelector";
-import { isoString } from "@/sharedComponents/lib/helpers/isoString";
 import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
+import { Modal } from "@/sharedComponents/ui/Modal";
+import { deleteEverywhere } from "../model/services/delete";
 
 export interface TaskFormProps {
   className?: string;
@@ -63,6 +62,7 @@ const initialReducers: ReducersList = {
 const TaskForm = memo(({ className }: TaskFormProps) => {
   const dispatch = useAppDispatch();
   const form = useSelector(getTaskForm);
+  const foodOptions = useSelector(getTaskFoodOptions);
   const isCreateMode = useSelector(getTaskCreateMode);
   const error = useSelector(getTaskError);
 
@@ -86,15 +86,19 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     if (id === "new") {
       const dateFromUrl = searchParams.get("date") as string;
       const isFoodFromUrl = searchParams.get("isFood") as string;
+      console.log(dateFromUrl, isFoodFromUrl);
       dispatch(
         taskActions.setCreateMode({
-          date: dateFromUrl ? dateFromUrl : getYYYY_MM_DD(startOfDay(new Date())),
+          date: dateFromUrl
+            ? dateFromUrl
+            : getYYYY_MM_DD(startOfDay(new Date())),
           isFood: isFoodFromUrl === "1" ? true : false,
         })
       );
     } else {
+      const dateFromUrl = searchParams.get("date") as string;
       dispatch(taskActions.setId(Number(id)));
-      dispatch(fetchTask());
+      dispatch(fetchTask(dateFromUrl));
     }
   }, [dispatch, id, searchParams]);
 
@@ -106,7 +110,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     }
     if (error) alert(error);
     if (!backPath) {
-       navigate(getRouteMain(getDD_MM_YYYY(new Date(form?.date))));
+      navigate(getRouteMain(getDD_MM_YYYY(new Date(form?.date))));
     } else {
       navigate(backPath);
     }
@@ -126,6 +130,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     },
     [dispatch]
   );
+
   const onChangeIsTracker = useCallback(
     (val: boolean) => {
       dispatch(taskActions.onChangeIsTracker(val));
@@ -144,9 +149,27 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     },
     [dispatch]
   );
+  const onChangeFood = useCallback(
+    (data: { value: number; label: string; data: Food }) => {
+      dispatch(taskActions.onChangeFood(data));
+    },
+    [dispatch]
+  );
   const onChangeRepeatCount = useCallback(
     (val: number | undefined) => {
       dispatch(taskActions.onChangeRepeatCount(val));
+    },
+    [dispatch]
+  );
+  const onChangeFoodCountToPrepare = useCallback(
+    (val: number | undefined) => {
+      dispatch(taskActions.onChangeFoodCountToPrepare(val));
+    },
+    [dispatch]
+  );
+  const onChangeFoodCout = useCallback(
+    (val: number | undefined) => {
+      dispatch(taskActions.onChangeFoodCout(val));
     },
     [dispatch]
   );
@@ -289,9 +312,121 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     [dispatch]
   );
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [newDate, setNewDate] = useState<string>();
+
+  // useEffect(() => {
+  //   if (
+  //     newDate !== (form?.taskRepeatDayCheck?.length
+  //       ? form.taskRepeatDayCheck[0].newDate !== null
+  //         ? form.taskRepeatDayCheck[0].newDate
+  //         : form.taskRepeatDayCheck[0].date
+  //       : form?.date)
+  //   )
+  //     setNewDate(
+  //       form?.taskRepeatDayCheck?.length
+  //         ? form.taskRepeatDayCheck[0].newDate !== null
+  //           ? form.taskRepeatDayCheck[0].newDate
+  //           : form.taskRepeatDayCheck[0].date
+  //         : form?.date
+  //     );
+  // }, [form?.date, form?.taskRepeatDayCheck, newDate]);
+
+  const onSelectOtherDayHandler = useCallback(() => {
+    setModalOpen(true);
+  }, []);
+
+  const onEndSelectOtherDayHandler = useCallback(() => {
+    dispatch(taskActions.onChangeDate(newDate));
+    setNewDate(undefined);
+    setModalOpen(false);
+  }, [dispatch, newDate]);
+
+  const onCancelSelectOtherDayHandler = useCallback(() => {
+    setModalOpen(false);
+  }, []);
+
+  const onStartDeleteHandler = useCallback(() => {
+    setDeleteModalOpen(true);
+  }, []);
+
+  const onCancelDeleteHandler = useCallback(() => {
+    setDeleteModalOpen(false);
+  }, []);
+
+  const onChangeNewDate = useCallback((date: string) => {
+    setNewDate(date);
+  }, []);
+
+  const onDeleteHandler = useCallback(async () => {
+    await dispatch(deleteEverywhere());
+    setDeleteModalOpen(false);
+    onBack();
+  }, [dispatch, onBack]);
+
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
       <div className={classNames(cls.TaskForm, {}, [className])}>
+        {!!modalOpen && (
+          <Modal isOpen={true}>
+            <div className={cls.Data}>
+              <div className={cls.LabelTopCenter}>
+                На какую дату перенести задачу?
+              </div>
+              <div className={cls.InputBlock}>
+                <Input
+                  className={cls.Input}
+                  value={newDate}
+                  type="date"
+                  onChange={onChangeNewDate}
+                  dateValueString={
+                    newDate
+                      ? getDD_Month_NotReqYYYY(new Date(newDate), true)
+                      : ""
+                  }
+                />
+              </div>
+              <div style={{ marginTop: "10px" }} className={cls.ButtonBlock}>
+                <Button
+                  onClick={onCancelSelectOtherDayHandler}
+                  className={cls.SecondaryButton}
+                >
+                  Отмена
+                </Button>
+                <Button
+                  onClick={onEndSelectOtherDayHandler}
+                  className={cls.MainButton}
+                >
+                  ОК
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        )}
+
+        {!!deleteModalOpen && (
+          <Modal isOpen={true}>
+            <div className={cls.Data}>
+              <div className={cls.LabelTopCenter}>
+                Удалить трекер сегодня и в будущих днях?
+              </div>
+
+              <div className={cls.ButtonBlock}>
+                <Button
+                  onClick={onCancelDeleteHandler}
+                  className={cls.SecondaryButton}
+                >
+                  Отмена
+                </Button>
+                <Button onClick={onDeleteHandler} className={cls.MainButton}>
+                  ОК
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        )}
+
         <div className={cls.Header}>
           <div className={cls.HeaderText}></div>
           {!openModalDays && !openModalYearDays && (
@@ -312,12 +447,14 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
         </div>
         {!openModalDays && !openModalYearDays && (
           <div className={cls.Data}>
-            <Input
-              className={cls.MainInput}
-              placeholder={"Название"}
-              value={form?.name || undefined}
-              onChange={onChangeName}
-            />
+            {!form?.isFood && (
+              <Input
+                className={cls.MainInput}
+                placeholder={"Название"}
+                value={form?.name || undefined}
+                onChange={onChangeName}
+              />
+            )}
 
             <div className={cls.Selector}>
               <div
@@ -326,7 +463,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                   [cls.SelectorItemActive]: !form?.isTracker,
                 })}
               >
-                Задача
+                Один раз
               </div>
               <div
                 onClick={() => onChangeIsTracker(true)}
@@ -334,9 +471,86 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                   [cls.SelectorItemActive]: form?.isTracker,
                 })}
               >
-                Трекер
+                Повторять
               </div>
             </div>
+
+            {form?.isFood && (
+              <div className={cls.InputBlock}>
+                <Input
+                  isWithEvent={true}
+                  eventAction={() => {
+                    // setAddressFormOpen(true);
+                  }}
+                  buttonIcon={
+                    form?.food ? (
+                      <div style={{ cursor: "pointer" }} title="Редактировать">
+                        <Edit width={20} />
+                      </div>
+                    ) : (
+                      <div style={{ cursor: "pointer" }} title="Создать">
+                        <Create width={20} />
+                      </div>
+                    )
+                  }
+                >
+                  <CustomSelect
+                    className={cls.Input}
+                    value={
+                      form?.food
+                        ? {
+                            value: form.foodId,
+                            label: form.food.name,
+                            data: form.food,
+                          }
+                        : undefined
+                    }
+                    onChange={onChangeFood}
+                    options={foodOptions.map((e) => ({
+                      value: e.id,
+                      label: e.name,
+                      data: e,
+                    }))}
+                  />
+                </Input>
+              </div>
+            )}
+
+            {form?.isFood && (
+              <Button className={cls.Button} onClick={onSelectOtherDayHandler}>
+                Подбор&nbsp;по ингридиентам
+              </Button>
+            )}
+
+            {form?.isFood && (
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Сколько приготовить</div>
+                <Input
+                  className={cls.Input} //бессрочно или число
+                  value={form?.foodCountToPrepare ?? undefined}
+                  onChange={onChangeFoodCountToPrepare}
+                  buttonIcon={<Close className={cls.SmallClearIcon} />}
+                  isWithEvent={true}
+                  eventAction={() => onChangeFoodCountToPrepare(undefined)}
+                  type="number"
+                />
+              </div>
+            )}
+
+            {form?.isFood && (
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Сколько съели</div>
+                <Input
+                  className={cls.Input} //бессрочно или число
+                  value={form?.foodCout ?? undefined}
+                  onChange={onChangeFoodCout}
+                  buttonIcon={<Close className={cls.SmallClearIcon} />}
+                  isWithEvent={true}
+                  eventAction={() => onChangeFoodCout(undefined)}
+                  type="number"
+                />
+              </div>
+            )}
 
             {form?.isTracker && (
               <>
@@ -421,8 +635,10 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
             {form?.isTracker && (
               <div className={cls.CurrentDate}>
                 {getDD_Month_NotReqYYYY(
-                  form?.taskRepeatDayCheck.length
-                    ? new Date(form?.taskRepeatDayCheck[0].date)
+                  form?.taskRepeatDayCheck?.length
+                    ? form?.taskRepeatDayCheck[0].newDate
+                      ? new Date(form?.taskRepeatDayCheck[0].newDate)
+                      : new Date(form?.taskRepeatDayCheck[0].date)
                     : new Date()
                 )}
               </div>
@@ -433,7 +649,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
               <Input
                 className={cls.Input}
                 value={
-                  form?.taskRepeatDayCheck.length
+                  form?.taskRepeatDayCheck?.length
                     ? form?.taskRepeatDayCheck[0].moneyOutcomeFact
                     : undefined
                 }
@@ -448,7 +664,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
               <Input
                 className={cls.Input}
                 value={
-                  form?.taskRepeatDayCheck.length
+                  form?.taskRepeatDayCheck?.length
                     ? form?.taskRepeatDayCheck[0].moneyIncomeFact
                     : undefined
                 }
@@ -463,7 +679,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
               <Input
                 className={cls.Input}
                 value={
-                  form?.taskRepeatDayCheck.length
+                  form?.taskRepeatDayCheck?.length
                     ? form?.taskRepeatDayCheck[0].deadline
                     : undefined
                 }
@@ -471,7 +687,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                 width={"small"}
                 type="date"
                 dateValueString={
-                  form?.taskRepeatDayCheck.length &&
+                  form?.taskRepeatDayCheck?.length &&
                   form?.taskRepeatDayCheck[0].deadline
                     ? getDD_Month_NotReqYYYY(
                         new Date(form?.taskRepeatDayCheck[0].deadline),
@@ -480,7 +696,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                     : ""
                 }
               />
-              <Button className={cls.Button} onClick={onSave}>
+              <Button className={cls.Button} onClick={onSelectOtherDayHandler}>
                 Перенос&nbsp;➔
               </Button>
             </div>
@@ -488,7 +704,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
             <Input
               className={cls.TextArea}
               value={
-                form?.taskRepeatDayCheck.length
+                form?.taskRepeatDayCheck?.length
                   ? form?.taskRepeatDayCheck[0].note
                   : undefined
               }
@@ -515,6 +731,15 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
 
         <div className={cls.Footer}>
           <div className={cls.ButtonBlock}>
+            {id !== "new" && (
+              <Button
+                className={cls.SecondaryButton}
+                onClick={onStartDeleteHandler}
+              >
+                Удалить трекер
+              </Button>
+            )}
+
             {openModalDays && (
               <Button className={cls.MainButton} onClick={onSaveDays}>
                 OK

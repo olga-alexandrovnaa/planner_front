@@ -68,7 +68,11 @@ const Input = forwardRef<HTMLInputElement, Props>(
   ) => {
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (type === "number") {
-        onChange?.(Number(e.target.value));
+        let data = String(e.target.value);
+        if(data.length !== 1){
+          data = data.replace(/^0+/, '');
+        }
+        onChange?.(Number(data));
       } else {
         onChange?.(e.target.value);
       }
@@ -127,7 +131,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             [styles.disabled]: disabled,
           })}
           ref={refInput}
-          value={value ?? ""}
+          value={ type === 'number' && String(value).length !== 1 ? String(value).replace(/^0+/, '') : value ?? ''}
           disabled={disabled}
           {...props}
           type={type}

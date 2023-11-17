@@ -4,12 +4,12 @@ import $api from "@/sharedComponents/api/api";
 import { ListTask } from "../types/dayTasksListSchema";
 import { startOfDay } from "date-fns";
 import { isArray } from "lodash";
-import { tasksType } from "@/serviceEntities/Task";
+import { modeType } from "@/serviceEntities/Task";
 import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 
 export const fetchList = createAsyncThunk<
-  ListTask[],
-  { date: Date, type: tasksType },
+  { data: ListTask[]; },
+  { date: Date, type: modeType },
   ThunkConfig<string>
 >("dayTasksList/fetchList", async (data, thunkApi) => {
   const { rejectWithValue } = thunkApi;
@@ -24,8 +24,7 @@ export const fetchList = createAsyncThunk<
       method: "GET",
     });
 
-    if (!isArray(responseData)) {
-
+    if (!responseData.data) {
       throw new Error();
     }
 

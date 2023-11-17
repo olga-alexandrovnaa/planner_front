@@ -336,29 +336,44 @@ const MonthForm = memo(({ className }: MonthFormProps) => {
 
   useEffect(() => {
     dispatch(fetchTrackerProgress());
-  }, [dispatch, currentSelectedTracker]);
+  }, [dispatch, currentSelectedTracker, showedMonthYearString]);
 
   //деньги
   const trackerMoneyInfo = useSelector(getMoneyInfo);
   const remainder = useSelector(getRemainder);
   const investment = useSelector(getInvestment);
 
+  const [timerRemainder, setTimerRemainder] = useState<NodeJS.Timeout>();
+  const [timerInvestment, setTimerInvestment] = useState<NodeJS.Timeout>();
+
   const setRemainder = useCallback(
     async (value: number) => {
       await dispatch(monthActions.setRemainder(value));
-      await dispatch(editMonthMoneyInfo());
-      dispatch(fetchMonthWalletInfo());
+
+      if (timerRemainder) clearTimeout(timerRemainder);
+      setTimerRemainder(
+        setTimeout(async () => {
+          await dispatch(editMonthMoneyInfo());
+          dispatch(fetchMonthWalletInfo());
+        }, 500)
+      );
     },
-    [dispatch]
+    [dispatch, timerRemainder]
   );
 
   const setInvestment = useCallback(
     async (value: number) => {
       await dispatch(monthActions.setInvestment(value));
-      await dispatch(editMonthMoneyInfo());
-      dispatch(fetchMonthWalletInfo());
+
+      if (timerInvestment) clearTimeout(timerInvestment);
+      setTimerInvestment(
+        setTimeout(async () => {
+          await dispatch(editMonthMoneyInfo());
+          dispatch(fetchMonthWalletInfo());
+        }, 500)
+      );
     },
-    [dispatch]
+    [dispatch, timerInvestment]
   );
 
   useEffect(() => {

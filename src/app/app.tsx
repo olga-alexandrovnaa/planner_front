@@ -14,19 +14,19 @@ import { useNavigate } from "react-router-dom";
 const App = () => {
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
-  const inited = useSelector(getUserInited);
-  const authData = useSelector(getUserAuthData);
+  // const dispatch = useDispatch();
+  // const inited = useSelector(getUserInited);
+  // const authData = useSelector(getUserAuthData);
 
-  useEffect(() => {
-    dispatch(userActions.initAuthData());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(userActions.initAuthData());
+  // }, [dispatch]);
 
-  useEffect(() => {
-    if (inited && !authData && location.pathname !== getRoutelogin()) {
-      navigate(getRoutelogin(), { replace: true });
-    }
-  }, [inited, authData, location, navigate]);
+  // useEffect(() => {
+  //   if (inited && !authData && location.pathname !== getRoutelogin()) {
+  //     navigate(getRoutelogin(), { replace: true });
+  //   }
+  // }, [inited, authData, location, navigate]);
 
   return (
     <div className={classNames("app")}>

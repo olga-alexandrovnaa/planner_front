@@ -3,4 +3,4 @@ export { TaskFormAsync as TaskForm };
 
 export type { TaskSchema } from './model/types/task';
 
-export { IntervalType, tasksType } from './model/types/task';
+export { IntervalType, modeType } from './model/types/task';

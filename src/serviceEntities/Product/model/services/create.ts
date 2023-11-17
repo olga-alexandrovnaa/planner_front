@@ -1,24 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
-import { getUpdateTaskDtoForService } from '../selectors/selectors';
 import $api from '@/sharedComponents/api/api';
-import { TaskExt } from '../types/task';
+import { Food } from '../types/product';
+import { getCreateProductDtoForService } from '../selectors/selectors';
 
-export const update = createAsyncThunk<
-    TaskExt,
+export const create = createAsyncThunk<
+    Food,
     undefined,
     ThunkConfig<string>
->('task/update', async (_, thunkApi) => {
+>('product/create', async (_, thunkApi) => {
     const { rejectWithValue, getState } = thunkApi;
 
-    const data = getUpdateTaskDtoForService(getState());
-
-    if (!Object.entries(data.dto).length) return null;
+    const data = getCreateProductDtoForService(getState());
 
     try {
         const responseData = await $api(
-            __API__ + `tasks/${data.id}`,
-            { method: "PATCH", body: JSON.stringify(data.dto) }
+            __API__ + `Products`,
+            { method: "POST", body: JSON.stringify(data.dto) }
         );
 
         if (!responseData.data) {

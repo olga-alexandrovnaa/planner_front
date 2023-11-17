@@ -1,34 +1,28 @@
 import { StateSchema } from "@/app/providers/StoreProvider";
 import { createSelector } from "@reduxjs/toolkit";
-import { CreateTaskDto, UpdateTaskDto } from "../types/task";
 import { isArray, isObject } from "lodash";
+import { CreateDto, UpdateDto } from "../types/product";
 
-export const getTask = (state: StateSchema) => state.task;
-export const getTaskData = (state: StateSchema) => state.task?.data;
-export const getTaskForm = (state: StateSchema) => state.task?.form;
-export const getTaskFormRepeatDaysForChanging = (state: StateSchema) => state.task?.formRepeatDays;
-export const getTaskFormRepeatYearDaysForChanging = (state: StateSchema) => state.task?.formRepeatIfYearIntervalDays;
-export const getTaskFormIntervalLength = (state: StateSchema) => state.task?.form.intervalLength;
-export const getTaskFormIntervalPart = (state: StateSchema) => state.task?.form.intervalPart;
-export const getTaskFormRepeatDays = (state: StateSchema) => state.task?.form?.repeatDays;
-export const getTaskFormRepeatYearDays = (state: StateSchema) => state.task?.form?.repeatIfYearIntervalDays;
-export const getTaskId = (state: StateSchema) => state.task?.id;
-export const getTaskCreateMode = (state: StateSchema) => state.task?.isCreateMode;
-export const getTaskIsLoading = (state: StateSchema) => state.task?.isLoading;
-export const getTaskError = (state: StateSchema) => state.task?.error;
-export const getTaskFoodOptions = (state: StateSchema) => state.task?.foodOptions;
+export const getProduct = (state: StateSchema) => state.task;
+export const getProductData = (state: StateSchema) => state.task?.data;
+export const getProductForm = (state: StateSchema) => state.task?.form;
+export const getProductId = (state: StateSchema) => state.task?.id;
+export const getProductCreateMode = (state: StateSchema) => state.task?.isCreateMode;
+export const getProductIsLoading = (state: StateSchema) => state.task?.isLoading;
+export const getProductError = (state: StateSchema) => state.task?.error;
+export const getProductFoodOptions = (state: StateSchema) => state.task?.foodOptions;
 
 
 
-export const getTaskIdForService = createSelector(getTaskId, (id) => {
+export const getProductIdForService = createSelector(getProductId, (id) => {
   return id;
 });
 
-export const getCreateTaskDtoForService = createSelector(getTask, (data): { id: number, dto: CreateTaskDto } => {
+export const getCreateProductDtoForService = createSelector(getProduct, (data): { id: number, dto: CreateDto } => {
 
   if (!data || !data.isCreateMode || !data.form) return;
 
-  const dto: CreateTaskDto = {};
+  const dto: CreateDto = {};
 
   for (const [k, v] of Object.entries(data.form)) {
     if (v !== null) {
@@ -42,13 +36,13 @@ export const getCreateTaskDtoForService = createSelector(getTask, (data): { id: 
   };
 });
 
-export const getUpdateTaskDtoForService = createSelector(getTask, (data) => {
+export const getUpdateProductDtoForService = createSelector(getProduct, (data) => {
   if (!data || !data.data || !data.form) return;
 
   const loaded = data.data;
   const changed = data.form;
 
-  const dto: UpdateTaskDto = {
+  const dto: UpdateDto = {
     id: loaded.id,
   };
 

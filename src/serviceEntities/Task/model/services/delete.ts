@@ -1,26 +1,28 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
 import $api from '@/sharedComponents/api/api';
-import { TaskExt } from '../types/task';
 import { getTaskIdForService } from '../selectors/selectors';
 
-export const fetchTask = createAsyncThunk<
-    TaskExt,
-    string,
+export const deleteEverywhere = createAsyncThunk<
+    boolean,
+    undefined,
     ThunkConfig<string>
->('task/fetchTask', async (date, thunkApi) => {
+>('task/create', async (_, thunkApi) => {
     const { rejectWithValue, getState } = thunkApi;
 
     const id = getTaskIdForService(getState());
 
     try {
-        const responseData = await $api(__API__ + `tasks/${id}?date=${date}`, { method: "GET" });
+        const responseData = await $api(
+            __API__ + `tasks/${id}`,
+            { method: "DELETE" }
+        );
 
-        if (!responseData.data) {
+        if (responseData.error) {
             throw new Error();
         }
 
-        return responseData.data;
+        return responseData;
 
     } catch (e) {
         return rejectWithValue('error');
