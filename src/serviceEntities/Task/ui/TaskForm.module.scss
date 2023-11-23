@@ -298,7 +298,7 @@
 
     .Label {
       margin-right: 5px;
-      width: 80px;
+      min-width: 80px;
       line-height: 90%;
     }
     .Icon {
@@ -327,6 +327,15 @@
       font-size: var(--fontSizeSmall);
      
     }
+  }
+
+  .InputFood{
+    border: none !important;
+    display: flex;
+    flex-grow: 1;
+    padding: 0px 5px 0px 5px;
+    margin: 5px 0px 5px 0px;
+    background-color: var(--input-bg);
   }
 
   .SelectorWeekBlock{
@@ -363,7 +372,7 @@
   
   .Button {
     padding: 8px;
-
+    width: fit-content;
     font-size: var(--fontSizeSmall);
     background-color: var(--btn-active) !important;
     color: var(--white-text) !important;

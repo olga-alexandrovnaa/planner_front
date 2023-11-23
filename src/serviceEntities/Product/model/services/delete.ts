@@ -14,7 +14,7 @@ export const deleteEverywhere = createAsyncThunk<
 
     try {
         const responseData = await $api(
-            __API__ + `Products/${id}`,
+            __API__ + `tasks/food/${id}`,
             { method: "DELETE" }
         );
 

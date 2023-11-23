@@ -42,170 +42,6 @@
     align-items: center;
   }
 
-  .WeekSelector,
-  .MonthSelector ,
-  .YearSelector {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    width: 100%;
-
-    margin-bottom: calc(60px + var(--mainPageMargin));
-
-    position: relative;
-
- 
-    .YearSelectorMonths {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      flex-grow: 1;
-      margin-top: 5px;
-
-      .SelectorMonthBlock{
-        margin: 5px;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        align-items: center;
-        justify-content: center;
-
-        .SelectorMonthHeader{
-          display: flex;
-          text-align: center;
-        }
-
-        .SelectorMonth{
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          align-items: center;
-          justify-content: center;
-          .SelectorDayBlock {
-            margin: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 40px;
-            width: 40px;
-    
-            .SelectorYearDay {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              border-radius: 50%;
-              height: 40px;
-              width: 40px;
-              background-color: var(--light-bg-color);
-            }
-            .SelectorSelectedYearDay {
-              background-color: var(--primary);
-            }
-          }
-
-        }
-      }
-    }
-    
-
-    .WeekSelectorWeek {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      flex-grow: 1;
-
-      .SelectorDayBlock {
-        margin: 5px;
-        display: flex;
-        width: 100%;
-        align-items: center;
-        justify-content: center;
-
-        .SelectorDay {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 14px;
-          height: 40px;
-          width: 70%;
-          background-color: var(--light-bg-color);
-        }
-        .SelectorSelectedDay {
-          background-color: var(--primary);
-          color: var(--white-text);
-        }
-      }
-    }
-    .MonthSelectorMonth {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      flex-grow: 1;
-      margin-top: 5px;
-
-      .SelectorDayBlock {
-        margin: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 40px;
-        width: 40px;
-
-        .SelectorMonthDay {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          height: 40px;
-          width: 40px;
-          background-color: var(--light-bg-color);
-        }
-        .SelectorSelectedMonthDay {
-          background-color: var(--primary);
-        }
-      }
-    }
-
-    .SelectorHeader {
-      display: flex;
-      flex-direction: row;
-
-      .DatesHeaderLeft {
-        display: flex;
-        flex-direction: row;
-        flex-basis: 30%;
-      }
-      .DatesHeaderCenter {
-        display: flex;
-        flex-direction: row;
-        flex-basis: 40%;
-        justify-content: center;
-        align-items: center;
-        font-size: var(--fontSize);
-        font-weight: var(--fontWeightBold);
-
-        .Month {
-          cursor: pointer;
-          font-weight: var(--fontWeightBold);
-          text-align: center;
-          width: min-content;
-        }
-      }
-      .DatesHeaderRight {
-        display: flex;
-        flex-direction: row;
-        flex-basis: 30%;
-        justify-content: flex-end;
-      }
-    }
-  }
-
-
   .Footer {
     position: fixed;
     height: 60px;
@@ -249,8 +85,7 @@
     align-self: end;
 }
 
-.Data,
-.MonthSelectorMonthWeeks {
+.Data {
   display: flex;
   flex-direction: column;
 
@@ -263,21 +98,21 @@
 
   justify-content: stretch;
 
-  .MonthSelectorMonthWeeksCreating {
-    padding: var(--mainPageMargin);
-    background-color: var(--secondary-bg-color);
-    border-radius: 5px;
-    .CreatingHeader {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: var(--fontWeightBold);
-      .CreatingHeaderText{
-          width: 60%;
-      }
-    }
-  }
+  // .MonthSelectorMonthWeeksCreating {
+  //   padding: var(--mainPageMargin);
+  //   background-color: var(--secondary-bg-color);
+  //   border-radius: 5px;
+  //   .CreatingHeader {
+  //     display: flex;
+  //     flex-direction: row;
+  //     justify-content: space-between;
+  //     align-items: center;
+  //     font-weight: var(--fontWeightBold);
+  //     .CreatingHeaderText{
+  //         width: 60%;
+  //     }
+  //   }
+  // }
 
   .LabelTop {
     margin-right: 5px;
@@ -298,7 +133,7 @@
 
     .Label {
       margin-right: 5px;
-      width: 80px;
+      min-width: 80px;
       line-height: 90%;
     }
     .Icon {
@@ -329,36 +164,12 @@
     }
   }
 
-  .SelectorWeekBlock{
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      background-color: var(--light-bg-color);
-      margin: 5px;
-      border-radius: 5px;
-
-      .SelectorWeek{
-          padding: 5px;
-          
-      }
-      .SelectorWeekIcon{
-          padding: 5px;
-          margin-top: 5px;
-      }
-  }
-
   .MainInput {
     display: flex;
     background-color: rgba(255, 255, 255, 0);
     border: none;
     font-size: var(--fontSizeLarge) !important;
     padding: 0px !important;
-  }
-
-  .CurrentDate {
-    font-weight: var(--fontWeightBold);
-    margin-top: 30px;
   }
   
   .Button {
@@ -367,16 +178,15 @@
     font-size: var(--fontSizeSmall);
     background-color: var(--btn-active) !important;
     color: var(--white-text) !important;
-  }
 
- 
+    width: fit-content;
+  }
 
   .TextArea {
     margin-top: 5px;
     background-color: var(--input-bg);
     border: none !important;
     min-height: 100px;
-    margin-bottom: calc(60px + var(--mainPageMargin));
   }
 
   .Selector {
@@ -399,6 +209,47 @@
       background-color: var(--btn-active);
       color: var(--white-text);
     }
+  }
+
+  .addIngredientsForm{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--light-bg-color);
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    NumberInput, .Input {
+      background-color: var(--main-bg-color);
+    }
+
+    .headerOfAddIngredientsForm{
+      font-weight: bold;
+    }
+
+    .Button{
+      margin-top: 15px;
+      margin-bottom: 5px;
+      align-self:  end;
+    }
+  }
+  .addedIngredients{
+    .headerOfAddedIngredients{
+      font-weight: bold;
+    }
+
+    display: flex;
+    flex-direction: column;
+    margin-bottom: calc(60px + var(--mainPageMargin));
+
+    .Ingredient{
+      margin: 5px;
+      background-color: var(--input-bg);
+      border-radius: 10px;
+      display: flex;
+      flex-grow: 1;
+    }
+
   }
 }
 

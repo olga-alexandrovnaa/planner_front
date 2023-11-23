@@ -3,16 +3,23 @@ import { createSelector } from "@reduxjs/toolkit";
 import { isArray, isObject } from "lodash";
 import { CreateDto, UpdateDto } from "../types/product";
 
-export const getProduct = (state: StateSchema) => state.task;
-export const getProductData = (state: StateSchema) => state.task?.data;
-export const getProductForm = (state: StateSchema) => state.task?.form;
-export const getProductId = (state: StateSchema) => state.task?.id;
-export const getProductCreateMode = (state: StateSchema) => state.task?.isCreateMode;
-export const getProductIsLoading = (state: StateSchema) => state.task?.isLoading;
-export const getProductError = (state: StateSchema) => state.task?.error;
-export const getProductFoodOptions = (state: StateSchema) => state.task?.foodOptions;
+export const getProduct = (state: StateSchema) => state.product;
+export const getProductData = (state: StateSchema) => state.product?.data;
+export const getProductForm = (state: StateSchema) => state.product?.form;
+export const getProductId = (state: StateSchema) => state.product?.id;
+export const getProductCreateMode = (state: StateSchema) => state.product?.isCreateMode;
+export const getProductIsLoading = (state: StateSchema) => state.product?.isLoading;
+export const getProductError = (state: StateSchema) => state.product?.error;
+export const getProductIngredientsOptions = (state: StateSchema) => state.product?.ingredientsOptions;
+export const getProductProductsTypes = (state: StateSchema) => state.product?.productsTypes;
+export const getProductMeasureUnits = (state: StateSchema) => state.product?.measureUnits;
+export const getProductMeasureUnitsByIngredient = (state: StateSchema) => state.product?.measureUnitsByIngredient;
+export const getProductIngredientToCreate = (state: StateSchema) => state.product?.ingredientToCreate;
 
 
+export const getProductToCreate = createSelector(getProduct, (data) => {
+  return { ...data.productToCreate, id: undefined };
+});
 
 export const getProductIdForService = createSelector(getProductId, (id) => {
   return id;

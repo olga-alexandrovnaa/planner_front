@@ -1,20 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
 import $api from '@/sharedComponents/api/api';
-import { getProductIdForService } from '../selectors/selectors';
-import { Food } from '../types/product';
+import { Product } from '../types/product';
 
-export const fetchProduct = createAsyncThunk<
-    Food,
-    undefined,
+export const fetchProductsByType = createAsyncThunk<
+    Product[],
+    number,
     ThunkConfig<string>
->('product/fetchProduct', async (_, thunkApi) => {
+>('product/fetchProductsByType', async (type, thunkApi) => {
     const { rejectWithValue, getState } = thunkApi;
 
-    const id = getProductIdForService(getState());
-
     try {
-        const responseData = await $api(__API__ + `tasks/food/${id}`, { method: "GET" });
+        const responseData = await $api(__API__ + `tasks/productsByType/${type}`, { method: "GET" });
 
         if (!responseData.data) {
             throw new Error();

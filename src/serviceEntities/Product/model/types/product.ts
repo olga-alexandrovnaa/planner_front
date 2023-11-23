@@ -1,34 +1,11 @@
 
 export type Ingredient = {
   id: number;
-  trackerId: number;
   productId: number;
-  product: {
-    id: number;
-    name: string;
-    typeId?: number;
-    type?: {
-      id: number;
-      name: string;
-      userId?: number;
-      isDeleted: boolean;
-    };
-    measureUnitId: number;
-    measureUnit: {
-      id: number;
-      name: string;
-    };
-  };
+  product: Product;
   count: number;
   measureUnitId?: number | null;
-  measureUnit?: {
-    measureUnitId: number;
-    measureUnit: {
-      id: number;
-      name: string;
-    };
-    outcomeOfProduct: number;
-  };
+  measureUnit?: MeasureUnit;
 };
 
 
@@ -72,18 +49,28 @@ export enum foodType {
   snack = 'snack',
 }
 
+export const foodTypeText: Record<foodType, string> = {
+  [foodType.breakfast]: "Завтрак",
+  [foodType.soup]: "Суп",
+  [foodType.second]: "Второе",
+  [foodType.dessert]: "Десерт",
+  [foodType.salad]: "Салат",
+  [foodType.drink]: "Напитки",
+  [foodType.snack]: "Закуски",
+};
+
+
+export const foodTypeOptions = Object.values(foodType).map(
+  (value: foodType) => ({ value: value, label: foodTypeText[value] })
+);
+
 export type Product = {
   id: number;
-
   name: string;
   typeId?: number;
   type?: ProductType;
   measureUnitId?: number;
   measureUnit?: MeasureUnit;
-
-  foodType?: foodType;
-  recipe?: string;
-  ingredients: Ingredient[]
 };
 
 export type MeasureUnit = {
@@ -93,8 +80,12 @@ export type MeasureUnit = {
 }
 
 export type OutcomeMeasureUnit = {
+  id: number;
   measureUnitId: number;
-  measureUnit: MeasureUnit;
+  measureUnit: {
+    id: number;
+    name: string;
+  };
   outcomeOfProduct: number;
 }
 
@@ -103,14 +94,18 @@ export type ProductType = {
   name: string;
 };
 
+
 export interface ProductSchema {
   id: number;
   form?: Food;
   data?: Food;
-
   productsTypes: ProductType[]
   ingredientsOptions: Product[]
   measureUnits: MeasureUnit[]
+  measureUnitsByIngredient: MeasureUnit[]
+  productToCreate?: Product;
+  ingredientToCreate?: Ingredient & { type: ProductType };
+  addedIngredientsCount: number;
   isLoading?: boolean;
   isCreateMode?: boolean;
   error?: string;

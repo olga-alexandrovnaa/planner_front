@@ -24,7 +24,7 @@ import {
   getTaskForm,
 } from "../model/selectors/selectors";
 import { create } from "../model/services/create";
-import { getRouteMain } from "@/sharedComponents/config/routeConfig/routeConfig";
+import { getRouteMain, getRouteProduct } from "@/sharedComponents/config/routeConfig/routeConfig";
 import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 import { update } from "../model/services/update";
 import { fetchTask } from "../model/services/fetch";
@@ -365,6 +365,23 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     onBack();
   }, [dispatch, onBack]);
 
+  const location = useLocation();
+
+  const onEditFood = useCallback(() => {
+    const params: OptionalRecord<string, string> = {
+      backPath: location.pathname,
+    };
+    navigate(getRouteProduct(String(form.foodId), params));
+  }, [form.foodId, location.pathname, navigate]);
+
+  const onCreateNewFood = useCallback(() => {
+    const params: OptionalRecord<string, string> = {
+      backPath: location.pathname,
+    };
+    navigate(getRouteProduct('new', params));
+  }, [location.pathname, navigate]);
+
+
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
       <div className={classNames(cls.TaskForm, {}, [className])}>
@@ -478,24 +495,24 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
             {form?.isFood && (
               <div className={cls.InputBlock}>
                 <Input
+                  className={cls.InputFood}
                   isWithEvent={true}
                   eventAction={() => {
                     // setAddressFormOpen(true);
                   }}
                   buttonIcon={
                     form?.food ? (
-                      <div style={{ cursor: "pointer" }} title="Редактировать">
+                      <div style={{ cursor: "pointer" }} title="Редактировать" onClick={onEditFood}>
                         <Edit width={20} />
                       </div>
                     ) : (
-                      <div style={{ cursor: "pointer" }} title="Создать">
+                      <div style={{ cursor: "pointer" }} title="Создать" onClick={onCreateNewFood}>
                         <Create width={20} />
                       </div>
                     )
                   }
                 >
                   <CustomSelect
-                    className={cls.Input}
                     value={
                       form?.food
                         ? {
