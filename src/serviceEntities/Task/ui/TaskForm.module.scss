@@ -210,11 +210,12 @@
     position: fixed;
     height: 60px;
     display: flex;
-    width: calc(100% - (var(--mainPageMargin) * 2));
+    min-width: calc(100vw - (var(--mainPageMargin) * 2));
+    max-width: calc(100vw - (var(--mainPageMargin) * 2));
     flex-direction: row;
     padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);
     justify-content: flex-end;
-    bottom: var(--mainPageMargin);
+    bottom: calc(4 * var(--mainPageMargin));
   }
 
 }
@@ -253,14 +254,10 @@
 .MonthSelectorMonthWeeks {
   display: flex;
   flex-direction: column;
-
-  flex-grow: 1;
-
-  min-width: calc(100% - (var(--mainPageMargin) * 2));
-  max-width: calc(100% - (var(--mainPageMargin) * 2));
-
+  // flex-grow: 1;
+  min-width: calc(100vw - (var(--mainPageMargin) * 2));
+  max-width: calc(100vw - (var(--mainPageMargin) * 2));
   padding: var(--mainPageMargin) ;
-
   justify-content: stretch;
 
   .MonthSelectorMonthWeeksCreating {
