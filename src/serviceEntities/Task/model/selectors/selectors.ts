@@ -17,6 +17,7 @@ export const getTaskCreateMode = (state: StateSchema) => state.task?.isCreateMod
 export const getTaskIsLoading = (state: StateSchema) => state.task?.isLoading;
 export const getTaskError = (state: StateSchema) => state.task?.error;
 export const getTaskFoodOptions = (state: StateSchema) => state.task?.foodOptions;
+export const getTaskCurrentFoodType = (state: StateSchema) => state.task?.currentFoodType;
 
 
 

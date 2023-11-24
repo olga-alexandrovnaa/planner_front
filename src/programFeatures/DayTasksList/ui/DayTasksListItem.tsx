@@ -44,7 +44,7 @@ const DayTasksListItem = memo(
 
         <div className={cls.DayTasksListItemData} onClick={onClickHandler}>
           <div className={cls.DayTasksListItemText}>
-            {data.name}
+            {data.isFood ? data.food.name : data.name}
           </div>
 
           <div className={cls.Icon} onClick={onDeleteHandler}>

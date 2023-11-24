@@ -1,3 +1,4 @@
+import { foodType } from "@/serviceEntities/Product/model/types/product";
 import { IntervalType, modeType } from "@/serviceEntities/Task";
 
 export type ListTask = {
@@ -12,6 +13,19 @@ export type ListTask = {
   isFood: boolean;
   checked: boolean;
   deadline: string | null;
+
+  foodId: number | null;
+  food: {
+    id: number;
+    name: string;
+    proteins: number | null;
+    fats: number | null;
+    carbohydrates: number | null;
+    calories: number | null;
+    foodType: foodType | null;
+  } | null;
+  foodCountToPrepare: number | null;
+  foodCout: number | null;
 };
 
 export interface DayTasksListSchema {

@@ -1,3 +1,5 @@
+import { GroupBase } from "react-select";
+
 export enum IntervalType {
   Day = 'Day',
   Week = 'Week',
@@ -239,7 +241,12 @@ export interface TaskSchema {
   data?: TaskExt;
   formRepeatDays?: RepeatDayTaskWithNotYearInterval[];
   formRepeatIfYearIntervalDays?: RepeatDayTaskWithYearInterval[];
-  foodOptions: Food[];
+  currentFoodType?: foodType;
+  foodOptions: GroupBase<{
+    value: number;
+    label: string;
+    data: Food;
+  }>[];
   isLoading?: boolean;
   isCreateMode?: boolean;
   error?: string;

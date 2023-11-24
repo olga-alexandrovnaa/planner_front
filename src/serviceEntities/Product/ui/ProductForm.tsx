@@ -21,6 +21,7 @@ import {
   getProductCreateMode,
   getProductError,
   getProductForm,
+  getProductIngredientProductToCreate,
   getProductIngredientToCreate,
   getProductIngredientsOptions,
   getProductMeasureUnits,
@@ -28,12 +29,9 @@ import {
   getProductProductsTypes,
 } from "../model/selectors/selectors";
 import { create } from "../model/services/create";
-import { getRouteMain } from "@/sharedComponents/config/routeConfig/routeConfig";
-import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
+import { getRouteTask } from "@/sharedComponents/config/routeConfig/routeConfig";
 import { update } from "../model/services/update";
 import { fetchProduct } from "../model/services/fetch";
-import { startOfDay } from "date-fns";
-import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 import { Modal } from "@/sharedComponents/ui/Modal";
 import { deleteEverywhere } from "../model/services/delete";
 import { Input } from "@/sharedComponents/ui/Inputs/Input";
@@ -43,7 +41,6 @@ import {
 } from "@/sharedComponents/ui/AsyncSelect/AsyncSelect";
 import {
   MeasureUnit,
-  OutcomeMeasureUnit,
   Product,
   ProductType,
   foodType,
@@ -52,6 +49,11 @@ import {
 } from "../model/types/product";
 import { Button } from "@/sharedComponents/ui/Button";
 import Ingredient from "./Ingredient";
+import { fetchProductTypes } from "../model/services/fetchProductTypes";
+import { fetchProductsByType } from "../model/services/fetchProductsByType";
+import { fetchMeasureUnitsByIngredient } from "../model/services/fetchMeasureUnitsByIngredient";
+import { createIngredientProduct } from "../model/services/createIngredientProduct";
+import { fetchMeasureUnits } from "../model/services/fetchMeasureUnits";
 
 export interface ProductFormProps {
   className?: string;
@@ -65,7 +67,9 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
   const dispatch = useAppDispatch();
   const form = useSelector(getProductForm);
   const ingredientToCreate = useSelector(getProductIngredientToCreate);
-
+  const ingredientProductToCreate = useSelector(
+    getProductIngredientProductToCreate
+  );
   const ingredientOptions = useSelector(getProductIngredientsOptions);
 
   const productsTypes = useSelector(getProductProductsTypes);
@@ -84,32 +88,53 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
 
-  const search = useLocation().search;
-  const backPath = new URLSearchParams(search).get("backPath");
+  const trackerBackPath = searchParams.get("trackerBackPath") as string;
+  const dateFromUrl = searchParams.get("dateFromUrl") as string;
+  const type = searchParams.get("type") as string;
+  const taskId = searchParams.get("taskId") as string;
 
   useEffect(() => {
     if (id === "new") {
-      dispatch(productActions.setCreateMode());
+      const fT: foodType = Object.values(foodType).find((v) => v === type)
+      dispatch(productActions.setCreateMode(fT));
     } else {
       dispatch(productActions.setId(Number(id)));
       dispatch(fetchProduct());
     }
-  }, [dispatch, id, searchParams]);
+  }, [dispatch, id, searchParams, type]);
 
   const onSave = useCallback(async () => {
+    let result;
     if (isCreateMode) {
-      await dispatch(create());
+      result = await dispatch(create());
     } else {
-      await dispatch(update());
+      result = await dispatch(update());
     }
     if (error) alert(error);
 
-    navigate(backPath);
-  }, [backPath, dispatch, error, isCreateMode, navigate]);
+    const params: OptionalRecord<string, string> = {
+      backPath: trackerBackPath,
+      dateFromUrl: dateFromUrl,
+      type: type,
+      isFood: '1',
+    };
+
+    if(typeof result.payload !== 'string'){
+      params.createdProduct = String(result.payload.id);
+      navigate(getRouteTask(taskId, params));
+    }
+    navigate(getRouteTask(taskId, params));
+  }, [dateFromUrl, dispatch, error, isCreateMode, navigate, taskId, trackerBackPath, type]);
 
   const onBack = useCallback(() => {
-    navigate(backPath);
-  }, [backPath, navigate]);
+    const params: OptionalRecord<string, string> = {
+      backPath: trackerBackPath,
+      dateFromUrl: dateFromUrl,
+      type: type,
+      isFood: '1',
+    };
+    navigate(getRouteTask(taskId, params));
+  }, [dateFromUrl, navigate, taskId, trackerBackPath, type]);
 
   const onChangeName = useCallback(
     (val: string) => {
@@ -180,8 +205,8 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
     dispatch(productActions.onAddIngredient());
   }, [dispatch]);
   const onChangeAddedIngredentMeasureUnit = useCallback(
-    (data: { value: MeasureUnit; label: string }) => {
-      dispatch(productActions.onChangeAddedIngredentMeasureUnit(data.value));
+    (data: { value: MeasureUnit; label: string } | undefined) => {
+      dispatch(productActions.onChangeAddedIngredentMeasureUnit(data ? data.value : undefined));
     },
     [dispatch]
   );
@@ -192,14 +217,74 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
     [dispatch]
   );
   const onChangeAddedIngredentProduct = useCallback(
-    (data: { value: Product; label: string }) => {
-      dispatch(productActions.onChangeAddedIngredentProduct(data.value));
+    (data: { value: Product; label: string } | undefined) => {
+      dispatch(productActions.onChangeAddedIngredentProduct(data ? data.value : undefined));
     },
     [dispatch]
   );
   const onChangeAddedIngredentProductType = useCallback(
-    (data: { value: ProductType; label: string }) => {
-      dispatch(productActions.onChangeAddedIngredentProductType(data.value));
+    (data: { value: ProductType; label: string } | undefined) => {
+      dispatch(productActions.onChangeAddedIngredentProductType(data ? data.value : undefined));
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    dispatch(fetchProductTypes());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchMeasureUnits());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchProductsByType(ingredientToCreate?.type?.id));
+  }, [dispatch, ingredientToCreate?.type?.id]);
+
+  useEffect(() => {
+    dispatch(fetchMeasureUnitsByIngredient(ingredientToCreate?.productId));
+  }, [dispatch, ingredientToCreate?.productId]);
+
+  const [openProductCreateModal, setProductCreateModalOpen] = useState(false);
+
+  const onStartProductCreateHandler = useCallback(
+    (inputValue: string) => {
+      dispatch(productActions.onChangeNameCreatedProduct(inputValue));
+      if (ingredientToCreate?.type) {
+        dispatch(
+          productActions.onChangeTypeCreatedProduct(ingredientToCreate.type)
+        );
+      }
+      setProductCreateModalOpen(true);
+    },
+    [dispatch, ingredientToCreate?.type]
+  );
+
+  const onCancelProductCreateHandler = useCallback(() => {
+    setProductCreateModalOpen(false);
+  }, []);
+
+  const onProductCreateHandler = useCallback(async () => {
+    await dispatch(createIngredientProduct());
+    dispatch(fetchProductsByType(ingredientToCreate?.type?.id));
+    setProductCreateModalOpen(false);
+  }, [dispatch, ingredientToCreate?.type?.id]);
+
+  const onChangeNameCreatedProduct = useCallback(
+    (val: string) => {
+      dispatch(productActions.onChangeNameCreatedProduct(val));
+    },
+    [dispatch]
+  );
+  const onChangeMeasureUnitCreatedProduct = useCallback(
+    (data: { value: MeasureUnit; label: string } | undefined) => {
+      dispatch(productActions.onChangeMeasureUnitCreatedProduct(data ? data.value : undefined));
+    },
+    [dispatch]
+  );
+  const onChangeTypeCreatedProduct = useCallback(
+    (data: { value: ProductType; label: string } | undefined) => {
+      dispatch(productActions.onChangeTypeCreatedProduct(data ? data.value : undefined));
     },
     [dispatch]
   );
@@ -207,6 +292,105 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
       <div className={classNames(cls.ProductForm, {}, [className])}>
+        {!!openProductCreateModal && (
+          <Modal isOpen={true}>
+            <div className={cls.Data}>
+              <div className={cls.LabelTopCenter}>Создание продукта</div>
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Название</div>
+                <Input
+                  className={cls.Input}
+                  placeholder={"Название"}
+                  value={ingredientProductToCreate.name || undefined}
+                  onChange={onChangeNameCreatedProduct}
+                />
+              </div>
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Тип</div>
+                <CustomSelect
+                  className={cls.Input}
+                  menuPlacement="top"
+                  value={
+                    ingredientProductToCreate?.type
+                      ? {
+                          value: ingredientProductToCreate?.type,
+                          label: ingredientProductToCreate?.type.name,
+                        }
+                      : ''
+                  }
+                  onChange={onChangeTypeCreatedProduct}
+                  options={
+                    productsTypes
+                      ? productsTypes.map((e) => ({
+                          value: e,
+                          label: e.name,
+                        }))
+                      : []
+                  }
+                />
+              </div>
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Ед. изм.</div>
+                <CustomSelect
+                  className={cls.Input}
+                  menuPlacement="top"
+                  value={
+                    ingredientProductToCreate?.measureUnit
+                      ? {
+                          value: ingredientProductToCreate?.measureUnit,
+                          label: ingredientProductToCreate?.measureUnit.name,
+                        }
+                      : ''
+                  }
+                  onChange={onChangeMeasureUnitCreatedProduct}
+                  options={
+                    measureUnits
+                      ? measureUnits.map((e) => ({
+                          value: e,
+                          label: e.name,
+                        }))
+                      : []
+                  }
+                />
+              </div>
+              <div style={{ marginTop: "10px" }} className={cls.ButtonBlock}>
+                <Button
+                  onClick={onCancelProductCreateHandler}
+                  className={cls.SecondaryButton}
+                >
+                  Отмена
+                </Button>
+                <Button
+                  onClick={onProductCreateHandler}
+                  className={cls.MainButton}
+                >
+                  ОК
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        )}
+
+        {!!openDeleteModal && (
+          <Modal isOpen={true}>
+            <div className={cls.Data}>
+              <div className={cls.LabelTopCenter}>Удалить блюдо?</div>
+
+              <div className={cls.ButtonBlock}>
+                <Button
+                  onClick={onCancelDeleteHandler}
+                  className={cls.SecondaryButton}
+                >
+                  Отмена
+                </Button>
+                <Button onClick={onDeleteHandler} className={cls.MainButton}>
+                  ОК
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        )}
+
         <div className={cls.Header}>
           <div className={cls.HeaderText}></div>
           <div className={cls.HeaderCloseIcon} onClick={onBack}>
@@ -234,7 +418,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Белки</div>
             <Input
               className={cls.Input}
-              value={form?.proteins || 0}
+              value={form?.proteins || ""}
               onChange={onChangeProteins}
               type="number"
             />
@@ -243,7 +427,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Жиры</div>
             <Input
               className={cls.Input}
-              value={form?.fats || 0}
+              value={form?.fats || ""}
               onChange={onChangeFats}
               type="number"
             />
@@ -252,7 +436,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Углеводы</div>
             <Input
               className={cls.Input}
-              value={form?.carbohydrates || 0}
+              value={form?.carbohydrates || ""}
               onChange={onChangeCarbohydrates}
               type="number"
             />
@@ -261,7 +445,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Калории</div>
             <Input
               className={cls.Input}
-              value={form?.calories || 0}
+              value={form?.calories || ""}
               onChange={onChangeCalories}
               type="number"
             />
@@ -277,7 +461,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                       value: form?.foodType,
                       label: foodTypeText[form?.foodType],
                     }
-                  : undefined
+                  : ''
               }
               onChange={onChangeFoodType}
               options={foodTypeOptions}
@@ -294,73 +478,97 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                 className={cls.Input}
                 menuPlacement="top"
                 value={
-                  ingredientToCreate.type
+                  ingredientToCreate?.type
                     ? {
-                        value: ingredientToCreate.type,
-                        label: ingredientToCreate.type.name,
+                        value: ingredientToCreate?.type,
+                        label: ingredientToCreate?.type.name,
                       }
-                    : undefined
+                    : ''
                 }
                 onChange={onChangeAddedIngredentProductType}
-                options={productsTypes.map((e) => ({
-                  value: e,
-                  label: e.name,
-                }))}
-              />
-            </div>
-            <div className={cls.InputBlock}>
-              <div className={cls.Label}>Продукт</div>
-              <CustomAsyncCreatableSelect
-                className={cls.Input}
-                menuPlacement="top"
-                value={
-                  ingredientToCreate.product
-                    ? {
-                        value: ingredientToCreate.product,
-                        label: ingredientToCreate.product.name,
-                      }
-                    : undefined
+                options={
+                  productsTypes
+                    ? productsTypes.map((e) => ({
+                        value: e,
+                        label: e.name,
+                      }))
+                    : []
                 }
-                onChange={onChangeAddedIngredentProduct}
-                options={ingredientOptions.map((e) => ({
-                  value: e,
-                  label: e.name,
-                }))}
-                isClearable
               />
             </div>
-            <div className={cls.InputBlock}>
-              <div className={cls.Label}>Кол-во</div>
-              <Input
-                className={cls.Input}
-                value={ingredientToCreate?.count || 0}
-                onChange={onChangeAddedIngredentCount}
-                type="number"
-              />
-            </div>
-            <div className={cls.InputBlock}>
-              <div className={cls.Label}>Ед. изм.</div>
-              <CustomSelect
-                className={cls.Input}
-                menuPlacement="top"
-                value={
-                  ingredientToCreate.measureUnit
-                    ? {
-                        value: ingredientToCreate.measureUnit,
-                        label: ingredientToCreate.measureUnit.name,
-                      }
-                    : undefined
-                }
-                onChange={onChangeAddedIngredentMeasureUnit}
-                options={measureUnitsByIngredient.map((e) => ({
-                  value: e,
-                  label: e.name,
-                }))}
-              />
-            </div>
-            <Button className={cls.Button} onClick={onAddIngredient}>
-              Добавить ингр.
-            </Button>
+            {!!ingredientToCreate?.type && (
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Продукт</div>
+                <CustomAsyncCreatableSelect
+                  onCreateOption={onStartProductCreateHandler}
+                  className={cls.Input}
+                  menuPlacement="top"
+                  value={
+                    ingredientToCreate?.product
+                      ? {
+                          value: ingredientToCreate?.product,
+                          label: ingredientToCreate?.product.name,
+                        }
+                      : ''
+                  }
+                  onChange={onChangeAddedIngredentProduct}
+                  defaultOptions={
+                    ingredientOptions
+                      ? ingredientOptions.map((e) => ({
+                          value: e,
+                          label: e.name,
+                        }))
+                      : []
+                  }
+                  isClearable
+                />
+              </div>
+            )}
+            {!!ingredientToCreate?.product && (
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Кол-во</div>
+                <Input
+                  className={cls.Input}
+                  value={ingredientToCreate?.count || ""}
+                  onChange={onChangeAddedIngredentCount}
+                  type="number"
+                />
+              </div>
+            )}
+            {!!ingredientToCreate?.product && (
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Ед. изм.</div>
+                <CustomSelect
+                  className={cls.Input}
+                  menuPlacement="top"
+                  value={
+                    ingredientToCreate?.measureUnit
+                      ? {
+                          value: ingredientToCreate?.measureUnit,
+                          label: ingredientToCreate?.measureUnit.name,
+                        }
+                      : ''
+                  }
+                  onChange={onChangeAddedIngredentMeasureUnit}
+                  options={
+                    measureUnitsByIngredient
+                      ? measureUnitsByIngredient.map((e) => ({
+                          value: e,
+                          label: e.name,
+                        }))
+                      : []
+                  }
+                />
+              </div>
+            )}
+            {!!ingredientToCreate?.type &&
+              !!ingredientToCreate?.product &&
+              !!ingredientToCreate?.count &&
+              !!ingredientToCreate?.measureUnit && (
+                <Button className={cls.Button} onClick={onAddIngredient}>
+                  Добавить ингредиент
+                </Button>
+              )}
           </div>
 
           <div className={cls.addedIngredients}>
@@ -391,7 +599,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
               </Button>
             )}
 
-            {!openDeleteModal && (
+            {!openDeleteModal && form?.name && (
               <Button className={cls.MainButton} onClick={onSave}>
                 Сохранить
               </Button>

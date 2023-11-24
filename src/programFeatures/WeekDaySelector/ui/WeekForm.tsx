@@ -9,6 +9,9 @@ import {
 } from "@/sharedComponents/lib/components/DynamicModuleLoader/DynamicModuleLoader";
 import { classNames } from "@/sharedComponents/lib/classNames/classNames";
 import {
+  getAllIngredients,
+  getAllIngredientsEnd,
+  getAllIngredientsStart,
   getSelectedDay,
   getShowedMonthYearString,
   getShowedWeekNumber,
@@ -42,6 +45,10 @@ import { ReactComponent as Money } from "@/sharedComponents/assets/icons/money.s
 import { ReactComponent as SelfData } from "@/sharedComponents/assets/icons/selfData.svg";
 import { ReactComponent as Bag } from "@/sharedComponents/assets/icons/bag.svg";
 import { ReactComponent as Menu } from "@/sharedComponents/assets/icons/menu.svg";
+import { fetchAllIngredients } from "../model/services/fetchAllIngredients";
+import { Modal } from "@/sharedComponents/ui/Modal";
+import { Input } from "@/sharedComponents/ui/Inputs/Input";
+import { getDD_Month_NotReqYYYY } from "@/sharedComponents/lib/helpers/getDD_Month_NotReqYYYY";
 
 export interface WeekFormProps {
   className?: string;
@@ -184,6 +191,37 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
     navigate(getRouteTask("new", params));
   }, [selectedDay, type, location.pathname, navigate]);
 
+  const allIngredientsEnd = useSelector(getAllIngredientsEnd);
+  const allIngredientsStart = useSelector(getAllIngredientsStart);
+  const allIngredients = useSelector(getAllIngredients);
+
+  const [allIngredientsOpen, setAllIngredientsOpen] = useState(false);
+
+  const onChangeAllIngredientsStart = useCallback(
+    (val: string) => {
+      dispatch(weekActions.setAllIngredientsStart(val));
+    },
+    [dispatch]
+  );
+
+  const onChangeAllIngredientsEnd = useCallback(
+    (val: string) => {
+      dispatch(weekActions.setAllIngredientsEnd(val));
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    if (allIngredientsOpen) {
+      dispatch(fetchAllIngredients());
+    }
+  }, [
+    dispatch,
+    date,
+    allIngredientsStart,
+    allIngredientsEnd,
+    allIngredientsOpen,
+  ]);
 
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
@@ -193,6 +231,74 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
+        {!!allIngredientsOpen && (
+          <Modal isOpen={true}>
+            <div className={cls.ModalData}>
+              <div className={cls.Header}>
+                <div className={cls.LabelTopCenter}>
+                  Необходимые ингредиенты за период
+                </div>
+                <div className={cls.InputBlock}>
+                  <div className={cls.Label}>с</div>
+                  <Input
+                    className={cls.Input}
+                    value={allIngredientsStart}
+                    type="date"
+                    dateValueString={
+                      allIngredientsStart
+                        ? getDD_Month_NotReqYYYY(
+                            new Date(allIngredientsStart),
+                            true
+                          )
+                        : ""
+                    }
+                    onChange={onChangeAllIngredientsStart}
+                  />
+                </div>
+                <div className={cls.InputBlock}>
+                  <div className={cls.Label}>по</div>
+                  <Input
+                    className={cls.Input}
+                    value={allIngredientsEnd}
+                    type="date"
+                    dateValueString={
+                      allIngredientsEnd
+                        ? getDD_Month_NotReqYYYY(
+                            new Date(allIngredientsEnd),
+                            true
+                          )
+                        : ""
+                    }
+                    onChange={onChangeAllIngredientsEnd}
+                  />
+                </div>
+              </div>
+
+              <div className={cls.Content}>
+                <div className={cls.allIngredients}>
+                  {allIngredients.map((e) => (
+                    <div className={cls.allIngredient}>
+                      <div>{e.product.name}</div>
+                      <div>{`${e.count} ${e.product.measureUnit.name}`}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className={cls.Footer}>
+                <div style={{ marginTop: "10px" }} className={cls.ButtonBlock}>
+                  <Button
+                    onClick={() => setAllIngredientsOpen(false)}
+                    className={cls.MainButton}
+                  >
+                    ОК
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Modal>
+        )}
+
         <div className={cls.Header}>
           <div className={cls.DatesHeader}>
             <div className={cls.DatesHeaderLeft}>
@@ -249,7 +355,10 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
           type !== modeType.otherInfo && (
             <div className={cls.Content}>
               {type === modeType.food && (
-                <Button className={cls.BlackButton} onClick={onCreate}>
+                <Button
+                  className={cls.BlackButton}
+                  onClick={() => setAllIngredientsOpen(true)}
+                >
                   Все ингриденты
                 </Button>
               )}
@@ -260,7 +369,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         {type !== modeType.selfInfo &&
           type !== modeType.bag &&
           type !== modeType.otherInfo && (
-            <div className={cls.ButtonBlock}>
+            <div className={cls.MainButtonBlock}>
               <Button className={cls.Button} onClick={onCreate}>
                 Создать
               </Button>

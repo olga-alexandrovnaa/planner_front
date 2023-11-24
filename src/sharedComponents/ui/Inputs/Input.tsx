@@ -96,7 +96,14 @@ const Input = forwardRef<HTMLInputElement, Props>(
     const ref = useRef<HTMLTextAreaElement>(null);
 
     const onInputClick = useCallback(() => {
-      if (type === "textarea") {
+      if (type === "number") {
+        if (ref.current) {
+          ref.current.focus();
+          if(value === '0'){
+            ref.current.select();
+          }
+        }
+      } else if (type === "textarea") {
         if (ref.current) {
           ref.current.focus();
         }
@@ -109,7 +116,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
           }
         }
       }
-    }, [type]);
+    }, [type, value]);
 
     useEffect(() => {
       if (ref.current) {

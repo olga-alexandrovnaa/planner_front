@@ -6,6 +6,7 @@ import { create } from "../services/create";
 import { update } from "../services/update";
 import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
 import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
+import { fetchFoodOptionsByType } from "../services/fetchFoodOptionsByType";
 
 const initialState: TaskSchema = {
   data: null,
@@ -60,8 +61,13 @@ const taskSlice = createSlice({
     onChangeName: (state, action: PayloadAction<string>) => {
       state.form.name = action.payload;
     },
-    onFoodType: (state, action: PayloadAction<foodType | undefined>) => {
-      state.form.foodType = action.payload ? action.payload : null;
+
+    onChangeFoodType: (state, action: PayloadAction<foodType | undefined>) => {
+      if (state.currentFoodType !== action.payload) {
+        state.form.foodId = undefined;
+        state.form.food = undefined;
+      }
+      state.currentFoodType = action.payload ? action.payload : null;
     },
     onChangeFoodCountToPrepare: (state, action: PayloadAction<number | undefined>) => {
       state.form.foodCountToPrepare = action.payload ? action.payload : null;
@@ -73,6 +79,7 @@ const taskSlice = createSlice({
       state.form.foodId = action.payload ? action.payload.value : null;
       state.form.food = action.payload ? action.payload.data : null;
     },
+
     onChangeDate: (state, action: PayloadAction<string>) => {
       if (state.form.taskRepeatDayCheck.length) {
         if (state.form.date === action.payload) {
@@ -252,6 +259,13 @@ const taskSlice = createSlice({
       state.form.repeatIfYearIntervalDays = JSON.parse(JSON.stringify(state.formRepeatIfYearIntervalDays));
     },
 
+    onChangeFoodByUrlId: (state, action: PayloadAction<number>) => {
+      const data = state.foodOptions.find((e) => e.id === action.payload);
+      if (data) {
+        state.form.foodId = data.id;
+        state.form.food = data;
+      }
+    },
 
   },
   extraReducers: (builder) => {
@@ -264,6 +278,7 @@ const taskSlice = createSlice({
         state.isLoading = false;
         state.data = JSON.parse(JSON.stringify(action.payload))
         state.form = JSON.parse(JSON.stringify(action.payload))
+        state.currentFoodType = action.payload?.food?.foodType;
       })
       .addCase(fetchTask.rejected, (state, action: any) => {
         state.isLoading = false;
@@ -298,6 +313,13 @@ const taskSlice = createSlice({
       .addCase(update.rejected, (state, action: any) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+
+      .addCase(fetchFoodOptionsByType.pending, (state) => {
+        state.foodOptions = [];
+      })
+      .addCase(fetchFoodOptionsByType.fulfilled, (state, action: PayloadAction<Food[]>) => {
+        state.foodOptions = action.payload;
       })
   },
 

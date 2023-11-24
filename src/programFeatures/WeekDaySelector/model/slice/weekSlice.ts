@@ -1,14 +1,19 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Holiday, WeekSchema } from "../types/weekSchema";
-import { getISOWeeksInYear, getYear} from 'date-fns'
+import { AllIngredient, Holiday, WeekSchema } from "../types/weekSchema";
+import { getISOWeeksInYear, getYear } from 'date-fns'
 import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNumber";
+import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
+import { fetchAllIngredients } from "../services/fetchAllIngredients";
 
 const initialState: WeekSchema = {
   selectedDay: new Date(),
-  showedWeekNumber: getYearWeekNumber(new Date()), 
+  showedWeekNumber: getYearWeekNumber(new Date()),
   showedYear: getYear(new Date()),
-  holidays: []
+  holidays: [],
+  allIngredientsStart: getYYYY_MM_DD(new Date()),
+  allIngredientsEnd: getYYYY_MM_DD(new Date()),
+  allIngredients: [],
 };
 
 const weekSlice = createSlice({
@@ -19,6 +24,8 @@ const weekSlice = createSlice({
       state.selectedDay = action.payload;
       state.showedWeekNumber = getYearWeekNumber(action.payload);
       state.showedYear = getYear(action.payload);
+      state.allIngredientsStart = getYYYY_MM_DD(action.payload);
+      state.allIngredientsEnd = getYYYY_MM_DD(action.payload);
     },
     // setShowedWeekNumber: (state, action: PayloadAction<number>) => {
     //   state.showedWeekNumber = action.payload;
@@ -54,7 +61,25 @@ const weekSlice = createSlice({
 
     setHolidays: (state, action: PayloadAction<Holiday[]>) => {
       state.holidays = action.payload;
+    },
+
+    setAllIngredientsStart: (state, action: PayloadAction<string>) => {
+      state.allIngredientsStart = action.payload;
+    },
+
+    setAllIngredientsEnd: (state, action: PayloadAction<string>) => {
+      state.allIngredientsEnd = action.payload;
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAllIngredients.pending, (state) => {
+        state.allIngredients = [];
+      })
+      .addCase(fetchAllIngredients.fulfilled, (state, action: PayloadAction<AllIngredient[]>) => {
+        state.allIngredients = action.payload;
+      })
+
   },
 
 });

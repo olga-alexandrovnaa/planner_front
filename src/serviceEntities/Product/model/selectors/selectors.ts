@@ -15,6 +15,7 @@ export const getProductProductsTypes = (state: StateSchema) => state.product?.pr
 export const getProductMeasureUnits = (state: StateSchema) => state.product?.measureUnits;
 export const getProductMeasureUnitsByIngredient = (state: StateSchema) => state.product?.measureUnitsByIngredient;
 export const getProductIngredientToCreate = (state: StateSchema) => state.product?.ingredientToCreate;
+export const getProductIngredientProductToCreate = (state: StateSchema) => state.product?.productToCreate;
 
 
 export const getProductToCreate = createSelector(getProduct, (data) => {

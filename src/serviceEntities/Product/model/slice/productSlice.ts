@@ -19,7 +19,14 @@ const initialState: ProductSchema = {
   ingredientsOptions: [],
   measureUnits: [],
   productsTypes: [],
-  productToCreate: null,
+  productToCreate: {
+    id: 0,
+    name: undefined,
+    measureUnit: undefined,
+    measureUnitId: undefined,
+    type: undefined,
+    typeId: undefined,
+  },
   measureUnitsByIngredient: [],
   addedIngredientsCount: 0,
   ingredientToCreate: {
@@ -40,7 +47,7 @@ const productSlice = createSlice({
     setId: (state, action: PayloadAction<number>) => {
       state.id = action.payload;
     },
-    setCreateMode: (state) => {
+    setCreateMode: (state, action: PayloadAction<foodType>) => {
       state.isCreateMode = true;
       state.form = {
         id: 0,
@@ -50,7 +57,7 @@ const productSlice = createSlice({
         fats: null,
         proteins: null,
         recipe: null,
-        foodType: null,
+        foodType: action.payload,
         ingredients: [],
       }
     },
@@ -108,6 +115,18 @@ const productSlice = createSlice({
     onDeleteIngredient: (state, action: PayloadAction<number>) => {
       state.form.ingredients = state.form.ingredients.filter((e) => e.id !== action.payload)
     },
+
+    onChangeTypeCreatedProduct: (state, action: PayloadAction<ProductType>) => {
+      state.productToCreate.type = action.payload;
+      state.productToCreate.typeId = action.payload.id;
+    },
+    onChangeNameCreatedProduct: (state, action: PayloadAction<string>) => {
+      state.productToCreate.name = action.payload;
+    },
+    onChangeMeasureUnitCreatedProduct: (state, action: PayloadAction<MeasureUnit>) => {
+      state.productToCreate.measureUnitId = action.payload.id;
+      state.productToCreate.measureUnit = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -159,7 +178,16 @@ const productSlice = createSlice({
         // state.error = undefined;
       })
       .addCase(createIngredientProduct.fulfilled, (state, action: PayloadAction<Product>) => {
-        state.productToCreate = null;
+        state.productToCreate = {
+          id: 0,
+          name: undefined,
+          measureUnit: undefined,
+          measureUnitId: undefined,
+          type: undefined,
+          typeId: undefined,
+        };
+        state.ingredientToCreate.productId = action.payload.id;
+        state.ingredientToCreate.product = action.payload;
       })
 
       .addCase(fetchProductTypes.pending, (state) => {

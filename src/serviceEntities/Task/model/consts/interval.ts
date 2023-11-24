@@ -6,31 +6,6 @@ export const moveTypeIfDayNotExistsText: Record<MoveTypeIfDayNotExists, string> 
   [MoveTypeIfDayNotExists.currentIntervalLastDay]: 'На конец текущего месяца',
   [MoveTypeIfDayNotExists.nextIntervalFirstDay]: 'На начало следующего месяца'
 }
-
-export const foodTypeText: Record<foodType, string> = {
-  [foodType.breakfast]: 'На конец текущего месяца',
-  [foodType.dessert]: 'На конец текущего месяца',
-  [foodType.drink]: 'На конец текущего месяца',
-  [foodType.salad]: 'На конец текущего месяца',
-  [foodType.second]: 'На конец текущего месяца',
-  [foodType.snack]: 'На конец текущего месяца',
-  [foodType.soup]: 'На конец текущего месяца',
-}
-
-export const foodTypeOptions = [
-  {
-    options: [
-      { label: foodTypeText[foodType.breakfast], value: foodType.breakfast },
-      { label: foodTypeText[foodType.dessert], value: foodType.dessert },
-      { label: foodTypeText[foodType.drink], value: foodType.drink },
-      { label: foodTypeText[foodType.salad], value: foodType.salad },
-      { label: foodTypeText[foodType.second], value: foodType.second },
-      { label: foodTypeText[foodType.snack], value: foodType.snack },
-      { label: foodTypeText[foodType.soup], value: foodType.soup },
-    ],
-  },
-];
-
 export const moveTypeIfDayNotExistsOptions = [
   { label: moveTypeIfDayNotExistsText[MoveTypeIfDayNotExists.currentIntervalLastDay], value: MoveTypeIfDayNotExists.currentIntervalLastDay },
   { label: moveTypeIfDayNotExistsText[MoveTypeIfDayNotExists.nextIntervalFirstDay], value: MoveTypeIfDayNotExists.nextIntervalFirstDay },

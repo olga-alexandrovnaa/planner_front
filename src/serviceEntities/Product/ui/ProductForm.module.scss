@@ -123,6 +123,7 @@
     margin-top: 5px;
     margin-bottom: 10px;
     text-align: center;
+    font-weight: bold;
   }
 
   .InputBlock {
@@ -133,7 +134,7 @@
 
     .Label {
       margin-right: 5px;
-      min-width: 80px;
+      min-width: 90px;
       line-height: 90%;
     }
     .Icon {
@@ -247,7 +248,22 @@
       background-color: var(--input-bg);
       border-radius: 10px;
       display: flex;
+      flex-direction: row;
+      justify-content: space-between;
       flex-grow: 1;
+
+
+      .IngredientData{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-grow: 1;
+        padding: 5px;
+        .IngredientDataName{
+        }
+        .IngredientDataCount{
+        }
+      }
     }
 
   }

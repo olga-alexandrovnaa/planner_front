@@ -1,14 +1,5 @@
 @import "@/app/styles/mixins/adaptive.scss";
 
-.WeekForm{
-    display: flex;
-    flex-direction: column;
-
-    width: calc(100vw);
-    height: calc(100vh);
-
-    font-size: var(--fontSizeSmall);
-    background-color: var(--main-bg-color);
 
     .Icon{
         background-color: rgba(255, 255, 255, 0);
@@ -169,7 +160,7 @@
         }
     }
 
-    .ButtonBlock{
+    .MainButtonBlock{
         display: flex;
        
         padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);
@@ -178,8 +169,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--primary);
-            color: var(--white-text);
+            background-color: var(--primary) !important;
+            color: var(--white-text) !important;
             width: 100%;
             height: 50px;
             font-size: var(--fontSize);
@@ -226,4 +217,93 @@
         }
     }
 
-}
+
+
+    .WeekForm{
+        display: flex;
+        flex-direction: column;
+    
+        width: calc(100vw);
+        height: calc(100vh);
+    
+        font-size: var(--fontSizeSmall);
+        background-color: var(--main-bg-color);
+    
+    }
+
+
+
+.ModalData {
+    display: flex;
+    flex-direction: column;
+    width: calc(100vw);
+    height: calc(100vh);
+    font-size: var(--fontSizeSmall);
+
+    .Header{
+        border: none;
+    }
+  
+    .LabelTop {
+      margin-right: 5px;
+      margin-top: 5px;
+    }
+    .LabelTopCenter{
+      margin-right: 5px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+  
+    .InputBlock {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-top: 5px;
+      .Label {
+        margin-right: 5px;
+        min-width: 90px;
+        line-height: 90%;
+      }
+      .Input {
+        display: flex;
+        flex-grow: 1;
+        background-color: var(--input-bg);
+        border: none;
+        margin-left: 5px;
+      }
+    }
+  
+    .allIngredients{
+      display: flex;
+      flex-direction: column;
+      margin-bottom: calc(60px + var(--mainPageMargin));
+  
+      .allIngredient{
+        margin-top: 10px;
+        background-color: var(--input-bg);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-grow: 1;
+        padding: 10px;
+
+      }
+  
+    }
+
+    .ButtonBlock {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        justify-content: end;
+        .MainButton {
+          font-size: var(--fontSize);
+          color: var(--white-text)  !important;
+          min-width: 100px;
+        }
+      }
+
+  }

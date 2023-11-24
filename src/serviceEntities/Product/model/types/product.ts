@@ -55,8 +55,8 @@ export const foodTypeText: Record<foodType, string> = {
   [foodType.second]: "Второе",
   [foodType.dessert]: "Десерт",
   [foodType.salad]: "Салат",
-  [foodType.drink]: "Напитки",
-  [foodType.snack]: "Закуски",
+  [foodType.drink]: "Напиток",
+  [foodType.snack]: "Закуска",
 };
 
 
@@ -103,8 +103,8 @@ export interface ProductSchema {
   ingredientsOptions: Product[]
   measureUnits: MeasureUnit[]
   measureUnitsByIngredient: MeasureUnit[]
-  productToCreate?: Product;
-  ingredientToCreate?: Ingredient & { type: ProductType };
+  productToCreate: Product;
+  ingredientToCreate: Ingredient & { type: ProductType };
   addedIngredientsCount: number;
   isLoading?: boolean;
   isCreateMode?: boolean;

@@ -19,12 +19,16 @@ import {
 import { taskActions, taskReducer } from "../model/slice/taskSlice";
 import {
   getTaskCreateMode,
+  getTaskCurrentFoodType,
   getTaskError,
   getTaskFoodOptions,
   getTaskForm,
 } from "../model/selectors/selectors";
 import { create } from "../model/services/create";
-import { getRouteMain, getRouteProduct } from "@/sharedComponents/config/routeConfig/routeConfig";
+import {
+  getRouteMain,
+  getRouteProduct,
+} from "@/sharedComponents/config/routeConfig/routeConfig";
 import { getDD_MM_YYYY } from "@/sharedComponents/lib/helpers/getDD_MM_YYYY";
 import { update } from "../model/services/update";
 import { fetchTask } from "../model/services/fetch";
@@ -39,6 +43,7 @@ import {
   IntervalType,
   MoveTypeIfDayNotExists,
   WeekNumber,
+  foodType,
 } from "../model/types/task";
 import WeekSelector from "./WeekSelector";
 import {
@@ -50,6 +55,11 @@ import YearSelector from "./YearSelector";
 import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 import { Modal } from "@/sharedComponents/ui/Modal";
 import { deleteEverywhere } from "../model/services/delete";
+import {
+  foodTypeOptions,
+  foodTypeText,
+} from "@/serviceEntities/Product/model/types/product";
+import { fetchFoodOptionsByType } from "../model/services/fetchFoodOptionsByType";
 
 export interface TaskFormProps {
   className?: string;
@@ -63,6 +73,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
   const dispatch = useAppDispatch();
   const form = useSelector(getTaskForm);
   const foodOptions = useSelector(getTaskFoodOptions);
+  const currentFoodType = useSelector(getTaskCurrentFoodType);
   const isCreateMode = useSelector(getTaskCreateMode);
   const error = useSelector(getTaskError);
 
@@ -81,12 +92,12 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
 
   const search = useLocation().search;
   const backPath = new URLSearchParams(search).get("backPath");
+  const dateFromUrl = searchParams.get("date") as string;
+  const isFoodFromUrl = searchParams.get("isFood") as string;
+  const typeFromUrl = searchParams.get("type") as string;
 
   useEffect(() => {
     if (id === "new") {
-      const dateFromUrl = searchParams.get("date") as string;
-      const isFoodFromUrl = searchParams.get("isFood") as string;
-      console.log(dateFromUrl, isFoodFromUrl);
       dispatch(
         taskActions.setCreateMode({
           date: dateFromUrl
@@ -100,7 +111,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
       dispatch(taskActions.setId(Number(id)));
       dispatch(fetchTask(dateFromUrl));
     }
-  }, [dispatch, id, searchParams]);
+  }, [dateFromUrl, dispatch, id, isFoodFromUrl, searchParams]);
 
   const onSave = useCallback(async () => {
     if (isCreateMode) {
@@ -149,12 +160,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     },
     [dispatch]
   );
-  const onChangeFood = useCallback(
-    (data: { value: number; label: string; data: Food }) => {
-      dispatch(taskActions.onChangeFood(data));
-    },
-    [dispatch]
-  );
+
   const onChangeRepeatCount = useCallback(
     (val: number | undefined) => {
       dispatch(taskActions.onChangeRepeatCount(val));
@@ -365,22 +371,71 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     onBack();
   }, [dispatch, onBack]);
 
-  const location = useLocation();
+  const onChangeFood = useCallback(
+    (data: { value: number; label: string; data: Food }) => {
+      dispatch(taskActions.onChangeFood(data));
+    },
+    [dispatch]
+  );
+  const onChangeCurrentFoodType = useCallback(
+    (data: { value: foodType; label: string }) => {
+      dispatch(taskActions.onChangeFoodType(data ? data.value : undefined));
+    },
+    [dispatch]
+  );
 
   const onEditFood = useCallback(() => {
     const params: OptionalRecord<string, string> = {
-      backPath: location.pathname,
+      trackerBackPath: backPath,
+      dateFromUrl: dateFromUrl,
+      type: currentFoodType,
+      taskId: id,
     };
-    navigate(getRouteProduct(String(form.foodId), params));
-  }, [form.foodId, location.pathname, navigate]);
+    navigate(getRouteProduct(String(form?.foodId), params));
+  }, [backPath, currentFoodType, dateFromUrl, form?.foodId, id, navigate]);
 
   const onCreateNewFood = useCallback(() => {
     const params: OptionalRecord<string, string> = {
-      backPath: location.pathname,
+      trackerBackPath: backPath,
+      dateFromUrl: dateFromUrl,
+      type: currentFoodType,
+      taskId: id,
     };
-    navigate(getRouteProduct('new', params));
-  }, [location.pathname, navigate]);
+    navigate(getRouteProduct("new", params));
+  }, [backPath, currentFoodType, dateFromUrl, id, navigate]);
 
+  const createdProduct = new URLSearchParams(search).get("createdProduct");
+
+  useEffect(() => {
+    if (typeFromUrl) {
+      const fT: foodType = Object.values(foodType).find(
+        (v) => v === typeFromUrl
+      );
+      dispatch(taskActions.onChangeFoodType(fT));
+    }
+  }, [dispatch, typeFromUrl]);
+
+  const loadFoodOptions = useCallback(async () => {
+    await dispatch(
+      fetchFoodOptionsByType({
+        type: currentFoodType,
+        date: getYYYY_MM_DD(
+          form?.taskRepeatDayCheck?.length
+            ? form?.taskRepeatDayCheck[0].newDate
+              ? new Date(form?.taskRepeatDayCheck[0].newDate)
+              : new Date(form?.taskRepeatDayCheck[0].date)
+            : new Date()
+        ),
+      })
+    );
+    if (createdProduct) {
+      dispatch(taskActions.onChangeFoodByUrlId(Number(createdProduct)));
+    }
+  }, [createdProduct, currentFoodType, dispatch, form?.taskRepeatDayCheck]);
+
+  useEffect(() => {
+    loadFoodOptions();
+  }, [dispatch, loadFoodOptions]);
 
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
@@ -494,6 +549,26 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
 
             {form?.isFood && (
               <div className={cls.InputBlock}>
+                <div className={cls.Label}>Тип</div>
+                <CustomSelect
+                  className={cls.Input}
+                  menuPlacement="top"
+                  value={
+                    currentFoodType
+                      ? {
+                          value: currentFoodType,
+                          label: foodTypeText[currentFoodType],
+                        }
+                      : undefined
+                  }
+                  onChange={onChangeCurrentFoodType}
+                  options={foodTypeOptions}
+                />
+              </div>
+            )}
+
+            {form?.isFood && !!currentFoodType && (
+              <div className={cls.InputBlock}>
                 <Input
                   className={cls.InputFood}
                   isWithEvent={true}
@@ -502,11 +577,19 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                   }}
                   buttonIcon={
                     form?.food ? (
-                      <div style={{ cursor: "pointer" }} title="Редактировать" onClick={onEditFood}>
+                      <div
+                        style={{ cursor: "pointer" }}
+                        title="Редактировать"
+                        onClick={onEditFood}
+                      >
                         <Edit width={20} />
                       </div>
                     ) : (
-                      <div style={{ cursor: "pointer" }} title="Создать" onClick={onCreateNewFood}>
+                      <div
+                        style={{ cursor: "pointer" }}
+                        title="Создать"
+                        onClick={onCreateNewFood}
+                      >
                         <Create width={20} />
                       </div>
                     )
@@ -520,14 +603,11 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                             label: form.food.name,
                             data: form.food,
                           }
-                        : undefined
+                        : ""
                     }
                     onChange={onChangeFood}
-                    options={foodOptions.map((e) => ({
-                      value: e.id,
-                      label: e.name,
-                      data: e,
-                    }))}
+                    isClearable
+                    options={foodOptions}
                   />
                 </Input>
               </div>
