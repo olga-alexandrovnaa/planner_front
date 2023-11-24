@@ -578,13 +578,13 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
           </div>
 
           <div className={cls.addedIngredients}>
-            {!!form?.ingredients.length && (
+            {!!form?.ingredients?.length && (
               <div className={cls.headerOfAddedIngredients}>
                 Добавленные игредиенты
               </div>
             )}
 
-            {form?.ingredients.map((e) => (
+            {form?.ingredients?.map((e) => (
               <Ingredient
                 ingredient={e}
                 key={e.id}
@@ -601,7 +601,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                 className={cls.SecondaryButton}
                 onClick={onStartDeleteHandler}
               >
-                Удалить трекер
+                Удалить блюдо
               </Button>
             )}
 
