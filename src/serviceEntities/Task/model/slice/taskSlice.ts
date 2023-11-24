@@ -63,7 +63,7 @@ const taskSlice = createSlice({
     },
 
     onChangeFoodType: (state, action: PayloadAction<foodType | undefined>) => {
-      if (state.currentFoodType !== action.payload) {
+      if (state.currentFoodType !== action.payload && state.form) {
         state.form.foodId = undefined;
         state.form.food = undefined;
       }
@@ -260,10 +260,11 @@ const taskSlice = createSlice({
     },
 
     onChangeFoodByUrlId: (state, action: PayloadAction<number>) => {
-      const data = state.foodOptions.find((e) => e.id === action.payload);
-      if (data) {
-        state.form.foodId = data.id;
-        state.form.food = data;
+      const data = state.foodOptions.find((gr) => gr.options.find((e) => e.data.id === action.payload));
+      if (data && state.form) {
+        const d = data.options.find((e) => e.data.id === action.payload);
+        state.form.foodId = d.data.id;
+        state.form.food = d.data;
       }
     },
 

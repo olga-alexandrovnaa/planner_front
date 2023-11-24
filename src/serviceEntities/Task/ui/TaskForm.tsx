@@ -614,12 +614,6 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
             )}
 
             {form?.isFood && (
-              <Button className={cls.Button} onClick={onSelectOtherDayHandler}>
-                Подбор&nbsp;по ингридиентам
-              </Button>
-            )}
-
-            {form?.isFood && (
               <div className={cls.InputBlock}>
                 <div className={cls.Label}>Сколько приготовить</div>
                 <Input
