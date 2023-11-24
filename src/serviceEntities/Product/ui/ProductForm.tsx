@@ -310,6 +310,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                 <CustomSelect
                   className={cls.Input}
                   menuPlacement="top"
+                  isSearchable
                   value={
                     ingredientProductToCreate?.type
                       ? {
@@ -334,6 +335,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                 <CustomSelect
                   className={cls.Input}
                   menuPlacement="top"
+                  isSearchable
                   value={
                     ingredientProductToCreate?.measureUnit
                       ? {
@@ -455,6 +457,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <CustomSelect
               className={cls.Input}
               menuPlacement="top"
+              isSearchable
               value={
                 form?.foodType
                   ? {
@@ -477,6 +480,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
               <CustomSelect
                 className={cls.Input}
                 menuPlacement="top"
+                isSearchable
                 value={
                   ingredientToCreate?.type
                     ? {
@@ -503,6 +507,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                   onCreateOption={onStartProductCreateHandler}
                   className={cls.Input}
                   menuPlacement="top"
+                  isSearchable
                   value={
                     ingredientToCreate?.product
                       ? {
@@ -541,6 +546,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                 <CustomSelect
                   className={cls.Input}
                   menuPlacement="top"
+                  isSearchable
                   value={
                     ingredientToCreate?.measureUnit
                       ? {
