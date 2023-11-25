@@ -808,11 +808,33 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
 
             <div className={cls.FoodInfo}>
               {!!form?.isFood && !!form?.food && !!form.food.recipe && (
+                <div className={cls.Fats}>
+                  <div className={cls.FatsLabel}>БЖУ порции:</div>
+                  <div className={cls.FatsData}>
+                    {form.foodCout
+                      ? form.food.proteins ?? 0 * form.foodCout
+                      : form.food.proteins ?? 0}&nbsp;
+                    белков&nbsp;&nbsp;{" "}
+                    {form.foodCout
+                      ? form.food.fats ?? 0 * form.foodCout
+                      : form.food.fats ?? 0}&nbsp;
+                    жиров&nbsp;&nbsp;{" "}
+                    {form.foodCout
+                      ? form.food.carbohydrates ?? 0 * form.foodCout
+                      : form.food.carbohydrates ?? 0}&nbsp;
+                    угл.&nbsp;&nbsp;{" "}
+                    {form.foodCout
+                      ? form.food.calories ?? 0 * form.foodCout
+                      : form.food.calories ?? 0}&nbsp;
+                    ккал
+                  </div>
+                </div>
+              )}
+
+              {!!form?.isFood && !!form?.food && !!form.food.recipe && (
                 <div className={cls.FoodRecipe}>
                   <div className={cls.FoodRecipeLabel}>Рецепт:</div>
-                  <div className={cls.FoodRecipeData}>
-                    {form.food.recipe} fffffff
-                  </div>
+                  <div className={cls.FoodRecipeData}>{form.food.recipe}</div>
                 </div>
               )}
 

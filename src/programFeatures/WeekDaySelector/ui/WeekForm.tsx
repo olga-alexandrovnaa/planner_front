@@ -359,7 +359,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
                   className={cls.BlackButton}
                   onClick={() => setAllIngredientsOpen(true)}
                 >
-                  Все ингриденты
+                  Все ингредиенты
                 </Button>
               )}
               <DayTasksListForm date={selectedDay} type={type} />

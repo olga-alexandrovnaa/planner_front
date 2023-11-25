@@ -409,6 +409,17 @@
   flex-direction: column;
   margin-bottom: calc(60px + var(--mainPageMargin));
 }
+.Fats {
+  display: flex;
+  flex-direction: column;
+  padding-top: 15px;
+  .FatsLabel {
+    font-weight: bold;
+  }
+  .FatsData {
+    font-size: var(--fontSizeSmall);
+  }
+}
 .FoodRecipe {
   display: flex;
   flex-direction: column;

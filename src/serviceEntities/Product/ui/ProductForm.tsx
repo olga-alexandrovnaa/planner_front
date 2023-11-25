@@ -607,7 +607,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
           <div className={cls.addedIngredients}>
             {!!form?.ingredients?.length && (
               <div className={cls.headerOfAddedIngredients}>
-                Добавленные игредиенты
+                Добавленные ингредиенты
               </div>
             )}
 
