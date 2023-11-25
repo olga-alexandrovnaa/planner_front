@@ -307,6 +307,12 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
     },
     [dispatch]
   );
+  const onChangeCountCreatedProduct = useCallback(
+    (val: number) => {
+      dispatch(productActions.onChangeCountCreatedProduct(val));
+    },
+    [dispatch]
+  );
   const onChangeTypeCreatedProduct = useCallback(
     (data: { value: ProductType; label: string } | undefined) => {
       dispatch(
@@ -380,6 +386,20 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                         }))
                       : []
                   }
+                />
+              </div>
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Упаковка</div>
+                <Input
+                  className={cls.Input}
+                  value={ingredientProductToCreate?.count ?? ""}
+                  onChange={onChangeCountCreatedProduct}
+                  textAfterInput={
+                    ingredientProductToCreate?.measureUnit
+                      ? ingredientProductToCreate?.measureUnit.name
+                      : ""
+                  }
+                  type="number"
                 />
               </div>
               <div style={{ marginTop: "10px" }} className={cls.ButtonBlock}>

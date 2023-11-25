@@ -24,6 +24,7 @@ const initialState: ProductSchema = {
     name: undefined,
     measureUnit: undefined,
     measureUnitId: undefined,
+    count: 1,
     type: undefined,
     typeId: undefined,
   },
@@ -127,6 +128,9 @@ const productSlice = createSlice({
       state.productToCreate.measureUnitId = action.payload ? action.payload.id : undefined; 
       state.productToCreate.measureUnit = action.payload;
     },
+    onChangeCountCreatedProduct: (state, action: PayloadAction<number>) => {
+      state.productToCreate.count = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -183,6 +187,7 @@ const productSlice = createSlice({
           name: undefined,
           measureUnit: undefined,
           measureUnitId: undefined,
+          count: 1,
           type: undefined,
           typeId: undefined,
         };
