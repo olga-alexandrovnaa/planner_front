@@ -459,7 +459,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             className={cls.TextArea}
             value={form?.recipe ?? ""}
             onChange={onChangeRecipe}
-            placeholder="Примечание"
+            placeholder="Рецепт"
             type="textarea"
           />
 
