@@ -404,13 +404,13 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
           <Input
             className={cls.MainInput}
             placeholder={"Название"}
-            value={form?.name || undefined}
+            value={form?.name ?? ''}
             onChange={onChangeName}
           />
 
           <Input
             className={cls.TextArea}
-            value={form?.recipe || undefined}
+            value={form?.recipe ?? ''}
             onChange={onChangeRecipe}
             placeholder="Примечание"
             type="textarea"
@@ -420,7 +420,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Белки</div>
             <Input
               className={cls.Input}
-              value={form?.proteins || ""}
+              value={form?.proteins ?? ""}
               onChange={onChangeProteins}
               type="number"
             />
@@ -429,7 +429,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Жиры</div>
             <Input
               className={cls.Input}
-              value={form?.fats || ""}
+              value={form?.fats ?? ""}
               onChange={onChangeFats}
               type="number"
             />
@@ -438,7 +438,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Углеводы</div>
             <Input
               className={cls.Input}
-              value={form?.carbohydrates || ""}
+              value={form?.carbohydrates ?? ""}
               onChange={onChangeCarbohydrates}
               type="number"
             />
@@ -447,7 +447,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Калории</div>
             <Input
               className={cls.Input}
-              value={form?.calories || ""}
+              value={form?.calories ?? ""}
               onChange={onChangeCalories}
               type="number"
             />
@@ -534,7 +534,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                 <div className={cls.Label}>Кол-во</div>
                 <Input
                   className={cls.Input}
-                  value={ingredientToCreate?.count || ""}
+                  value={ingredientToCreate?.count ?? ""}
                   onChange={onChangeAddedIngredentCount}
                   type="number"
                 />
