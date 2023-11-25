@@ -216,6 +216,10 @@ const productSlice = createSlice({
       })
       .addCase(fetchMeasureUnitsByIngredient.fulfilled, (state, action: PayloadAction<MeasureUnit[]>) => {
         state.measureUnitsByIngredient = action.payload;
+        if(action.payload?.length === 1){
+          state.ingredientToCreate.measureUnitId = action.payload[0].id;
+          state.ingredientToCreate.measureUnit = action.payload[0];
+        }
       })
 
   },

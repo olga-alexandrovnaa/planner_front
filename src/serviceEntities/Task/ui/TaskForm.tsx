@@ -858,32 +858,50 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
         )}
 
         <div className={cls.Footer}>
-          <div className={cls.ButtonBlock}>
-            {id !== "new" && (
+          {id !== "new" ? (
+            <div className={cls.ButtonBlock}>
               <Button
                 className={cls.SecondaryButton}
                 onClick={onStartDeleteHandler}
               >
                 Удалить трекер
               </Button>
-            )}
 
-            {openModalDays && (
-              <Button className={cls.MainButton} onClick={onSaveDays}>
-                OK
-              </Button>
-            )}
-            {openModalYearDays && (
-              <Button className={cls.MainButton} onClick={onSaveYearDays}>
-                OK
-              </Button>
-            )}
-            {!openModalDays && !openModalYearDays && (
-              <Button className={cls.MainButton} onClick={onSave}>
-                Сохранить
-              </Button>
-            )}
-          </div>
+              {openModalDays && (
+                <Button className={cls.MainButton} onClick={onSaveDays}>
+                  OK
+                </Button>
+              )}
+              {openModalYearDays && (
+                <Button className={cls.MainButton} onClick={onSaveYearDays}>
+                  OK
+                </Button>
+              )}
+              {!openModalDays && !openModalYearDays && (
+                <Button className={cls.MainButton} onClick={onSave}>
+                  Сохранить
+                </Button>
+              )}
+            </div>
+          ) : (
+            <>
+              {openModalDays && (
+                <Button className={cls.MainButton} onClick={onSaveDays}>
+                  OK
+                </Button>
+              )}
+              {openModalYearDays && (
+                <Button className={cls.MainButton} onClick={onSaveYearDays}>
+                  OK
+                </Button>
+              )}
+              {!openModalDays && !openModalYearDays && (
+                <Button className={cls.MainButton} onClick={onSave}>
+                  Сохранить
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </DynamicModuleLoader>

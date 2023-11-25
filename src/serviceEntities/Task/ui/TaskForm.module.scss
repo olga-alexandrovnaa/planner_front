@@ -220,18 +220,18 @@
   flex-direction: row;
   flex-grow: 1;
   justify-content: space-between;
-  .SecondaryButton {
-    font-size: var(--fontSize);
-    border-color: var(--btn-active) !important;
-    background-color: var(--main-bg-color) !important;
-    color: var(--primary-text) !important;
-    min-width: 100px;
-  }
-  .MainButton {
-    font-size: var(--fontSize);
-    color: var(--white-text) !important;
-    min-width: 100px;
-  }
+}
+.SecondaryButton {
+  font-size: var(--fontSize);
+  border-color: var(--btn-active) !important;
+  background-color: var(--main-bg-color) !important;
+  color: var(--primary-text) !important;
+  min-width: 100px;
+}
+.MainButton {
+  font-size: var(--fontSize);
+  color: var(--white-text) !important;
+  min-width: 100px;
 }
 
 .ModalButton {
@@ -404,7 +404,7 @@
   height: 12px;
 }
 
-.FoodInfo{
+.FoodInfo {
   display: flex;
   flex-direction: column;
   margin-bottom: calc(60px + var(--mainPageMargin));
