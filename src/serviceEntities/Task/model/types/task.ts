@@ -1,3 +1,4 @@
+import { Ingredient } from "@/serviceEntities/Product/model/types/product";
 import { GroupBase } from "react-select";
 
 export enum IntervalType {
@@ -17,38 +18,6 @@ export enum MoveTypeIfDayNotExists {
   nextIntervalFirstDay = 'nextIntervalFirstDay',
   currentIntervalLastDay = 'currentIntervalLastDay',
 }
-
-export type Ingredient = {
-  id: number;
-  trackerId: number;
-  productId: number;
-  product: {
-    id: number;
-    name: string;
-    typeId?: number;
-    type?: {
-      id: number;
-      name: string;
-      userId?: number;
-      isDeleted: boolean;
-    };
-    measureUnitId: number;
-    measureUnit: {
-      id: number;
-      name: string;
-    };
-  };
-  count: number;
-  measureUnitId?: number | null;
-  measureUnit?: {
-    measureUnitId: number;
-    measureUnit: {
-      id: number;
-      name: string;
-    };
-    outcomeOfProduct: number;
-  };
-};
 
 export type RepeatDayTaskWithNotYearInterval = {
   id: number;

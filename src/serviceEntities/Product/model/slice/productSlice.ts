@@ -83,14 +83,14 @@ const productSlice = createSlice({
       state.form.foodType = action.payload;
     },
     onChangeAddedIngredentProduct: (state, action: PayloadAction<Product>) => {
-      state.ingredientToCreate.productId = action.payload.id;
+      state.ingredientToCreate.productId = action.payload ? action.payload.id : undefined;
       state.ingredientToCreate.product = action.payload;
     },
     onChangeAddedIngredentCount: (state, action: PayloadAction<number>) => {
       state.ingredientToCreate.count = action.payload;
     },
     onChangeAddedIngredentMeasureUnit: (state, action: PayloadAction<MeasureUnit>) => {
-      state.ingredientToCreate.measureUnitId = action.payload.id;
+      state.ingredientToCreate.measureUnitId = action.payload ? action.payload.id : undefined;
       state.ingredientToCreate.measureUnit = action.payload;
     },
     onChangeAddedIngredentProductType: (state, action: PayloadAction<ProductType>) => {
@@ -118,13 +118,13 @@ const productSlice = createSlice({
 
     onChangeTypeCreatedProduct: (state, action: PayloadAction<ProductType>) => {
       state.productToCreate.type = action.payload;
-      state.productToCreate.typeId = action.payload.id;
+      state.productToCreate.typeId = action.payload ? action.payload.id : undefined;
     },
     onChangeNameCreatedProduct: (state, action: PayloadAction<string>) => {
       state.productToCreate.name = action.payload;
     },
     onChangeMeasureUnitCreatedProduct: (state, action: PayloadAction<MeasureUnit>) => {
-      state.productToCreate.measureUnitId = action.payload.id;
+      state.productToCreate.measureUnitId = action.payload ? action.payload.id : undefined; 
       state.productToCreate.measureUnit = action.payload;
     },
   },
@@ -186,7 +186,7 @@ const productSlice = createSlice({
           type: undefined,
           typeId: undefined,
         };
-        state.ingredientToCreate.productId = action.payload.id;
+        state.ingredientToCreate.productId = action.payload ? action.payload.id : undefined;
         state.ingredientToCreate.product = action.payload;
       })
 

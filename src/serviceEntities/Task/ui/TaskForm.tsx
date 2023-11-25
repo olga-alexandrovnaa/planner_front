@@ -792,17 +792,54 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
               </Button>
             </div>
 
-            <Input
-              className={cls.TextArea}
-              value={
-                form?.taskRepeatDayCheck?.length
-                  ? form?.taskRepeatDayCheck[0].note
-                  : undefined
-              }
-              onChange={onChangeNote}
-              placeholder="Примечание"
-              type="textarea"
-            />
+            {!form?.isFood && (
+              <Input
+                className={cls.TextArea}
+                value={
+                  form?.taskRepeatDayCheck?.length
+                    ? form?.taskRepeatDayCheck[0].note
+                    : undefined
+                }
+                onChange={onChangeNote}
+                placeholder="Примечание"
+                type="textarea"
+              />
+            )}
+
+            <div className={cls.FoodInfo}>
+              {!!form?.isFood && !!form?.food && !!form.food.recipe && (
+                <div className={cls.FoodRecipe}>
+                  <div className={cls.FoodRecipeLabel}>Рецепт:</div>
+                  <div className={cls.FoodRecipeData}>
+                    {form.food.recipe} fffffff
+                  </div>
+                </div>
+              )}
+
+              {!!form?.isFood &&
+                !!form?.food &&
+                !!form?.food?.ingredients?.length && (
+                  <div className={cls.FoodIngredients}>
+                    <div className={cls.FoodIngredientsLabel}>Игредиенты:</div>
+                    <div className={cls.FoodIngredientsData}>
+                      {form.food.ingredients.map((e) => (
+                        <div className={cls.FoodIngredient}>
+                          <div className={cls.FoodIngredientName}>
+                            {e.product.name}
+                          </div>
+                          <div className={cls.FoodIngredientCount}>
+                            {`${
+                              form.foodCountToPrepare
+                                ? e.count * form.foodCountToPrepare
+                                : e.count
+                            } ${e.measureUnit.name}`}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </div>
           </div>
         )}
 
