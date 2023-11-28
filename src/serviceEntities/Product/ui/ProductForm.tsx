@@ -95,7 +95,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
 
   useEffect(() => {
     if (id === "new") {
-      const fT: foodType = Object.values(foodType).find((v) => v === type)
+      const fT: foodType = Object.values(foodType).find((v) => v === type);
       dispatch(productActions.setCreateMode(fT));
     } else {
       dispatch(productActions.setId(Number(id)));
@@ -116,22 +116,31 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
       backPath: trackerBackPath,
       dateFromUrl: dateFromUrl,
       type: type,
-      isFood: '1',
+      isFood: "1",
     };
 
-    if(typeof result.payload !== 'string'){
+    if (typeof result.payload !== "string") {
       params.createdProduct = String(result.payload.id);
       navigate(getRouteTask(taskId, params));
     }
     navigate(getRouteTask(taskId, params));
-  }, [dateFromUrl, dispatch, error, isCreateMode, navigate, taskId, trackerBackPath, type]);
+  }, [
+    dateFromUrl,
+    dispatch,
+    error,
+    isCreateMode,
+    navigate,
+    taskId,
+    trackerBackPath,
+    type,
+  ]);
 
   const onBack = useCallback(() => {
     const params: OptionalRecord<string, string> = {
       backPath: trackerBackPath,
       dateFromUrl: dateFromUrl,
       type: type,
-      isFood: '1',
+      isFood: "1",
     };
     navigate(getRouteTask(taskId, params));
   }, [dateFromUrl, navigate, taskId, trackerBackPath, type]);
@@ -206,7 +215,11 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
   }, [dispatch]);
   const onChangeAddedIngredentMeasureUnit = useCallback(
     (data: { value: MeasureUnit; label: string } | undefined) => {
-      dispatch(productActions.onChangeAddedIngredentMeasureUnit(data ? data.value : undefined));
+      dispatch(
+        productActions.onChangeAddedIngredentMeasureUnit(
+          data ? data.value : undefined
+        )
+      );
     },
     [dispatch]
   );
@@ -218,13 +231,21 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
   );
   const onChangeAddedIngredentProduct = useCallback(
     (data: { value: Product; label: string } | undefined) => {
-      dispatch(productActions.onChangeAddedIngredentProduct(data ? data.value : undefined));
+      dispatch(
+        productActions.onChangeAddedIngredentProduct(
+          data ? data.value : undefined
+        )
+      );
     },
     [dispatch]
   );
   const onChangeAddedIngredentProductType = useCallback(
     (data: { value: ProductType; label: string } | undefined) => {
-      dispatch(productActions.onChangeAddedIngredentProductType(data ? data.value : undefined));
+      dispatch(
+        productActions.onChangeAddedIngredentProductType(
+          data ? data.value : undefined
+        )
+      );
     },
     [dispatch]
   );
@@ -278,13 +299,25 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
   );
   const onChangeMeasureUnitCreatedProduct = useCallback(
     (data: { value: MeasureUnit; label: string } | undefined) => {
-      dispatch(productActions.onChangeMeasureUnitCreatedProduct(data ? data.value : undefined));
+      dispatch(
+        productActions.onChangeMeasureUnitCreatedProduct(
+          data ? data.value : undefined
+        )
+      );
+    },
+    [dispatch]
+  );
+  const onChangeCountCreatedProduct = useCallback(
+    (val: number) => {
+      dispatch(productActions.onChangeCountCreatedProduct(val));
     },
     [dispatch]
   );
   const onChangeTypeCreatedProduct = useCallback(
     (data: { value: ProductType; label: string } | undefined) => {
-      dispatch(productActions.onChangeTypeCreatedProduct(data ? data.value : undefined));
+      dispatch(
+        productActions.onChangeTypeCreatedProduct(data ? data.value : undefined)
+      );
     },
     [dispatch]
   );
@@ -317,7 +350,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                           value: ingredientProductToCreate?.type,
                           label: ingredientProductToCreate?.type.name,
                         }
-                      : ''
+                      : ""
                   }
                   onChange={onChangeTypeCreatedProduct}
                   options={
@@ -342,7 +375,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                           value: ingredientProductToCreate?.measureUnit,
                           label: ingredientProductToCreate?.measureUnit.name,
                         }
-                      : ''
+                      : ""
                   }
                   onChange={onChangeMeasureUnitCreatedProduct}
                   options={
@@ -353,6 +386,20 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                         }))
                       : []
                   }
+                />
+              </div>
+              <div className={cls.InputBlock}>
+                <div className={cls.Label}>Упаковка</div>
+                <Input
+                  className={cls.Input}
+                  value={ingredientProductToCreate?.count ?? ""}
+                  onChange={onChangeCountCreatedProduct}
+                  textAfterInput={
+                    ingredientProductToCreate?.measureUnit
+                      ? ingredientProductToCreate?.measureUnit.name
+                      : ""
+                  }
+                  type="number"
                 />
               </div>
               <div style={{ marginTop: "10px" }} className={cls.ButtonBlock}>
@@ -404,15 +451,15 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
           <Input
             className={cls.MainInput}
             placeholder={"Название"}
-            value={form?.name || undefined}
+            value={form?.name ?? ""}
             onChange={onChangeName}
           />
 
           <Input
             className={cls.TextArea}
-            value={form?.recipe || undefined}
+            value={form?.recipe ?? ""}
             onChange={onChangeRecipe}
-            placeholder="Примечание"
+            placeholder="Рецепт"
             type="textarea"
           />
 
@@ -420,7 +467,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Белки</div>
             <Input
               className={cls.Input}
-              value={form?.proteins || ""}
+              value={form?.proteins ?? ""}
               onChange={onChangeProteins}
               type="number"
             />
@@ -429,7 +476,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Жиры</div>
             <Input
               className={cls.Input}
-              value={form?.fats || ""}
+              value={form?.fats ?? ""}
               onChange={onChangeFats}
               type="number"
             />
@@ -438,7 +485,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Углеводы</div>
             <Input
               className={cls.Input}
-              value={form?.carbohydrates || ""}
+              value={form?.carbohydrates ?? ""}
               onChange={onChangeCarbohydrates}
               type="number"
             />
@@ -447,7 +494,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
             <div className={cls.Label}>Калории</div>
             <Input
               className={cls.Input}
-              value={form?.calories || ""}
+              value={form?.calories ?? ""}
               onChange={onChangeCalories}
               type="number"
             />
@@ -464,7 +511,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                       value: form?.foodType,
                       label: foodTypeText[form?.foodType],
                     }
-                  : ''
+                  : ""
               }
               onChange={onChangeFoodType}
               options={foodTypeOptions}
@@ -487,7 +534,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                         value: ingredientToCreate?.type,
                         label: ingredientToCreate?.type.name,
                       }
-                    : ''
+                    : ""
                 }
                 onChange={onChangeAddedIngredentProductType}
                 options={
@@ -514,7 +561,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                           value: ingredientToCreate?.product,
                           label: ingredientToCreate?.product.name,
                         }
-                      : ''
+                      : ""
                   }
                   onChange={onChangeAddedIngredentProduct}
                   defaultOptions={
@@ -534,7 +581,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                 <div className={cls.Label}>Кол-во</div>
                 <Input
                   className={cls.Input}
-                  value={ingredientToCreate?.count || ""}
+                  value={ingredientToCreate?.count ?? ""}
                   onChange={onChangeAddedIngredentCount}
                   type="number"
                 />
@@ -553,7 +600,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
                           value: ingredientToCreate?.measureUnit,
                           label: ingredientToCreate?.measureUnit.name,
                         }
-                      : ''
+                      : ""
                   }
                   onChange={onChangeAddedIngredentMeasureUnit}
                   options={
@@ -580,7 +627,7 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
           <div className={cls.addedIngredients}>
             {!!form?.ingredients?.length && (
               <div className={cls.headerOfAddedIngredients}>
-                Добавленные игредиенты
+                Добавленные ингредиенты
               </div>
             )}
 
@@ -595,22 +642,30 @@ const ProductForm = memo(({ className }: ProductFormProps) => {
         </div>
 
         <div className={cls.Footer}>
-          <div className={cls.ButtonBlock}>
-            {id !== "new" && (
+          {id !== "new" ? (
+            <div className={cls.ButtonBlock}>
               <Button
                 className={cls.SecondaryButton}
                 onClick={onStartDeleteHandler}
               >
                 Удалить блюдо
               </Button>
-            )}
 
-            {!openDeleteModal && form?.name && (
-              <Button className={cls.MainButton} onClick={onSave}>
-                Сохранить
-              </Button>
-            )}
-          </div>
+              {!openDeleteModal && form?.name && (
+                <Button className={cls.MainButton} onClick={onSave}>
+                  Сохранить
+                </Button>
+              )}
+            </div>
+          ) : (
+            <>
+              {!openDeleteModal && form?.name && (
+                <Button className={cls.MainButton} onClick={onSave}>
+                  Сохранить
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </DynamicModuleLoader>

@@ -305,7 +305,11 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
                   {allIngredients.map((e) => (
                     <div className={cls.allIngredient}>
                       <div>{e.product.name}</div>
-                      <div>{`${e.count} ${e.product.measureUnit.name}`}</div>
+                      <div>{`${e.count} ${e.product.measureUnit.name} (${
+                        e.countInPack
+                      } уп.${
+                        e.product.count !== 1 ? ` по ${e.product.count}` : ""
+                      })`}</div>
                     </div>
                   ))}
                 </div>

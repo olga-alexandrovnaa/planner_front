@@ -24,6 +24,7 @@ const initialState: ProductSchema = {
     name: undefined,
     measureUnit: undefined,
     measureUnitId: undefined,
+    count: 1,
     type: undefined,
     typeId: undefined,
   },
@@ -83,14 +84,14 @@ const productSlice = createSlice({
       state.form.foodType = action.payload;
     },
     onChangeAddedIngredentProduct: (state, action: PayloadAction<Product>) => {
-      state.ingredientToCreate.productId = action.payload.id;
+      state.ingredientToCreate.productId = action.payload ? action.payload.id : undefined;
       state.ingredientToCreate.product = action.payload;
     },
     onChangeAddedIngredentCount: (state, action: PayloadAction<number>) => {
       state.ingredientToCreate.count = action.payload;
     },
     onChangeAddedIngredentMeasureUnit: (state, action: PayloadAction<MeasureUnit>) => {
-      state.ingredientToCreate.measureUnitId = action.payload.id;
+      state.ingredientToCreate.measureUnitId = action.payload ? action.payload.id : undefined;
       state.ingredientToCreate.measureUnit = action.payload;
     },
     onChangeAddedIngredentProductType: (state, action: PayloadAction<ProductType>) => {
@@ -118,14 +119,17 @@ const productSlice = createSlice({
 
     onChangeTypeCreatedProduct: (state, action: PayloadAction<ProductType>) => {
       state.productToCreate.type = action.payload;
-      state.productToCreate.typeId = action.payload.id;
+      state.productToCreate.typeId = action.payload ? action.payload.id : undefined;
     },
     onChangeNameCreatedProduct: (state, action: PayloadAction<string>) => {
       state.productToCreate.name = action.payload;
     },
     onChangeMeasureUnitCreatedProduct: (state, action: PayloadAction<MeasureUnit>) => {
-      state.productToCreate.measureUnitId = action.payload.id;
+      state.productToCreate.measureUnitId = action.payload ? action.payload.id : undefined; 
       state.productToCreate.measureUnit = action.payload;
+    },
+    onChangeCountCreatedProduct: (state, action: PayloadAction<number>) => {
+      state.productToCreate.count = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -183,10 +187,11 @@ const productSlice = createSlice({
           name: undefined,
           measureUnit: undefined,
           measureUnitId: undefined,
+          count: 1,
           type: undefined,
           typeId: undefined,
         };
-        state.ingredientToCreate.productId = action.payload.id;
+        state.ingredientToCreate.productId = action.payload ? action.payload.id : undefined;
         state.ingredientToCreate.product = action.payload;
       })
 
@@ -216,6 +221,10 @@ const productSlice = createSlice({
       })
       .addCase(fetchMeasureUnitsByIngredient.fulfilled, (state, action: PayloadAction<MeasureUnit[]>) => {
         state.measureUnitsByIngredient = action.payload;
+        if(action.payload?.length === 1){
+          state.ingredientToCreate.measureUnitId = action.payload[0].id;
+          state.ingredientToCreate.measureUnit = action.payload[0];
+        }
       })
 
   },

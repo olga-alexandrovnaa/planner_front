@@ -19,6 +19,7 @@ export type DayNote = {
 export type AllIngredient = {
   product: Product;
   count: number;
+  countInPack: number;
 }
 
 export type WeekDay = {

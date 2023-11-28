@@ -43,7 +43,7 @@
   }
 
   .WeekSelector,
-  .MonthSelector ,
+  .MonthSelector,
   .YearSelector {
     display: flex;
     flex-direction: column;
@@ -54,7 +54,6 @@
 
     position: relative;
 
- 
     .YearSelectorMonths {
       display: flex;
       flex-direction: column;
@@ -62,7 +61,7 @@
       flex-grow: 1;
       margin-top: 5px;
 
-      .SelectorMonthBlock{
+      .SelectorMonthBlock {
         margin: 5px;
         display: flex;
         flex-direction: column;
@@ -70,12 +69,12 @@
         align-items: center;
         justify-content: center;
 
-        .SelectorMonthHeader{
+        .SelectorMonthHeader {
           display: flex;
           text-align: center;
         }
 
-        .SelectorMonth{
+        .SelectorMonth {
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
@@ -88,7 +87,7 @@
             justify-content: center;
             height: 40px;
             width: 40px;
-    
+
             .SelectorYearDay {
               display: flex;
               align-items: center;
@@ -102,11 +101,9 @@
               background-color: var(--primary);
             }
           }
-
         }
       }
     }
-    
 
     .WeekSelectorWeek {
       display: flex;
@@ -205,7 +202,6 @@
     }
   }
 
-
   .Footer {
     position: fixed;
     height: 60px;
@@ -215,9 +211,8 @@
     flex-direction: row;
     padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);
     justify-content: flex-end;
-    bottom: calc(4 * var(--mainPageMargin));
+    bottom: calc(var(--mainPageMargin));
   }
-
 }
 
 .ButtonBlock {
@@ -225,29 +220,29 @@
   flex-direction: row;
   flex-grow: 1;
   justify-content: space-between;
-  .SecondaryButton {
-    font-size: var(--fontSize);
-    border-color: var(--btn-active)  !important;
-    background-color: var(--main-bg-color) !important;
-    color: var(--primary-text)  !important;
-    min-width: 100px;
-  }
-  .MainButton {
-    font-size: var(--fontSize);
-    color: var(--white-text)  !important;
-    min-width: 100px;
-  }
+}
+.SecondaryButton {
+  font-size: var(--fontSize);
+  border-color: var(--btn-active) !important;
+  background-color: var(--main-bg-color) !important;
+  color: var(--primary-text) !important;
+  min-width: 100px;
+}
+.MainButton {
+  font-size: var(--fontSize);
+  color: var(--white-text) !important;
+  min-width: 100px;
 }
 
-.ModalButton{
-    padding: 8px;
-    margin-top: 20px;
-    font-size: var(--fontSizeSmall);
-    width: fit-content;
-    background-color: var(--btn-active) !important;
-    color: var(--white-text) !important;
-    display: flex;
-    align-self: end;
+.ModalButton {
+  padding: 8px;
+  margin-top: 20px;
+  font-size: var(--fontSizeSmall);
+  width: fit-content;
+  background-color: var(--btn-active) !important;
+  color: var(--white-text) !important;
+  display: flex;
+  align-self: end;
 }
 
 .Data,
@@ -257,7 +252,7 @@
   // flex-grow: 1;
   min-width: calc(100vw - (var(--mainPageMargin) * 2));
   max-width: calc(100vw - (var(--mainPageMargin) * 2));
-  padding: var(--mainPageMargin) ;
+  padding: var(--mainPageMargin);
   justify-content: stretch;
 
   .MonthSelectorMonthWeeksCreating {
@@ -270,8 +265,8 @@
       justify-content: space-between;
       align-items: center;
       font-weight: var(--fontWeightBold);
-      .CreatingHeaderText{
-          width: 60%;
+      .CreatingHeaderText {
+        width: 60%;
       }
     }
   }
@@ -280,7 +275,7 @@
     margin-right: 5px;
     margin-top: 5px;
   }
-  .LabelTopCenter{
+  .LabelTopCenter {
     margin-right: 5px;
     margin-top: 5px;
     margin-bottom: 10px;
@@ -295,7 +290,7 @@
 
     .Label {
       margin-right: 5px;
-      min-width: 90px !important;
+      min-width: 70px !important;
       line-height: 90%;
     }
     .Icon {
@@ -322,36 +317,33 @@
     .Button {
       margin-left: 5px;
       font-size: var(--fontSizeSmall);
-     
     }
   }
 
-  .InputFood{
+  .InputFood {
     border: none !important;
     display: flex;
     flex-grow: 1;
     padding: 0px 5px 0px 5px;
-    margin: 5px 0px 5px 0px;
     background-color: var(--input-bg);
   }
 
-  .SelectorWeekBlock{
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      background-color: var(--light-bg-color);
-      margin: 5px;
-      border-radius: 5px;
+  .SelectorWeekBlock {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--light-bg-color);
+    margin: 5px;
+    border-radius: 5px;
 
-      .SelectorWeek{
-          padding: 5px;
-          
-      }
-      .SelectorWeekIcon{
-          padding: 5px;
-          margin-top: 5px;
-      }
+    .SelectorWeek {
+      padding: 5px;
+    }
+    .SelectorWeekIcon {
+      padding: 5px;
+      margin-top: 5px;
+    }
   }
 
   .MainInput {
@@ -366,7 +358,7 @@
     font-weight: var(--fontWeightBold);
     margin-top: 30px;
   }
-  
+
   .Button {
     padding: 8px;
     width: fit-content;
@@ -374,8 +366,6 @@
     background-color: var(--btn-active) !important;
     color: var(--white-text) !important;
   }
-
- 
 
   .TextArea {
     margin-top: 5px;
@@ -408,9 +398,61 @@
   }
 }
 
-
-.SmallClearIcon{
+.SmallClearIcon {
   margin-right: 5px;
   width: 12px;
   height: 12px;
+}
+
+.FoodInfo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: calc(60px + var(--mainPageMargin));
+}
+.Fats {
+  display: flex;
+  flex-direction: column;
+  padding-top: 15px;
+  .FatsLabel {
+    font-weight: bold;
+  }
+  .FatsData {
+    font-size: var(--fontSizeSmall);
+  }
+}
+.FoodRecipe {
+  display: flex;
+  flex-direction: column;
+  padding-top: 15px;
+  .FoodRecipeLabel {
+    font-weight: bold;
+  }
+  .FoodRecipeData {
+    font-size: var(--fontSizeSmall);
+  }
+}
+
+.FoodIngredients {
+  display: flex;
+  flex-direction: column;
+  padding-top: 15px;
+  .FoodIngredientsLabel {
+    font-weight: bold;
+  }
+  .FoodIngredientsData {
+    font-size: var(--fontSizeSmall);
+    display: flex;
+    flex-direction: column;
+
+    .FoodIngredient {
+      display: flex;
+      flex-direction: row;
+      margin-top: 5px;
+      justify-content: space-between;
+      .FoodIngredientName {
+      }
+      .FoodIngredientCount {
+      }
+    }
+  }
 }

@@ -69,8 +69,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (type === "number") {
         let data = String(e.target.value);
-        if(data.length !== 1){
+        if(data.length !== 1 && !['.', ','].includes(data[1])){
           data = data.replace(/^0+/, '');
+          refInput.current.value = data;
         }
         onChange?.(Number(data));
       } else {
@@ -97,10 +98,10 @@ const Input = forwardRef<HTMLInputElement, Props>(
 
     const onInputClick = useCallback(() => {
       if (type === "number") {
-        if (ref.current) {
-          ref.current.focus();
-          if(value === '0'){
-            ref.current.select();
+        if (refInput.current) {
+          refInput.current.focus();
+          if(value == 0){
+            refInput.current.select();
           }
         }
       } else if (type === "textarea") {
@@ -138,7 +139,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             [styles.disabled]: disabled,
           })}
           ref={refInput}
-          value={ type === 'number' && String(value).length !== 1 ? String(value).replace(/^0+/, '') : value ?? ''}
+          value={value ?? ''}
           disabled={disabled}
           {...props}
           type={type}

@@ -792,17 +792,76 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
               </Button>
             </div>
 
-            <Input
-              className={cls.TextArea}
-              value={
-                form?.taskRepeatDayCheck?.length
-                  ? form?.taskRepeatDayCheck[0].note
-                  : undefined
-              }
-              onChange={onChangeNote}
-              placeholder="Примечание"
-              type="textarea"
-            />
+            {!form?.isFood && (
+              <Input
+                className={cls.TextArea}
+                value={
+                  form?.taskRepeatDayCheck?.length
+                    ? form?.taskRepeatDayCheck[0].note
+                    : undefined
+                }
+                onChange={onChangeNote}
+                placeholder="Примечание"
+                type="textarea"
+              />
+            )}
+
+            <div className={cls.FoodInfo}>
+              {!!form?.isFood && !!form?.food && !!form.food.recipe && (
+                <div className={cls.Fats}>
+                  <div className={cls.FatsLabel}>БЖУ порции:</div>
+                  <div className={cls.FatsData}>
+                    {form.foodCout
+                      ? form.food.proteins ?? 0 * form.foodCout
+                      : form.food.proteins ?? 0}&nbsp;
+                    белков&nbsp;&nbsp;{" "}
+                    {form.foodCout
+                      ? form.food.fats ?? 0 * form.foodCout
+                      : form.food.fats ?? 0}&nbsp;
+                    жиров&nbsp;&nbsp;{" "}
+                    {form.foodCout
+                      ? form.food.carbohydrates ?? 0 * form.foodCout
+                      : form.food.carbohydrates ?? 0}&nbsp;
+                    угл.&nbsp;&nbsp;{" "}
+                    {form.foodCout
+                      ? form.food.calories ?? 0 * form.foodCout
+                      : form.food.calories ?? 0}&nbsp;
+                    ккал
+                  </div>
+                </div>
+              )}
+
+              {!!form?.isFood && !!form?.food && !!form.food.recipe && (
+                <div className={cls.FoodRecipe}>
+                  <div className={cls.FoodRecipeLabel}>Рецепт:</div>
+                  <div className={cls.FoodRecipeData}>{form.food.recipe}</div>
+                </div>
+              )}
+
+              {!!form?.isFood &&
+                !!form?.food &&
+                !!form?.food?.ingredients?.length && (
+                  <div className={cls.FoodIngredients}>
+                    <div className={cls.FoodIngredientsLabel}>Игредиенты:</div>
+                    <div className={cls.FoodIngredientsData}>
+                      {form.food.ingredients.map((e) => (
+                        <div className={cls.FoodIngredient}>
+                          <div className={cls.FoodIngredientName}>
+                            {e.product.name}
+                          </div>
+                          <div className={cls.FoodIngredientCount}>
+                            {`${
+                              form.foodCountToPrepare
+                                ? e.count * form.foodCountToPrepare
+                                : e.count
+                            } ${e.measureUnit.name}`}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </div>
           </div>
         )}
 
@@ -821,32 +880,50 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
         )}
 
         <div className={cls.Footer}>
-          <div className={cls.ButtonBlock}>
-            {id !== "new" && (
+          {id !== "new" ? (
+            <div className={cls.ButtonBlock}>
               <Button
                 className={cls.SecondaryButton}
                 onClick={onStartDeleteHandler}
               >
                 Удалить трекер
               </Button>
-            )}
 
-            {openModalDays && (
-              <Button className={cls.MainButton} onClick={onSaveDays}>
-                OK
-              </Button>
-            )}
-            {openModalYearDays && (
-              <Button className={cls.MainButton} onClick={onSaveYearDays}>
-                OK
-              </Button>
-            )}
-            {!openModalDays && !openModalYearDays && (
-              <Button className={cls.MainButton} onClick={onSave}>
-                Сохранить
-              </Button>
-            )}
-          </div>
+              {openModalDays && (
+                <Button className={cls.MainButton} onClick={onSaveDays}>
+                  OK
+                </Button>
+              )}
+              {openModalYearDays && (
+                <Button className={cls.MainButton} onClick={onSaveYearDays}>
+                  OK
+                </Button>
+              )}
+              {!openModalDays && !openModalYearDays && (
+                <Button className={cls.MainButton} onClick={onSave}>
+                  Сохранить
+                </Button>
+              )}
+            </div>
+          ) : (
+            <>
+              {openModalDays && (
+                <Button className={cls.MainButton} onClick={onSaveDays}>
+                  OK
+                </Button>
+              )}
+              {openModalYearDays && (
+                <Button className={cls.MainButton} onClick={onSaveYearDays}>
+                  OK
+                </Button>
+              )}
+              {!openModalDays && !openModalYearDays && (
+                <Button className={cls.MainButton} onClick={onSave}>
+                  Сохранить
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </DynamicModuleLoader>

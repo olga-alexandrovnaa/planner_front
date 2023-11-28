@@ -52,7 +52,6 @@
     justify-content: flex-end;
     bottom: var(--mainPageMargin);
   }
-
 }
 
 .ButtonBlock {
@@ -60,29 +59,28 @@
   flex-direction: row;
   flex-grow: 1;
   justify-content: space-between;
-  .SecondaryButton {
-    font-size: var(--fontSize);
-    border-color: var(--btn-active)  !important;
-    background-color: var(--main-bg-color) !important;
-    color: var(--primary-text)  !important;
-    min-width: 100px;
-  }
-  .MainButton {
-    font-size: var(--fontSize);
-    color: var(--white-text)  !important;
-    min-width: 100px;
-  }
 }
-
-.ModalButton{
-    padding: 8px;
-    margin-top: 20px;
-    font-size: var(--fontSizeSmall);
-    width: fit-content;
-    background-color: var(--btn-active) !important;
-    color: var(--white-text) !important;
-    display: flex;
-    align-self: end;
+.SecondaryButton {
+  font-size: var(--fontSize);
+  border-color: var(--btn-active) !important;
+  background-color: var(--main-bg-color) !important;
+  color: var(--primary-text) !important;
+  min-width: 100px;
+}
+.MainButton {
+  font-size: var(--fontSize);
+  color: var(--white-text) !important;
+  min-width: 100px;
+}
+.ModalButton {
+  padding: 8px;
+  margin-top: 20px;
+  font-size: var(--fontSizeSmall);
+  width: fit-content;
+  background-color: var(--btn-active) !important;
+  color: var(--white-text) !important;
+  display: flex;
+  align-self: end;
 }
 
 .Data {
@@ -94,7 +92,7 @@
   min-width: calc(100% - (var(--mainPageMargin) * 2));
   max-width: calc(100% - (var(--mainPageMargin) * 2));
 
-  padding: var(--mainPageMargin) ;
+  padding: var(--mainPageMargin);
 
   justify-content: stretch;
 
@@ -118,7 +116,7 @@
     margin-right: 5px;
     margin-top: 5px;
   }
-  .LabelTopCenter{
+  .LabelTopCenter {
     margin-right: 5px;
     margin-top: 5px;
     margin-bottom: 10px;
@@ -161,7 +159,6 @@
     .Button {
       margin-left: 5px;
       font-size: var(--fontSizeSmall);
-     
     }
   }
 
@@ -172,7 +169,7 @@
     font-size: var(--fontSizeLarge) !important;
     padding: 0px !important;
   }
-  
+
   .Button {
     padding: 8px;
 
@@ -212,7 +209,7 @@
     }
   }
 
-  .addIngredientsForm{
+  .addIngredientsForm {
     display: flex;
     flex-direction: column;
     background-color: var(--light-bg-color);
@@ -220,22 +217,23 @@
     border-radius: 10px;
     margin-top: 20px;
     margin-bottom: 5px;
-    NumberInput, .Input {
+    NumberInput,
+    .Input {
       background-color: var(--main-bg-color);
     }
 
-    .headerOfAddIngredientsForm{
+    .headerOfAddIngredientsForm {
       font-weight: bold;
     }
 
-    .Button{
+    .Button {
       margin-top: 15px;
       margin-bottom: 5px;
-      align-self:  end;
+      align-self: end;
     }
   }
-  .addedIngredients{
-    .headerOfAddedIngredients{
+  .addedIngredients {
+    .headerOfAddedIngredients {
       font-weight: bold;
     }
 
@@ -243,7 +241,7 @@
     flex-direction: column;
     margin-bottom: calc(60px + var(--mainPageMargin));
 
-    .Ingredient{
+    .Ingredient {
       margin: 5px;
       background-color: var(--input-bg);
       border-radius: 10px;
@@ -252,25 +250,22 @@
       justify-content: space-between;
       flex-grow: 1;
 
-
-      .IngredientData{
+      .IngredientData {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         flex-grow: 1;
         padding: 5px;
-        .IngredientDataName{
+        .IngredientDataName {
         }
-        .IngredientDataCount{
+        .IngredientDataCount {
         }
       }
     }
-
   }
 }
 
-
-.SmallClearIcon{
+.SmallClearIcon {
   margin-right: 5px;
   width: 12px;
   height: 12px;

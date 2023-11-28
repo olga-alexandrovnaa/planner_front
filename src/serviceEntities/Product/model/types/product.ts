@@ -71,6 +71,7 @@ export type Product = {
   type?: ProductType;
   measureUnitId?: number;
   measureUnit?: MeasureUnit;
+  count: number;
 };
 
 export type MeasureUnit = {
