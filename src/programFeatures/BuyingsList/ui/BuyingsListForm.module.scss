@@ -1,0 +1,251 @@
+@import "@/app/styles/mixins/adaptive.scss";
+
+.BuyingsListForm{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex-grow: 1;
+    justify-content: stretch;
+    max-height: (100%);
+
+    .Loader{
+        position: absolute;
+    }
+
+    .CreateButton{
+      background-color: var(--btn-active);
+      color: var(--white-text);
+      width: fit-content;
+      margin-top: 10px;
+    }
+
+    
+
+    .List{
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        flex-grow: 1;
+        align-items: stretch;
+        overflow-y: auto;
+        max-height: (100%);
+
+        .BuyingsListItem{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            min-height: 40px;
+
+            .BuyingsListCheckBox{
+                display: flex;
+
+            }
+            .BuyingsListItemData{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                flex-grow: 1;
+                background-color: var(--input-bg);
+                padding: 10px;
+                border-radius: 5px;
+
+                .BuyingsListItemText{
+                    display: flex;
+                    flex-grow: 1;
+                }
+                .Icon{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+        }
+        .BuyingsListItemChecked{
+            .BuyingsListItemData{
+                background-color: var(--light-bg-color);
+            }
+        }
+    }
+
+    .Footer {
+      position: fixed;
+      height: 50px;
+      display: flex;
+      min-width: calc(100vw - (var(--mainPageMargin) * 2));
+      max-width: calc(100vw - (var(--mainPageMargin) * 2));
+      flex-direction: row;
+      padding: 0 var(--mainPageMargin) var(--mainPageMargin) var(--mainPageMargin);
+      justify-content: space-between;
+      bottom: calc(70px);
+
+      .FooterLeft{
+        display: flex;
+        flex-direction: column;
+        flex-basis: 70%;
+      }
+      .FooterRight{
+        margin-top: 5px;
+        display: flex;
+        flex-basis: 30%;
+        justify-content: flex-end;
+        align-items: center;
+
+        .MainButton {
+          padding: 8px;
+          margin-right: 10px;
+          width: fit-content;
+          height: 44px;
+          font-size: var(--fontSizeSmall);
+          background-color: var(--primary) !important;
+          color: var(--white-text) !important;
+        }
+      }
+    }
+}
+
+
+.ButtonBlock {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    justify-content: space-between;
+    .SecondaryButton {
+      font-size: var(--fontSize);
+      border-color: var(--btn-active)  !important;
+      background-color: var(--main-bg-color) !important;
+      color: var(--primary-text)  !important;
+      min-width: 100px;
+    }
+    .MainButton {
+      font-size: var(--fontSize);
+      color: var(--white-text)  !important;
+      min-width: 100px;
+    }
+  }
+  
+  .ModalButton{
+      padding: 8px;
+      margin-top: 20px;
+      font-size: var(--fontSizeSmall);
+      width: fit-content;
+      background-color: var(--btn-active) !important;
+      color: var(--white-text) !important;
+      display: flex;
+      align-self: end;
+  }
+  
+  .Data {
+    display: flex;
+    flex-direction: column;
+  
+    flex-grow: 1;
+  
+    min-width: calc(100wv - (var(--mainPageMargin) * 2));
+    max-width: calc(100wv - (var(--mainPageMargin) * 2));
+  
+    padding: var(--mainPageMargin) ;
+  
+    justify-content: stretch;
+  
+    
+  }
+  
+  .LabelTop {
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+  .LabelTopCenter{
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .InputBlock {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 5px;
+
+    .Label {
+      margin-right: 5px;
+      min-width: 90px;
+      line-height: 90%;
+    }
+    .Icon {
+      margin-top: 5px;
+    }
+    .NumberInput {
+      display: flex;
+      background-color: var(--input-bg);
+      border: none;
+      margin-left: 5px;
+      width: 100px;
+    }
+    .Input {
+      display: flex;
+      flex-grow: 1;
+      background-color: var(--input-bg);
+      border: none;
+      margin-left: 5px;
+    }
+    .OneInput {
+      margin-left: 0px;
+    }
+
+    .Button {
+      margin-left: 5px;
+      font-size: var(--fontSizeSmall);
+     
+    }
+  }
+
+  .MainInput {
+    display: flex;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    font-size: var(--fontSizeLarge) !important;
+    padding: 0px !important;
+  }
+  
+  .Button {
+    padding: 8px;
+
+    font-size: var(--fontSizeSmall);
+    background-color: var(--btn-active) !important;
+    color: var(--white-text) !important;
+
+    width: fit-content;
+  }
+
+  .TextArea {
+    margin-top: 5px;
+    background-color: var(--input-bg);
+    border: none !important;
+    min-height: 100px;
+  }
+
+  .Selector {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    .SelectorItem {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--main-bg-color);
+      border: 1px solid var(--btn-active);
+      cursor: pointer;
+      padding: 12px;
+      margin-right: 2px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .SelectorItemActive {
+      background-color: var(--btn-active);
+      color: var(--white-text);
+    }
+  }

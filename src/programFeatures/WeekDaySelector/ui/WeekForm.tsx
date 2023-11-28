@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState, useRef } from "react";
 import cls from "./WeekForm.module.scss";
 import { useAppDispatch } from "@/sharedComponents/lib/hooks/useAppDispatch/useAppDispatch";
 import { weekActions, weekReducer } from "../model/slice/weekSlice";
@@ -36,7 +36,6 @@ import { UserAuthDataForm } from "@/serviceEntities/User";
 import { DayTasksListForm } from "@/programFeatures/DayTasksList";
 import { modeType } from "@/serviceEntities/Task";
 import { Button } from "@/sharedComponents/ui/Button";
-import { isoString } from "@/sharedComponents/lib/helpers/isoString";
 import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 
 import { ReactComponent as AllTasks } from "@/sharedComponents/assets/icons/tasks.svg";
@@ -49,6 +48,10 @@ import { fetchAllIngredients } from "../model/services/fetchAllIngredients";
 import { Modal } from "@/sharedComponents/ui/Modal";
 import { Input } from "@/sharedComponents/ui/Inputs/Input";
 import { getDD_Month_NotReqYYYY } from "@/sharedComponents/lib/helpers/getDD_Month_NotReqYYYY";
+import { putDayNote } from "../model/services/putDayNote";
+import { fetchDayNote } from "../model/services/fetchDayNote";
+import { Editor } from "@tinymce/tinymce-react";
+import { BuyingsListForm } from "@/programFeatures/BuyingsList";
 
 export interface WeekFormProps {
   className?: string;
@@ -195,7 +198,30 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
   const allIngredientsStart = useSelector(getAllIngredientsStart);
   const allIngredients = useSelector(getAllIngredients);
 
+  const editorRef = useRef(null);
+
   const [allIngredientsOpen, setAllIngredientsOpen] = useState(false);
+
+  const putDayNoteHandler = useCallback(async () => {
+    if (editorRef.current) {
+      const data = editorRef.current.getContent();
+      await dispatch(
+        putDayNote({ date: getYYYY_MM_DD(selectedDay), note: data })
+      );
+      await dispatch(fetchDayNote(getYYYY_MM_DD(selectedDay)));
+    }
+  }, [dispatch, selectedDay]);
+
+  const fetchDayNoteHandler = useCallback(
+    async (editor: any) => {
+      editorRef.current = editor;
+      const res = await dispatch(fetchDayNote(getYYYY_MM_DD(selectedDay)));
+      if (editorRef.current && typeof res.payload !== "string") {
+        editorRef.current.setContent(res.payload.note);
+      }
+    },
+    [dispatch, selectedDay]
+  );
 
   const onChangeAllIngredientsStart = useCallback(
     (val: string) => {
@@ -350,31 +376,70 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
           )}
         </div>
 
-        {type !== modeType.selfInfo &&
-          type !== modeType.bag &&
-          type !== modeType.otherInfo && (
-            <div className={cls.Content}>
-              {type === modeType.food && (
-                <Button
-                  className={cls.BlackButton}
-                  onClick={() => setAllIngredientsOpen(true)}
-                >
-                  Все ингриденты
-                </Button>
-              )}
-              <DayTasksListForm date={selectedDay} type={type} />
-            </div>
-          )}
+        <>
+          {type !== modeType.selfInfo &&
+            type !== modeType.bag &&
+            type !== modeType.otherInfo && (
+              <div className={cls.Content}>
+                {type === modeType.food && (
+                  <Button
+                    className={cls.BlackButton}
+                    onClick={() => setAllIngredientsOpen(true)}
+                  >
+                    Все ингриденты
+                  </Button>
+                )}
+                <DayTasksListForm date={selectedDay} type={type} />
+              </div>
+            )}
 
-        {type !== modeType.selfInfo &&
-          type !== modeType.bag &&
-          type !== modeType.otherInfo && (
+          {type !== modeType.selfInfo &&
+            type !== modeType.bag &&
+            type !== modeType.otherInfo && (
+              <div className={cls.MainButtonBlock}>
+                <Button className={cls.Button} onClick={onCreate}>
+                  Создать
+                </Button>
+              </div>
+            )}
+        </>
+
+        {type === modeType.selfInfo && (
+          <div className={cls.Content}>
+            <Editor
+              apiKey="kbs8prf677kelamb2n8kghuohos7us4q24ox84tfy9him11j"
+              onInit={(evt, editor) => fetchDayNoteHandler(editor)}
+              initialValue=""
+              init={{
+                max_width: 1,
+                content_style: "img {max-width: 100%;}",
+                height: 500,
+                menubar: false,
+                plugins: [
+                  "advlist autolink lists link image charmap print preview anchor",
+                  "searchreplace visualblocks code fullscreen",
+                  "insertdatetime media table paste code help wordcount",
+                ],
+                toolbar:
+                  "undo redo | formatselect | " +
+                  "bold italic backcolor | alignleft aligncenter " +
+                  "alignright alignjustify | bullist numlist outdent indent | " +
+                  "removeformat | help",
+              }}
+            />
+
             <div className={cls.MainButtonBlock}>
-              <Button className={cls.Button} onClick={onCreate}>
-                Создать
+              <Button className={cls.Button} onClick={putDayNoteHandler}>
+                Сохранить
               </Button>
             </div>
-          )}
+          </div>
+        )}
+        {type === modeType.bag && (
+          <div className={cls.Content}>
+            <BuyingsListForm date={getYYYY_MM_DD(selectedDay)}/>
+          </div>
+        )}
 
         <div className={cls.Footer}>
           <div

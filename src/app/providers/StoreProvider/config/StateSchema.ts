@@ -10,6 +10,7 @@ import { TaskSchema } from '@/serviceEntities/Task';
 import { MonthSchema } from '@/programFeatures/MonthDaySelector';
 import { DayTasksListSchema } from '@/programFeatures/DayTasksList';
 import { ProductSchema } from '@/serviceEntities/Product';
+import { BuyingsListSchema } from '@/programFeatures/BuyingsList';
 
 export interface StateSchema {
   user: UserSchema;
@@ -19,11 +20,10 @@ export interface StateSchema {
   loginForm?: LoginSchema;
   monthForm?: MonthSchema;
   weekForm?: WeekSchema;
-
   task?: TaskSchema;
   dayTasks?: DayTasksListSchema;
-
   product?: ProductSchema;
+  buyings?: BuyingsListSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;

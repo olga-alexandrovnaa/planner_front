@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AllIngredient, Holiday, WeekSchema } from "../types/weekSchema";
+import { AllIngredient, DayNote, Holiday, WeekSchema } from "../types/weekSchema";
 import { getISOWeeksInYear, getYear } from 'date-fns'
 import { getYearWeekNumber } from "@/sharedComponents/lib/helpers/getYearWeekNumber";
 import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
@@ -79,7 +79,6 @@ const weekSlice = createSlice({
       .addCase(fetchAllIngredients.fulfilled, (state, action: PayloadAction<AllIngredient[]>) => {
         state.allIngredients = action.payload;
       })
-
   },
 
 });

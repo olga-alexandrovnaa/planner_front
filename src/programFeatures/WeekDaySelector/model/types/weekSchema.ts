@@ -10,6 +10,12 @@ export interface WeekSchema {
   holidays: Holiday[];
 }
 
+export type DayNote = {
+  userId: number;
+  date: string;
+  note: string;
+}
+
 export type AllIngredient = {
   product: Product;
   count: number;

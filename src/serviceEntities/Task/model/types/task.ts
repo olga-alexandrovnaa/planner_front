@@ -96,6 +96,10 @@ export type Food = {
   ingredients: Ingredient[]
 };
 
+export type IncomeOutcomeType = {
+  id: number;
+  name: string;
+}
 
 export interface TaskExt extends Record<string, any> {
   id: number;
@@ -117,6 +121,11 @@ export interface TaskExt extends Record<string, any> {
   food?: Food | null;
   foodCountToPrepare?: number | null;
   foodCout?: number | null;
+  taskBuyings: {
+    buying: {
+      note: string;
+    }
+  }[];
 
 }
 
@@ -129,12 +138,20 @@ export interface CreateTaskDto extends Record<string, any> {
   repeatCount?: number | null;
   moneyIncomePlan?: number | null;
   moneyOutcomePlan?: number | null;
+
+  outcomeTypeId?: number | null;
+  outcomeType?: IncomeOutcomeType | null;
+
+  incomeTypeId?: number | null;
+  incomeType?: IncomeOutcomeType | null;
+
   isFood?: boolean;
   recipe?: string | null;
   ingredients?: Ingredient[];
   repeatDays?: RepeatDayTaskWithNotYearInterval[];
   repeatIfYearIntervalDays?: RepeatDayTaskWithYearInterval[];
   taskRepeatDayCheck?: RepeatDayTaskCheck[];
+  buyings?: number[]
 }
 
 export interface UpdateTaskDto extends Record<string, any> {
@@ -145,6 +162,13 @@ export interface UpdateTaskDto extends Record<string, any> {
   repeatCount?: number | null;
   moneyIncomePlan?: number | null;
   moneyOutcomePlan?: number | null;
+
+  outcomeTypeId?: number | null;
+  outcomeType?: IncomeOutcomeType | null;
+
+  incomeTypeId?: number | null;
+  incomeType?: IncomeOutcomeType | null;
+
   isFood?: boolean;
   recipe?: string | null;
   ingredients?: {
