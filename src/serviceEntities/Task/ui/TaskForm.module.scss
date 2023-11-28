@@ -352,6 +352,10 @@
     border: none;
     font-size: var(--fontSizeLarge) !important;
     padding: 0px !important;
+
+    input {
+      padding-bottom: 5px !important;
+    }
   }
 
   .CurrentDate {
@@ -454,5 +458,20 @@
       .FoodIngredientCount {
       }
     }
+  }
+}
+
+
+
+.BuyingsInfo {
+  display: flex;
+  flex-direction: column;
+  padding-top: 15px;
+  .BuyingsLabel {
+    font-weight: bold;
+  }
+  .Buying {
+    margin-top: 5px;
+    font-size: var(--fontSizeSmall);
   }
 }

@@ -409,39 +409,40 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         </>
 
         {type === modeType.selfInfo && (
-          <div className={cls.Content}>
-            <Editor
-              apiKey="kbs8prf677kelamb2n8kghuohos7us4q24ox84tfy9him11j"
-              onInit={(evt, editor) => fetchDayNoteHandler(editor)}
-              initialValue=""
-              init={{
-                max_width: 1,
-                content_style: "img {max-width: 100%;}",
-                height: 500,
-                menubar: false,
-                plugins: [
-                  "advlist autolink lists link image charmap print preview anchor",
-                  "searchreplace visualblocks code fullscreen",
-                  "insertdatetime media table paste code help wordcount",
-                ],
-                toolbar:
-                  "undo redo | formatselect | " +
-                  "bold italic backcolor | alignleft aligncenter " +
-                  "alignright alignjustify | bullist numlist outdent indent | " +
-                  "removeformat | help",
-              }}
-            />
-
+          <>
+            <div className={cls.Content}>
+              <Editor
+                apiKey="kbs8prf677kelamb2n8kghuohos7us4q24ox84tfy9him11j"
+                onInit={(evt, editor) => fetchDayNoteHandler(editor)}
+                initialValue=""
+                init={{
+                  max_width: 1,
+                  content_style: "img {max-width: 100%;}",
+                  height: 500,
+                  menubar: false,
+                  plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks code fullscreen",
+                    "insertdatetime media table paste code help wordcount",
+                  ],
+                  toolbar:
+                    "undo redo | formatselect | " +
+                    "bold italic backcolor | alignleft aligncenter " +
+                    "alignright alignjustify | bullist numlist outdent indent | " +
+                    "removeformat | help",
+                }}
+              />
+            </div>
             <div className={cls.MainButtonBlock}>
               <Button className={cls.Button} onClick={putDayNoteHandler}>
                 Сохранить
               </Button>
             </div>
-          </div>
+          </>
         )}
         {type === modeType.bag && (
           <div className={cls.Content}>
-            <BuyingsListForm date={getYYYY_MM_DD(selectedDay)}/>
+            <BuyingsListForm date={getYYYY_MM_DD(selectedDay)} />
           </div>
         )}
 

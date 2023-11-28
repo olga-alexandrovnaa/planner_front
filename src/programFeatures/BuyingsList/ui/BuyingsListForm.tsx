@@ -70,8 +70,9 @@ const BuyingsListForm = memo(({ date, className }: BuyingsListFormProps) => {
   }, []);
 
   const onBuyingDelete = useCallback(
-    (id: number) => {
-      dispatch(deleteBuying({ id }));
+    async (id: number) => {
+      await dispatch(deleteBuying({ id }));
+      dispatch(fetchList());
     },
     [dispatch]
   );
@@ -88,7 +89,10 @@ const BuyingsListForm = memo(({ date, className }: BuyingsListFormProps) => {
 
   const onCreateOutcomeType = useCallback(
     async (inputValue: string) => {
-      await dispatch(createOutcomeType(inputValue));
+      const data = await dispatch(createOutcomeType(inputValue));
+      if (typeof data.payload !== "string") {
+        setOutcomeTypeId(data.payload.id);
+      }
       dispatch(fetchOutcomeTypes());
     },
     [dispatch]
@@ -100,9 +104,9 @@ const BuyingsListForm = memo(({ date, className }: BuyingsListFormProps) => {
     },
     [dispatch]
   );
-  const onCreateTask = useCallback(() => {
+  const onCreateTask = useCallback(async () => {
     setOpenModalTask(false);
-    dispatch(
+    await dispatch(
       createTask({
         date: currentDate,
         outcome: outcome,
@@ -110,9 +114,12 @@ const BuyingsListForm = memo(({ date, className }: BuyingsListFormProps) => {
         outcomeTypeId: outcomeTypeId,
       })
     );
-    checkedList.forEach((e) => {
-      dispatch(updateBuying({ id: e.id, data: { ...e, checked: true } }));
-    });
+    for (const e of checkedList) {
+      await dispatch(updateBuying({ id: e.id, data: { ...e, checked: true } }));
+    }
+
+    setOutcome(0);
+    dispatch(fetchList());
   }, [checkedList, currentDate, dispatch, outcome, outcomeTypeId]);
 
   useEffect(() => {

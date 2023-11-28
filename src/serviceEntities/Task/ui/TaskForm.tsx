@@ -806,6 +806,17 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
               />
             )}
 
+            {!!form?.taskBuyings?.length && (
+              <div className={cls.BuyingsInfo}>
+                <div className={cls.BuyingsLabel}>Покупки:</div>
+                <ul>
+                  {form.taskBuyings.map((e) => (
+                    <li className={cls.Buying}>{e.buying.note}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className={cls.FoodInfo}>
               {!!form?.isFood && !!form?.food && !!form.food.recipe && (
                 <div className={cls.Fats}>
@@ -813,20 +824,20 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                   <div className={cls.FatsData}>
                     {form.foodCout
                       ? form.food.proteins ?? 0 * form.foodCout
-                      : form.food.proteins ?? 0}&nbsp;
-                    белков&nbsp;&nbsp;{" "}
+                      : form.food.proteins ?? 0}
+                    &nbsp; белков&nbsp;&nbsp;{" "}
                     {form.foodCout
                       ? form.food.fats ?? 0 * form.foodCout
-                      : form.food.fats ?? 0}&nbsp;
-                    жиров&nbsp;&nbsp;{" "}
+                      : form.food.fats ?? 0}
+                    &nbsp; жиров&nbsp;&nbsp;{" "}
                     {form.foodCout
                       ? form.food.carbohydrates ?? 0 * form.foodCout
-                      : form.food.carbohydrates ?? 0}&nbsp;
-                    угл.&nbsp;&nbsp;{" "}
+                      : form.food.carbohydrates ?? 0}
+                    &nbsp; угл.&nbsp;&nbsp;{" "}
                     {form.foodCout
                       ? form.food.calories ?? 0 * form.foodCout
-                      : form.food.calories ?? 0}&nbsp;
-                    ккал
+                      : form.food.calories ?? 0}
+                    &nbsp; ккал
                   </div>
                 </div>
               )}

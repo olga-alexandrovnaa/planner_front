@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
 import $api from '@/sharedComponents/api/api';
-import { TaskExt } from '@/serviceEntities/Task/model/types/task';
+import { IncomeOutcomeType } from '@/serviceEntities/Task/model/types/task';
 
 export const createOutcomeType = createAsyncThunk<
-    TaskExt,
+    IncomeOutcomeType,
     string,
     ThunkConfig<string>
 >('buyingsList/createOutcomeType', async (name, thunkApi) => {

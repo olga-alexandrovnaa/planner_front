@@ -120,7 +120,7 @@ export interface CreateTaskDto extends Record<string, any> {
   repeatDays?: RepeatDayTaskWithNotYearInterval[];
   repeatIfYearIntervalDays?: RepeatDayTaskWithYearInterval[];
   taskRepeatDayCheck?: RepeatDayTaskCheck[];
-  buyings?: number[]
+  taskBuyings?: number[]
 }
 
 export interface UpdateTaskDto extends Record<string, any> {

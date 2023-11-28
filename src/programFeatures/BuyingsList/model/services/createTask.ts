@@ -13,7 +13,7 @@ export const createTask = createAsyncThunk<
     const dto: CreateTaskDto = {
         date: data.date,
         name: 'Покупки',
-        buyings: data.buyings,
+        taskBuyings: data.buyings,
         outcomeTypeId: data.outcomeTypeId,
         taskRepeatDayCheck: [
             {
