@@ -80,6 +80,7 @@ export interface TaskExt extends Record<string, any> {
   repeatCount?: number | null;
   moneyIncomePlan?: number | null;
   moneyOutcomePlan?: number | null;
+  isHoliday: boolean;
   isFood: boolean;
   repeatDays: RepeatDayTaskWithNotYearInterval[];
   repeatIfYearIntervalDays: RepeatDayTaskWithYearInterval[];
@@ -96,12 +97,19 @@ export interface TaskExt extends Record<string, any> {
     }
   }[];
 
+  outcomeTypeId?: number | null;
+  outcomeType?: IncomeOutcomeType | null;
+
+  incomeTypeId?: number | null;
+  incomeType?: IncomeOutcomeType | null;
+
 }
 
 export interface CreateTaskDto extends Record<string, any> {
   date: string;
   name: string;
   isTracker?: boolean;
+  isHoliday?: boolean;
   intervalPart?: IntervalType | null;
   intervalLength?: number | null;
   repeatCount?: number | null;
@@ -127,6 +135,7 @@ export interface UpdateTaskDto extends Record<string, any> {
   name?: string;
   isTracker?: boolean;
   intervalPart?: IntervalType | null;
+  isHoliday?: boolean;
   intervalLength?: number | null;
   repeatCount?: number | null;
   moneyIncomePlan?: number | null;
@@ -235,6 +244,8 @@ export interface TaskSchema {
   formRepeatDays?: RepeatDayTaskWithNotYearInterval[];
   formRepeatIfYearIntervalDays?: RepeatDayTaskWithYearInterval[];
   currentFoodType?: foodType;
+  outcomeTypes: IncomeOutcomeType[]
+  incomeTypes: IncomeOutcomeType[]
   foodOptions: GroupBase<{
     value: number;
     label: string;

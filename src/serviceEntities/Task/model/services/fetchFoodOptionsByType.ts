@@ -4,7 +4,14 @@ import $api from '@/sharedComponents/api/api';
 import { Food, foodType } from '../types/task';
 
 export const fetchFoodOptionsByType = createAsyncThunk<
-    Food[],
+    {
+        label: string;
+        options: {
+            value: number;
+            label: string;
+            data: Food;
+        }[];
+    }[],
     { type: foodType, date: string },
     ThunkConfig<string>
 >('task/fetchFoodOptionsByType', async (data, thunkApi) => {

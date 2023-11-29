@@ -18,6 +18,8 @@ export const getTaskIsLoading = (state: StateSchema) => state.task?.isLoading;
 export const getTaskError = (state: StateSchema) => state.task?.error;
 export const getTaskFoodOptions = (state: StateSchema) => state.task?.foodOptions;
 export const getTaskCurrentFoodType = (state: StateSchema) => state.task?.currentFoodType;
+export const getTaskIncomeTypes = (state: StateSchema) => state.task?.incomeTypes;
+export const getTaskOutcomeTypes = (state: StateSchema) => state.task?.outcomeTypes;
 
 
 

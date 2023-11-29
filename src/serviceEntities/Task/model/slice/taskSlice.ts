@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Food, foodType, IntervalType, MoveTypeIfDayNotExists, TaskExt, TaskSchema, WeekNumber } from "../types/task";
+import { Food, foodType, IncomeOutcomeType, IntervalType, MoveTypeIfDayNotExists, TaskExt, TaskSchema, WeekNumber } from "../types/task";
 import { fetchTask } from "../services/fetch";
 import { create } from "../services/create";
 import { update } from "../services/update";
 import { getWeekDayNumber } from "@/sharedComponents/lib/helpers/getWeekDayNumber";
-import { getYYYY_MM_DD } from "@/sharedComponents/lib/helpers/getYYYY_MM_DD";
 import { fetchFoodOptionsByType } from "../services/fetchFoodOptionsByType";
+import { fetchOutcomeTypes } from "../services/fetchOutcomeTypes";
+import { fetchIncomeTypes } from "../services/fetchIncomeTypes";
 
 const initialState: TaskSchema = {
   data: null,
@@ -16,7 +17,9 @@ const initialState: TaskSchema = {
   isCreateMode: false,
   formRepeatDays: [],
   formRepeatIfYearIntervalDays: [],
-  foodOptions: []
+  foodOptions: [],
+  incomeTypes: [],
+  outcomeTypes: [],
 };
 
 const taskSlice = createSlice({
@@ -39,6 +42,7 @@ const taskSlice = createSlice({
         intervalPart: null,
         moneyIncomePlan: null,
         moneyOutcomePlan: null,
+        taskBuyings: [],
         recipe: null,
         repeatCount: null,
         ingredients: [],
@@ -80,6 +84,15 @@ const taskSlice = createSlice({
       state.form.food = action.payload ? action.payload.data : null;
     },
 
+    onChangeIncomeType: (state, action: PayloadAction<IncomeOutcomeType | undefined>) => {
+      state.form.incomeTypeId = action.payload ? action.payload.id : null;
+      state.form.incomeType = action.payload;
+    },
+    onChangeOutcomeType: (state, action: PayloadAction<IncomeOutcomeType | undefined>) => {
+      state.form.outcomeTypeId = action.payload ? action.payload.id : null;
+      state.form.outcomeType = action.payload;
+    },
+
     onChangeDate: (state, action: PayloadAction<string>) => {
       if (state.form.taskRepeatDayCheck.length) {
         if (state.form.date === action.payload) {
@@ -91,8 +104,23 @@ const taskSlice = createSlice({
     },
     onChangeIsTracker: (state, action: PayloadAction<boolean>) => {
       state.form.isTracker = action.payload;
+      if (!action.payload) {
+        state.form.isHoliday = false;
+      }
       state.form.intervalLength = 1;
       state.form.intervalPart = IntervalType.Day;
+      state.form.repeatDays.push({
+        id: 0,
+        intervalPartIndex: null,
+        trackerId: state.form.id,
+        weekDayNumber: null,
+        weekNumber: null,
+        moveTypeIfDayNotExists: null,
+        dayFromBeginningInterval: 1,
+      })
+    },
+    onChangeIsHoliday: (state) => {
+      state.form.isHoliday = !state.form.isHoliday;
     },
     onChangeIntervalLength: (state, action: PayloadAction<number>) => {
       state.form.intervalLength = action.payload;
@@ -103,7 +131,12 @@ const taskSlice = createSlice({
             .filter((e) => e.intervalPartIndex <= action.payload)
         }
 
-      } else if (state.form.intervalPart !== IntervalType.Day) {
+      } else if (state.form.intervalPart === IntervalType.Day) {
+        if (state.form.repeatDays.length > action.payload) {
+          state.form.repeatDays = state.form.repeatDays
+            .filter((e) => e.dayFromBeginningInterval <= action.payload)
+        }
+      } else {
         if (state.form.repeatDays.length > action.payload) {
           state.form.repeatDays = state.form.repeatDays
             .filter((e) => e.intervalPartIndex <= action.payload)
@@ -123,7 +156,17 @@ const taskSlice = createSlice({
           yearDateDay: (new Date(state.form.date)).getDate(),
           yearDateMonth: (new Date(state.form.date)).getMonth(),
         })
-      } else if (action.payload !== IntervalType.Day) {
+      } else if (action.payload === IntervalType.Day) {
+        state.form.repeatDays.push({
+          id: 0,
+          intervalPartIndex: null,
+          trackerId: state.form.id,
+          weekDayNumber: null,
+          weekNumber: null,
+          moveTypeIfDayNotExists: null,
+          dayFromBeginningInterval: 1,
+        })
+      } else {
         state.form.repeatDays.push({
           id: 0,
           intervalPartIndex: 1,
@@ -319,8 +362,28 @@ const taskSlice = createSlice({
       .addCase(fetchFoodOptionsByType.pending, (state) => {
         state.foodOptions = [];
       })
-      .addCase(fetchFoodOptionsByType.fulfilled, (state, action: PayloadAction<Food[]>) => {
+      .addCase(fetchFoodOptionsByType.fulfilled, (state, action: PayloadAction<{
+        label: string;
+        options: {
+          value: number;
+          label: string;
+          data: Food;
+        }[];
+      }[]>) => {
         state.foodOptions = action.payload;
+      })
+
+      .addCase(fetchOutcomeTypes.pending, (state) => {
+        state.outcomeTypes = [];
+      })
+      .addCase(fetchOutcomeTypes.fulfilled, (state, action: PayloadAction<IncomeOutcomeType[]>) => {
+        state.outcomeTypes = action.payload;
+      })
+      .addCase(fetchIncomeTypes.pending, (state) => {
+        state.incomeTypes = [];
+      })
+      .addCase(fetchIncomeTypes.fulfilled, (state, action: PayloadAction<IncomeOutcomeType[]>) => {
+        state.incomeTypes = action.payload;
       })
   },
 

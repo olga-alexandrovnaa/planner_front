@@ -23,6 +23,8 @@ import {
   getTaskError,
   getTaskFoodOptions,
   getTaskForm,
+  getTaskIncomeTypes,
+  getTaskOutcomeTypes,
 } from "../model/selectors/selectors";
 import { create } from "../model/services/create";
 import {
@@ -35,11 +37,13 @@ import { fetchTask } from "../model/services/fetch";
 import { Button } from "@/sharedComponents/ui/Button";
 import { Input } from "@/sharedComponents/ui/Inputs/Input";
 import { startOfDay } from "date-fns";
-import { CustomSelect } from "@/sharedComponents/ui/AsyncSelect/AsyncSelect";
+import {
+  CustomAsyncCreatableSelect,
+  CustomSelect,
+} from "@/sharedComponents/ui/AsyncSelect/AsyncSelect";
 import { getDD_Month_NotReqYYYY } from "@/sharedComponents/lib/helpers/getDD_Month_NotReqYYYY";
 import {
   Food,
-  Ingredient,
   IntervalType,
   MoveTypeIfDayNotExists,
   WeekNumber,
@@ -60,6 +64,11 @@ import {
   foodTypeText,
 } from "@/serviceEntities/Product/model/types/product";
 import { fetchFoodOptionsByType } from "../model/services/fetchFoodOptionsByType";
+import { fetchOutcomeTypes } from "../model/services/fetchOutcomeTypes";
+import { fetchIncomeTypes } from "../model/services/fetchIncomeTypes";
+import { createIncomeType } from "../model/services/createIncomeType";
+import { createOutcomeType } from "../model/services/createOutcomeType";
+import DaySelector from "./DaySelector";
 
 export interface TaskFormProps {
   className?: string;
@@ -76,6 +85,8 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
   const currentFoodType = useSelector(getTaskCurrentFoodType);
   const isCreateMode = useSelector(getTaskCreateMode);
   const error = useSelector(getTaskError);
+  const incomeTypes = useSelector(getTaskIncomeTypes);
+  const outcomeTypes = useSelector(getTaskOutcomeTypes);
 
   const navigate = useNavigate();
 
@@ -148,6 +159,9 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     },
     [dispatch]
   );
+  const onChangeIsHoliday = useCallback(() => {
+    dispatch(taskActions.onChangeIsHoliday());
+  }, [dispatch]);
   const onChangeIntervalLength = useCallback(
     (val: number) => {
       dispatch(taskActions.onChangeIntervalLength(val));
@@ -394,6 +408,50 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
     navigate(getRouteProduct(String(form?.foodId), params));
   }, [backPath, currentFoodType, dateFromUrl, form?.foodId, id, navigate]);
 
+  const onCreateIncomeType = useCallback(
+    async (inputValue: string) => {
+      const data = await dispatch(createIncomeType(inputValue));
+      if (typeof data.payload !== "string") {
+        dispatch(taskActions.onChangeIncomeType(data.payload));
+      }
+      dispatch(fetchOutcomeTypes());
+    },
+    [dispatch]
+  );
+
+  const onCreateOutcomeType = useCallback(
+    async (inputValue: string) => {
+      const data = await dispatch(createOutcomeType(inputValue));
+      if (typeof data.payload !== "string") {
+        dispatch(taskActions.onChangeOutcomeType(data.payload));
+      }
+      dispatch(fetchOutcomeTypes());
+    },
+    [dispatch]
+  );
+
+  const setIncomeTypeId = useCallback(
+    async (value: { value: number; label: string }) => {
+      dispatch(
+        taskActions.onChangeIncomeType(
+          value ? { id: value.value, name: value.label } : undefined
+        )
+      );
+    },
+    [dispatch]
+  );
+
+  const setOutcomeTypeId = useCallback(
+    async (value: { value: number; label: string }) => {
+      dispatch(
+        taskActions.onChangeOutcomeType(
+          value ? { id: value.value, name: value.label } : undefined
+        )
+      );
+    },
+    [dispatch]
+  );
+
   const onCreateNewFood = useCallback(() => {
     const params: OptionalRecord<string, string> = {
       trackerBackPath: backPath,
@@ -436,6 +494,11 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
   useEffect(() => {
     loadFoodOptions();
   }, [dispatch, loadFoodOptions]);
+
+  useEffect(() => {
+    dispatch(fetchOutcomeTypes());
+    dispatch(fetchIncomeTypes());
+  }, [dispatch]);
 
   return (
     <DynamicModuleLoader removeAfterUnmount reducers={initialReducers}>
@@ -545,6 +608,16 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
               >
                 Повторять
               </div>
+              {form?.isTracker && (
+                <div
+                  onClick={onChangeIsHoliday}
+                  className={classNames(cls.SelectorItem, {
+                    [cls.SelectorItemHoliday]: form?.isHoliday,
+                  })}
+                >
+                  {form?.isHoliday ? "Праздник" : "Сделать праздником"}
+                </div>
+              )}
             </div>
 
             {form?.isFood && (
@@ -667,12 +740,7 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                     options={intervalOptions}
                   />
 
-                  {form.intervalPart === IntervalType.Week && (
-                    <Button className={cls.Button} onClick={onStartChangeDays}>
-                      Дни&nbsp;&#128396;
-                    </Button>
-                  )}
-                  {form.intervalPart === IntervalType.Month && (
+                  {form.intervalPart !== IntervalType.Year && (
                     <Button className={cls.Button} onClick={onStartChangeDays}>
                       Дни&nbsp;&#128396;
                     </Button>
@@ -709,6 +777,34 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                     type="number"
                   />
                 </div>
+                <div className={cls.InputBlock}>
+                  <div className={cls.Label}>Тип</div>
+                  <CustomAsyncCreatableSelect
+                    className={cls.Input}
+                    menuPlacement="top"
+                    isSearchable
+                    onCreateOption={onCreateOutcomeType}
+                    value={
+                      outcomeTypes && form?.outcomeTypeId
+                        ? outcomeTypes
+                            .map((e) => ({
+                              value: e.id,
+                              label: e.name,
+                            }))
+                            .find((e) => e.value === form?.outcomeTypeId)
+                        : undefined
+                    }
+                    onChange={setOutcomeTypeId}
+                    defaultOptions={
+                      outcomeTypes
+                        ? outcomeTypes.map((e) => ({
+                            value: e.id,
+                            label: e.name,
+                          }))
+                        : []
+                    }
+                  />
+                </div>
 
                 <div className={cls.InputBlock}>
                   <div className={cls.Label}>Доход (план)</div>
@@ -718,6 +814,34 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                     onChange={onChangeMoneyIncomePlan}
                     textAfterInput="₽"
                     type="number"
+                  />
+                </div>
+                <div className={cls.InputBlock}>
+                  <div className={cls.Label}>Тип</div>
+                  <CustomAsyncCreatableSelect
+                    className={cls.Input}
+                    menuPlacement="top"
+                    isSearchable
+                    onCreateOption={onCreateIncomeType}
+                    value={
+                      incomeTypes && form?.incomeTypeId
+                        ? incomeTypes
+                            .map((e) => ({
+                              value: e.id,
+                              label: e.name,
+                            }))
+                            .find((e) => e.value === form?.incomeTypeId)
+                        : undefined
+                    }
+                    onChange={setIncomeTypeId}
+                    defaultOptions={
+                      incomeTypes
+                        ? incomeTypes.map((e) => ({
+                            value: e.id,
+                            label: e.name,
+                          }))
+                        : []
+                    }
                   />
                 </div>
               </>
@@ -874,6 +998,10 @@ const TaskForm = memo(({ className }: TaskFormProps) => {
                 )}
             </div>
           </div>
+        )}
+
+        {openModalDays && form?.intervalPart === IntervalType.Day && (
+          <DaySelector onClick={onChangeDays} />
         )}
 
         {openModalDays && form?.intervalPart === IntervalType.Week && (
