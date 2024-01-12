@@ -10,7 +10,7 @@ export const deleteBuying = createAsyncThunk<
     const { rejectWithValue } = thunkApi;
 
     try {
-        const responseData = await $api(__API__ + 'tasks/buying/' + data.id, { method: "DELETE" });
+        const responseData = await $api(__API__ + 'buyings/' + data.id, { method: "DELETE" });
 
         if (responseData.error) {
             throw new Error();

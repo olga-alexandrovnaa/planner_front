@@ -11,7 +11,7 @@ export const createOutcomeType = createAsyncThunk<
     const { rejectWithValue } = thunkApi;
 
     try {
-        const responseData = await $api(__API__ + `tasks/outcomeType`, { body: JSON.stringify({ name: name }), method: "POST" });
+        const responseData = await $api(__API__ + `incomeOutcomeTypes/outcome`, { body: JSON.stringify({ name: name }), method: "POST" });
 
         if (!responseData.data) {
             throw new Error();

@@ -14,7 +14,7 @@ export const fetchProduct = createAsyncThunk<
     const id = getProductIdForService(getState());
 
     try {
-        const responseData = await $api(__API__ + `tasks/food/${id}`, { method: "GET" });
+        const responseData = await $api(__API__ + `products/food/${id}`, { method: "GET" });
 
         if (!responseData.data) {
             throw new Error();

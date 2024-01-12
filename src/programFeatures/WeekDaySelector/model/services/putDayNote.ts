@@ -11,7 +11,7 @@ export const putDayNote = createAsyncThunk<
     const { rejectWithValue } = thunkApi;
 
     try {
-        const responseData = await $api(__API__ + `tasks/dayNote?date=${data.date}`, { method: "PUT", body: JSON.stringify({ note: data.note }) });
+        const responseData = await $api(__API__ + `notes/dayNote?date=${data.date}`, { method: "PUT", body: JSON.stringify({ note: data.note }) });
 
         if (!responseData.data) {
             throw new Error();

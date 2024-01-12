@@ -14,7 +14,7 @@ export const fetchAllIngredients = createAsyncThunk<
     const data = getAllIngredientsDates(getState());
 
     try {
-        const responseData = await $api(__API__ + `tasks/allIngredients?dateStart=${data.dateStart}&dateEnd=${data.dateEnd}`, { method: "GET" });
+        const responseData = await $api(__API__ + `products/allIngredients?dateStart=${data.dateStart}&dateEnd=${data.dateEnd}`, { method: "GET" });
 
         if (!responseData.data) {
             throw new Error();

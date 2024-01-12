@@ -17,7 +17,7 @@ export const update = createAsyncThunk<
 
     try {
         const responseData = await $api(
-            __API__ + `tasks/food/${data.id}`,
+            __API__ + `products/food/${data.id}`,
             { method: "PATCH", body: JSON.stringify(data.dto) }
         );
 

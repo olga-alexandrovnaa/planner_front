@@ -11,7 +11,7 @@ export const updateBuying = createAsyncThunk<
     const { rejectWithValue } = thunkApi;
 
     try {
-        const responseData = await $api(__API__ + `tasks/buying/${data.id}`,
+        const responseData = await $api(__API__ + `buyings/${data.id}`,
             { method: "PATCH", body: JSON.stringify(data.data) });
 
         if (!responseData.data) {

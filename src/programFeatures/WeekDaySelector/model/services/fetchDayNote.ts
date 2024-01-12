@@ -11,7 +11,7 @@ export const fetchDayNote = createAsyncThunk<
     const { rejectWithValue } = thunkApi;
 
     try {
-        const responseData = await $api(__API__ + `tasks/dayNote?date=${date}`, { method: "GET" });
+        const responseData = await $api(__API__ + `notes/dayNote?date=${date}`, { method: "GET" });
 
         if (!responseData.data) {
             throw new Error();

@@ -11,7 +11,7 @@ export const fetchMeasureUnits = createAsyncThunk<
     const { rejectWithValue, getState } = thunkApi;
 
     try {
-        const responseData = await $api(__API__ + `tasks/measureUnits`, { method: "GET" });
+        const responseData = await $api(__API__ + `products/measureUnits`, { method: "GET" });
 
         if (!responseData.data) {
             throw new Error();

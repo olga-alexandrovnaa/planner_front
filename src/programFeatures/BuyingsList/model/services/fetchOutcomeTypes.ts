@@ -11,7 +11,7 @@ export const fetchOutcomeTypes = createAsyncThunk<
   const { rejectWithValue } = thunkApi;
 
   try {
-    const responseData = await $api(__API__ + "tasks/outcomeTypes", {
+    const responseData = await $api(__API__ + "incomeOutcomeTypes/outcome", {
       method: "GET",
     });
 

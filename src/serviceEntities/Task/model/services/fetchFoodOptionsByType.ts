@@ -19,7 +19,7 @@ export const fetchFoodOptionsByType = createAsyncThunk<
 
 
     try {
-        const responseData = await $api(__API__ + `tasks/foodOptionsByType?type=${data.type}&date=${data.date}`, { method: "GET" });
+        const responseData = await $api(__API__ + `products/foodOptionsByType?type=${data.type}&date=${data.date}`, { method: "GET" });
 
         if (!responseData.data) {
             throw new Error();

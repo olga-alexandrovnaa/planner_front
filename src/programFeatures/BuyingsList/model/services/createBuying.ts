@@ -11,7 +11,7 @@ export const createBuying = createAsyncThunk<
     const { rejectWithValue } = thunkApi;
 
     try {
-        const responseData = await $api(__API__ + `tasks/buying`,
+        const responseData = await $api(__API__ + `buyings`,
             { method: "POST", body: JSON.stringify(data) });
 
         if (!responseData.data) {

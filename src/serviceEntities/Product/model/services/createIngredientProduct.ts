@@ -15,7 +15,7 @@ export const createIngredientProduct = createAsyncThunk<
 
     try {
         const responseData = await $api(
-            __API__ + `tasks/product`,
+            __API__ + `products/product`,
             { method: "POST", body: JSON.stringify(data) }
         );
 

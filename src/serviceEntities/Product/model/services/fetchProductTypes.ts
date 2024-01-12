@@ -11,7 +11,7 @@ export const fetchProductTypes = createAsyncThunk<
     const { rejectWithValue, getState } = thunkApi;
 
     try {
-        const responseData = await $api(__API__ + `tasks/productTypes`, { method: "GET" });
+        const responseData = await $api(__API__ + `products/productTypes`, { method: "GET" });
 
         if (!responseData.data) {
             throw new Error();
