@@ -27,6 +27,8 @@ export type RepeatDayTaskWithNotYearInterval = {
   weekNumber?: WeekNumber | null;
   weekDayNumber?: number | null;
   moveTypeIfDayNotExists?: MoveTypeIfDayNotExists | null;
+  hour: number;
+  minute: number;
 };
 
 export type RepeatDayTaskWithYearInterval = {
@@ -36,6 +38,8 @@ export type RepeatDayTaskWithYearInterval = {
   yearDateDay: number;
   yearDateMonth: number;
   moveTypeIfDayNotExists?: MoveTypeIfDayNotExists | null;
+  hour: number;
+  minute: number;
 };
 
 export type RepeatDayTaskCheck = {
@@ -49,6 +53,8 @@ export type RepeatDayTaskCheck = {
   moneyOutcomeFact?: number | null;
   deadline?: string | null;
   isDeleted: boolean;
+  hour: number;
+  minute: number;
 };
 
 export type Food = {
@@ -103,10 +109,15 @@ export interface TaskExt extends Record<string, any> {
   incomeTypeId?: number | null;
   incomeType?: IncomeOutcomeType | null;
 
+  hour: number;
+  minute: number;
+
 }
 
 export interface CreateTaskDto extends Record<string, any> {
   date: string;
+  hour: number;
+  minute: number;
   name: string;
   isTracker?: boolean;
   isHoliday?: boolean;
@@ -162,6 +173,8 @@ export interface UpdateTaskDto extends Record<string, any> {
     dayFromBeginningInterval?: number;
     weekNumber?: WeekNumber;
     weekDayNumber?: number;
+    hour: number;
+    minute: number;
   }[];
   repeatIfYearIntervalDays?: {
     id: number;
@@ -169,6 +182,8 @@ export interface UpdateTaskDto extends Record<string, any> {
     intervalPartIndex: number;
     yearDateDay: number;
     yearDateMonth: number;
+    hour: number;
+    minute: number;
   }[];
   taskRepeatDayCheck?: {
     id: number;
@@ -180,6 +195,8 @@ export interface UpdateTaskDto extends Record<string, any> {
     moneyIncomeFact?: number;
     moneyOutcomeFact?: number;
     deadline?: string;
+    hour: number;
+    minute: number;
   }[];
 }
 
