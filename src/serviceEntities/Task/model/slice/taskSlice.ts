@@ -48,6 +48,9 @@ const taskSlice = createSlice({
         ingredients: [],
         repeatDays: [],
         repeatIfYearIntervalDays: [],
+        hour: null,
+        minute: null,
+        isHoliday: false,
         taskRepeatDayCheck: [{
           id: 0,
           checked: false,
@@ -59,6 +62,8 @@ const taskSlice = createSlice({
           moneyOutcomeFact: null,
           newDate: null,
           note: '',
+          hour: null,
+          minute: null,
         }]
       }
     },
@@ -117,6 +122,8 @@ const taskSlice = createSlice({
         weekNumber: null,
         moveTypeIfDayNotExists: null,
         dayFromBeginningInterval: 1,
+        hour: state.form.hour,
+        minute: state.form.minute,
       })
     },
     onChangeIsHoliday: (state) => {
@@ -155,6 +162,8 @@ const taskSlice = createSlice({
           trackerId: state.form.id,
           yearDateDay: (new Date(state.form.date)).getDate(),
           yearDateMonth: (new Date(state.form.date)).getMonth(),
+          hour: state.form.hour,
+          minute: state.form.minute,
         })
       } else if (action.payload === IntervalType.Day) {
         state.form.repeatDays.push({
@@ -165,6 +174,8 @@ const taskSlice = createSlice({
           weekNumber: null,
           moveTypeIfDayNotExists: null,
           dayFromBeginningInterval: 1,
+          hour: state.form.hour,
+          minute: state.form.minute,
         })
       } else {
         state.form.repeatDays.push({
@@ -176,7 +187,9 @@ const taskSlice = createSlice({
           moveTypeIfDayNotExists: null,
           dayFromBeginningInterval: action.payload === IntervalType.Month
             ? (new Date(state.form.date)).getDate()
-            : getWeekDayNumber(new Date(state.form.date)) + 1
+            : getWeekDayNumber(new Date(state.form.date)) + 1,
+            hour: state.form.hour,
+            minute: state.form.minute,
         })
       }
     },
@@ -235,6 +248,8 @@ const taskSlice = createSlice({
             moveTypeIfDayNotExists: action.payload.moveTypeIfDayNotExists,
             weekDayNumber: null,
             weekNumber: null,
+            hour: state.form.hour,
+            minute: state.form.minute,
           },
         ];
       }
@@ -263,6 +278,8 @@ const taskSlice = createSlice({
             moveTypeIfDayNotExists: action.payload.moveTypeIfDayNotExists,
             weekDayNumber: action.payload.weekDayNumber,
             weekNumber: action.payload.weekNumber,
+            hour: state.form.hour,
+            minute: state.form.minute,
           },
         ];
       }
@@ -288,6 +305,8 @@ const taskSlice = createSlice({
             moveTypeIfDayNotExists: action.payload.moveTypeIfDayNotExists,
             yearDateDay: action.payload.dayNumber,
             yearDateMonth: action.payload.monthNumber,
+            hour: state.form.hour,
+            minute: state.form.minute,
           },
         ];
       }

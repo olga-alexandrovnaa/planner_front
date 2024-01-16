@@ -210,15 +210,11 @@ export type DeleteTaskInDateDto = {
 };
 
 export enum modeType {
-  all = 'all',
-  outcome = 'outcome',
-  income = 'income',
+  events = 'events',
+  tasks = 'tasks',
   food = 'food',
-  trackers = 'trackers',
-  notTrackers = 'notTrackers',
   selfInfo = 'selfInfo',
   bag = 'bag',
-  otherInfo = 'otherInfo'
 }
 
 export enum foodType {

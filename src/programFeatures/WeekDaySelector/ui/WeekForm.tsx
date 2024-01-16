@@ -95,7 +95,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
     let t = localStorage.getItem("type");
 
     if (!t) {
-      t = "all";
+      t = modeType.tasks;
       localStorage.setItem("type", t);
     }
 
@@ -332,14 +332,17 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         <div className={cls.Header}>
           <div className={cls.DatesHeader}>
             <div className={cls.DatesHeaderLeft}>
-              <div
+              {/* <div
                 className={classNames(cls.Icon)}
                 onClick={() => {
                   setType(modeType.otherInfo);
                 }}
               >
                 <Menu width={20} height={20} />
-              </div>
+              </div> */}
+              <div className={cls.TodayLink} onClick={onSelectToday}>
+              <span>cегодня</span> &nbsp; <Link />
+            </div>
             </div>
             <div className={cls.DatesHeaderCenter}>
               <div className={cls.Icon} onClick={onSwipeLeft}>
@@ -360,13 +363,13 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
             </div>
           </div>
 
-          {type !== modeType.otherInfo && type !== modeType.bag && (
+          {/* {type !== modeType.bag && (
             <div className={cls.TodayLink} onClick={onSelectToday}>
               <span>cегодня</span> &nbsp; <Link />
             </div>
-          )}
+          )} */}
 
-          {type !== modeType.otherInfo && type !== modeType.bag && (
+          { type !== modeType.bag && (
             <div className={cls.Dates}>
               <div className={cls.WeekDay}>
                 <div className={cls.WeekDayName}>#</div>
@@ -383,7 +386,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         <>
           {type !== modeType.selfInfo &&
             type !== modeType.bag &&
-            type !== modeType.otherInfo && (
+             (
               <div className={cls.Content}>
                 {type === modeType.food && (
                   <Button
@@ -398,8 +401,7 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
             )}
 
           {type !== modeType.selfInfo &&
-            type !== modeType.bag &&
-            type !== modeType.otherInfo && (
+            type !== modeType.bag && (
               <div className={cls.MainButtonBlock}>
                 <Button className={cls.Button} onClick={onCreate}>
                   Создать
@@ -449,10 +451,10 @@ const WeekForm = memo(({ className }: WeekFormProps) => {
         <div className={cls.Footer}>
           <div
             className={classNames(cls.Icon, {
-              [cls.SelectedIcon]: type === modeType.all,
+              [cls.SelectedIcon]: type === modeType.tasks || type === modeType.events,
             })}
             onClick={() => {
-              setType(modeType.all);
+              setType(modeType.tasks);
             }}
           >
             <AllTasks width={50} height={50} />
